@@ -16,6 +16,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.ExceptionHandler;
 import spark.ModelAndView;
+import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -33,28 +34,29 @@ import freemarker.template.Configuration;
 public class Main {
 
   private static final int RESSTAT = 500;
-
+  private static DatabaseHandler myDBHandler;
+  private static JSONParser myJSONParser;
   public static void main(String[] args) {
     System.out.println("Hello World");
     System.out.println(System.currentTimeMillis() / 1000);
     try {
-      DatabaseHandler myHandler = new DatabaseHandler("calendar.sqlite3");
-      myHandler.createTablesForCalendar();
-      myHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy",
+      myDBHandler = new DatabaseHandler("calendar.sqlite3");
+      myDBHandler.createTablesForCalendar();
+      myDBHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy",
           "hyeddana@cs.brown.edu");
-      myHandler.deleteUser("Harsha");
-      myHandler.deleteUser("Harsha2");
-      myHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy",
+      myDBHandler.deleteUser("Harsha");
+      myDBHandler.deleteUser("Harsha2");
+      myDBHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy",
           "hyeddana@cs.brown.edu");
-      myHandler.insertUser("Harsha2", "meow", "Harsha Yeddanapudy",
+      myDBHandler.insertUser("Harsha2", "meow", "Harsha Yeddanapudy",
           "hyeddana@cs.brown.edu");
-      myHandler.addFriendRequest("Harsha", "Harsha2");
-      myHandler.addFriendRequest("Harsha2", "Harsha");
-      myHandler.acceptFriendRequest("Harsha2", "Harsha");
-      myHandler.removeFriend("Harsha", "Harsha2");
-      myHandler.addGroup("Harsha Squad");
-      myHandler.addUserToGroup("Harsha", 1);
-      myHandler.addUserToGroup("Harsha2", 1);
+      myDBHandler.addFriendRequest("Harsha", "Harsha2");
+      myDBHandler.addFriendRequest("Harsha2", "Harsha");
+      myDBHandler.acceptFriendRequest("Harsha2", "Harsha");
+      myDBHandler.removeFriend("Harsha", "Harsha2");
+      myDBHandler.addGroup("Harsha Squad");
+      myDBHandler.addUserToGroup("Harsha", 1);
+      myDBHandler.addUserToGroup("Harsha2", 1);
       Date myDate = new SimpleDateFormat("dd/M/yyyy").parse("03/4/2015");
       System.out.println(myDate.toString());
       List<String> hSquad = new ArrayList<String>();
@@ -69,15 +71,15 @@ public class Main {
       Date myDate2 = new SimpleDateFormat("dd/M/yyyy").parse("06/4/2015");
       Event e2 = new Event(myDate2, "Ninja Time!", "Monday", hGroup, "", 30,
           "Harsha going stealth-mode");
-      System.out.println(myHandler.findGroup("Harsha Squad"));
-      myHandler.addEvent(e);
-      myHandler.addEvent(e2);
-      List<Event> events = myHandler.getAllEventsFromUser("Harsha");
+      System.out.println(myDBHandler.findGroup("Harsha Squad"));
+      myDBHandler.addEvent(e);
+      myDBHandler.addEvent(e2);
+      List<Event> events = myDBHandler.getAllEventsFromUser("Harsha");
       for (int i = 0; i < events.size(); i++) {
         System.out.println(events.get(i).getAttendees().size());
       }
-      JSONParser myParser = new JSONParser();
-      myParser.eventToJson(e);
+      myJSONParser = new JSONParser();
+      myJSONParser.eventToJson(e);
       System.out.println(System.currentTimeMillis() / 1000);
     } catch (ClassNotFoundException | SQLException | ParseException e) {
       e.printStackTrace();
@@ -119,9 +121,9 @@ public class Main {
     FreeMarkerEngine freeMarker = createEngine();
     System.out.println("spark?");
     // Setup Spark Routes
-
     Spark.get("/calendar", new FrontHandler(), freeMarker);
-
+    Spark.post("/calendar", new BTFEventHandler(), freeMarker);
+    
   }
 
   private static class FrontHandler implements TemplateViewRoute {
@@ -134,6 +136,39 @@ public class Main {
       return new ModelAndView(variables, "main.ftl");
     }
   }
+  
+  /**
+   * Back end to front end; for a given user, grabs all of that user's events
+   * so that they can be displayed on the calendar page when the user logs in.
+   * @author wtruong02151
+   *
+   */
+  private static class BTFEventHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      String testUser = "Harsha";
+      //list of events that this user has
+      List<Event> testEvents;
+      try {
+        testEvents = myDBHandler.getAllEventsFromUser(testUser);
+        List<String> toFrontEnd = new ArrayList<String>();
+        for (Event e : testEvents) {
+          toFrontEnd.add(myJSONParser.eventToJson(e));
+        }
+        Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
+            "events", toFrontEnd);
+        return new ModelAndView(variables, "main.ftl");
+      } catch (SQLException e1) {
+        System.out.println("ERROR: SQLException");
+      } catch (ParseException e1) {
+        System.out.println("ERROR: SQLException");
+      }
+      
+      return null;
+    }
+  }
+  
 
   private static class ExceptionPrinter implements ExceptionHandler {
     @Override
