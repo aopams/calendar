@@ -39,10 +39,10 @@ public class DatabaseHandler {
       + "name nvarchar(30) NOT NULL,"
       + "email nvarchar(30) NOT NULL);";
     String groupTable = "CREATE Table Groups ("
-      + "group_id integer identity PRIMARY KEY,"
+      + "group_id integer PRIMARY KEY AUTOINCREMENT,"
       + "group_name nvarchar(16));";
     String eventTable = "CREATE TABLE Events ("
-      + "event_id integer identity Primary Key,"
+      + "event_id integer Primary Key AUTOINCREMENT,"
       + "date DATE not NULL,"
       + "time TIME not NULL,"
       + "title nvarchar(50) not NULL,"
@@ -56,16 +56,16 @@ public class DatabaseHandler {
       + "FOREIGN KEY (user_name1) References Users(user_name)"
       + "FOREIGN KEY (user_name2) References Users(user_name));";
     String userEventTable = "CREATE TABLE User_Event ("
-      + "user nvarchar(16) NOT NULL,"
+      + "user_name nvarchar(16) NOT NULL,"
       + "event_id integer NOT NULL,"
-      + "PRIMARY KEY(user, event_id),"
-      + "FOREIGN KEY (user) references Users(user_name),"
+      + "PRIMARY KEY(user_name, event_id),"
+      + "FOREIGN KEY (user_name) references Users(user_name),"
       + "FOREIGN KEY (event_id) references Events(event_id));";
     String userGroupTable = "CREATE TABLE User_Group ("
-      + "user nvarchar(16) NOT NULL,"
+      + "user_name nvarchar(16) NOT NULL,"
       + "group_id integer NOT NULL,"
-      + "PRIMARY KEY(user, group_id),"
-      + "FOREIGN KEY (user) references Users(user_name),"
+      + "PRIMARY KEY(user_name, group_id),"
+      + "FOREIGN KEY (user_name) references Users(user_name),"
       + "FOREIGN KEY (group_id) references Groups(group_id));";
     String groupEventTable = "CREATE TABLE Group_Event ("
       + "group_id integer,"
@@ -87,31 +87,30 @@ public class DatabaseHandler {
     theStat.setString(1, user_name);
     ResultSet rs = theStat.executeQuery();
     String toReturn = null;
-    if (rs.isClosed()) {
+    if (rs.next()) {
       toReturn = rs.getString(1);
     }
     return toReturn;
   }
   public void insertUser(String user_name, String password,
       String name, String email) throws SQLException {
-    if (findUser(user_name) == null) {
-      String query = "INSERT into Users (user_name, user_password, name, email)"
-          + "VALUES (?, ?, ?, ?);";
-      PreparedStatement theStat = conn.prepareStatement(query);
-      theStat.setString(1, user_name);
-      theStat.setString(2, password);
-      theStat.setString(3, name);
-      theStat.setString(4, email);
-      theStat.executeUpdate();
-    }
+    String query = "INSERT into Users (user_name, user_password, name, email)"
+        + "Select ?, ?, ?, ? where not exists ("
+        + "select * from Users where user_name = ?);";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    theStat.setString(2, password);
+    theStat.setString(3, name);
+    theStat.setString(4, email);
+    theStat.setString(5, user_name);
+    theStat.executeUpdate();
+    
   }
   public void deleteUser(String user_name) throws SQLException {
-    if (findUser(user_name) == null) {
-      String query = "Delete from Users where user_name = \"" + user_name + "\"";
-      Statement theStat = conn.createStatement();
-      theStat.executeUpdate(query);
-      theStat.close();
-    }
+    String query = "Delete from Users where user_name = \"" + user_name + "\"";
+    Statement theStat = conn.createStatement();
+    theStat.executeUpdate(query);
+    theStat.close();
   }
   public void addFriendRequest(String user_name1, String user_name2) throws SQLException {
     String query = "INSERT into Friends (user_name1, user_name2, status)"
@@ -149,6 +148,52 @@ public class DatabaseHandler {
     theStat.setString(4, user_name1);
     theStat.executeUpdate();
     theStat.close();
+  }
+  public int findGroup(String group_name) throws SQLException {
+    String query = "select group_id from Groups where group_name = ?";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, group_name);
+    ResultSet rs = theStat.executeQuery();
+    int toReturn = -1;
+    if (rs.next()) {
+      toReturn = rs.getInt(1);
+    }
+    return toReturn;
+  }
+  public void addGroup(String group_name) throws SQLException {
+    String query = "INSERT into Groups(group_name)"
+        + "Select ? where not exists ("
+        + "select * from Groups where group_name = ?);";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, group_name);
+    theStat.setString(2, group_name);
+    theStat.executeUpdate();
+    theStat.close();
+  }
+  
+  public void addUserToGroup(String user_name, int group_id) throws SQLException {
+    String query = "INSERT into User_Group(user_name, group_id)"
+        + "Select ?, ? where not exists ("
+        + "select * from User_Group where user_name = ? and group_id = ?);";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    theStat.setInt(2, group_id);
+    theStat.setString(3, user_name);
+    theStat.setInt(4, group_id);
+    theStat.executeUpdate();
+    theStat.close();
+  }
+  public void removeUserFromGroup(String user_name, int group_id) throws SQLException {
+    String query = "Delete from User_Group"
+        + " where user_name = ? and group_id = ?;";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    theStat.setInt(2, group_id);
+    theStat.executeUpdate();
+    theStat.close();
+  }
+  public void addEvent(Event e) {
+    String query = "Insert into Events("
   }
   private void buildTable(String schema) throws SQLException {
     PreparedStatement myStat = conn.prepareStatement(schema);
