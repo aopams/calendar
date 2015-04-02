@@ -13,9 +13,9 @@ public class ServerCalls {
 
   private final String clientID = "223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com";
   private final String clientSecret = "6rmO_xu590Oe89yGFL-kX-l8";
-  private final String redirectURI = "http://localhost:4567/authorize";
+  private final String redirectURI = "http://localhost:4567";
 
-  public void loginClicked() {
+  public String loginClicked() {
 
     String website = "https://accounts.google.com/o/oauth2/auth";
 
@@ -38,16 +38,20 @@ public class ServerCalls {
           conn.getInputStream()));
 
       String inputLine;
+      String toReturn = "";
       while ((inputLine = br.readLine()) != null) {
-        System.out.println(inputLine);
+        toReturn += inputLine + "\n";
       }
+
       br.close();
+      return toReturn;
 
     } catch (MalformedURLException e) {
       System.out.println("ERROR: Malformed URL");
     } catch (IOException e) {
       System.out.println("ERROR: IO Exception");
     }
+    return null;
 
   }
 
@@ -59,6 +63,7 @@ public class ServerCalls {
       URL url = new URL(website);
 
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      
 
       conn.setRequestMethod("POST");
       conn.setRequestProperty("code", code);
