@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -77,7 +80,6 @@ public class Main {
       System.out.println(System.currentTimeMillis()/1000);
     } catch (ClassNotFoundException | SQLException | ParseException e) {
       e.printStackTrace();
-      //run spark server after andrew's testing
     } finally {
       run(args);
     }
@@ -115,7 +117,21 @@ public class Main {
 	    Spark.setPort(1234);
 	    Spark.exception(Exception.class, new ExceptionPrinter());
 	    FreeMarkerEngine freeMarker = createEngine();
+	    System.out.println("spark?");
 	    // Setup Spark Routes
+	    
+	    Spark.get("/calendar", new FrontHandler(), freeMarker);
+	    
+	    
+  }
+  
+  private static class FrontHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      Map<String, Object> variables =
+        ImmutableMap.of("title", "Calendar", "message", "");
+      return new ModelAndView(variables, "main.ftl");
+    }
   }
   
   private static class ExceptionPrinter implements ExceptionHandler {
