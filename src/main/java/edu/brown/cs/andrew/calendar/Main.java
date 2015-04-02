@@ -31,6 +31,8 @@ import edu.brown.cs.andrew.handlers.JSONParser;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
 
+import com.google.gson.*;
+
 public class Main {
 
   private static final int RESSTAT = 500;
@@ -156,8 +158,8 @@ public class Main {
         for (Event e : testEvents) {
           toFrontEnd.add(myJSONParser.eventToJson(e));
         }
-        Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
-            "events", toFrontEnd);
+        Map<String, List<String>> variables = new ImmutableMap.Builder()
+        .put("events", testEvents).build();
         return new ModelAndView(variables, "main.ftl");
       } catch (SQLException e1) {
         System.out.println("ERROR: SQLException");
