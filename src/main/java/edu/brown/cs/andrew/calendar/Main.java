@@ -120,7 +120,6 @@ public class Main {
     Spark.setPort(1234);
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
-    System.out.println("spark?");
     // Setup Spark Routes
 
     Spark.get("/", new CodeHandler(), freeMarker);
@@ -159,15 +158,14 @@ public class Main {
         for (Event e : testEvents) {
           toFrontEnd.add(myJSONParser.eventToJson(e));
         }
-        Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
-            "events", toFrontEnd);
+        Map<String, Object> variables = new ImmutableMap.Builder()
+        .put("events", toFrontEnd).build();
         return new ModelAndView(variables, "main.ftl");
       } catch (SQLException e1) {
         System.out.println("ERROR: SQLException");
       } catch (ParseException e1) {
         System.out.println("ERROR: SQLException");
       }
-
       return null;
     }
   }
