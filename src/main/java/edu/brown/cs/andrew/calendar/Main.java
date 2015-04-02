@@ -111,13 +111,14 @@ public class Main {
 
   private static void runSparkServer() {
     Spark.externalStaticFileLocation("src/main/resources/static");
-    Spark.setPort(4567);
+    Spark.setPort(1234);
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
     System.out.println("spark?");
     // Setup Spark Routes
 
     Spark.get("/calendar", new FrontHandler(), freeMarker);
+    Spark.get("/", new CodeHandler(), freeMarker);
 
   }
 
@@ -128,6 +129,21 @@ public class Main {
           "message", "");
       ServerCalls sc = new ServerCalls();
       String html = sc.loginClicked();
+      return new ModelAndView(variables, "main.ftl");
+    }
+  }
+
+  private static class CodeHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
+          "message", "");
+      String code = req.queryString().substring(
+          req.queryString().indexOf('=') + 1);
+      System.out.println(code);
+      ServerCalls sc = new ServerCalls();
+      sc.authorize(code);
+
       return new ModelAndView(variables, "main.ftl");
     }
   }

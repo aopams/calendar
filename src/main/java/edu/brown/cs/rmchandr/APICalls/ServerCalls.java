@@ -13,7 +13,7 @@ public class ServerCalls {
 
   private final String clientID = "223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com";
   private final String clientSecret = "6rmO_xu590Oe89yGFL-kX-l8";
-  private final String redirectURI = "http://localhost:4567";
+  private final String redirectURI = "http://localhost:1234";
 
   public String loginClicked() {
 
@@ -59,23 +59,37 @@ public class ServerCalls {
 
     try {
 
-      String website = "www.googleapis.com/oauth2/v3/token";
+      String website = "http://www.googleapis.com/oauth2/v3/token";
       URL url = new URL(website);
 
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      
 
       conn.setRequestMethod("POST");
-      conn.setRequestProperty("code", code);
-      conn.setRequestProperty("client_id", clientID);
-      conn.setRequestProperty("client_secret", clientSecret);
-      conn.setRequestProperty("redirect_uri", redirectURI);
-      conn.setRequestProperty("grant_type", "authorization_code");
+      // conn.setRequestProperty("Host", "");
+      conn.setRequestProperty("Content-Type",
+          "application/x-www-form-urlencoded");
 
+      HashMap<String, String> paramsMap = new HashMap<String, String>();
+      paramsMap.put("code", code);
+      paramsMap.put("client_id", clientID);
+      paramsMap.put("client_secret", clientSecret);
+      paramsMap.put("redirect_uri", redirectURI);
+      paramsMap.put("grant_type", "authorization_code");
+      String params = urlEncodedString(paramsMap);
+      System.out.println(params);
+
+      conn.setUseCaches(false);
+      conn.setDoInput(true);
       conn.setDoOutput(true);
       DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+      wr.writeBytes(params);
       wr.flush();
       wr.close();
+
+      int responseCode = conn.getResponseCode();
+      System.out.println("\nSending 'POST' request to URL : " + url);
+      System.out.println("Post parameters : " + params);
+      System.out.println("Response Code : " + responseCode);
 
       BufferedReader in = new BufferedReader(new InputStreamReader(
           conn.getInputStream()));
@@ -93,6 +107,7 @@ public class ServerCalls {
       return parseQueryString(response.toString());
     } catch (Exception e) {
       System.out.println("ERROR:");
+      e.printStackTrace();
       return null;
     }
 
