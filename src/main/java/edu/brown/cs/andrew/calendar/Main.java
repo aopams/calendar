@@ -28,6 +28,7 @@ import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
 import edu.brown.cs.andrew.handlers.Event;
+import edu.brown.cs.andrew.handlers.JSONParser;
 import freemarker.template.Configuration;
 
 public class Main {
@@ -77,6 +78,8 @@ public class Main {
       for (int i = 0; i < events.size(); i++) {
         System.out.println(events.get(i).getAttendees().size());
       }
+      JSONParser myParser = new JSONParser();
+      myParser.eventToJson(e);
       System.out.println(System.currentTimeMillis()/1000);
     } catch (ClassNotFoundException | SQLException | ParseException e) {
       e.printStackTrace();
