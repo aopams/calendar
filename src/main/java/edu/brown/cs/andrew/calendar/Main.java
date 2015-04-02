@@ -125,7 +125,7 @@ public class Main {
     System.out.println("spark?");
     // Setup Spark Routes
 
-    Spark.get("/", new CodeHandler(), freeMarker);
+    Spark.get("/calendar", new CodeHandler(), freeMarker);
     Spark.post("/calendar", new BTFEventHandler(), freeMarker);
   }
 
