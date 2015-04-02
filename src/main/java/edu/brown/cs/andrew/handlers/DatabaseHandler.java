@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,6 +166,17 @@ public class DatabaseHandler {
     }
     return toReturn;
   }
+  public String findGroup(int group_id) throws SQLException {
+    String query = "select group_name from Groups where group_id = ?";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setInt(1, group_id);
+    ResultSet rs = theStat.executeQuery();
+    String toReturn = "";
+    if (rs.next()) {
+      toReturn = rs.getString(1);
+    }
+    return toReturn;
+  }
   public void addGroup(String group_name) throws SQLException {
     String query = "INSERT into Groups(group_name)"
         + "Select ? where not exists ("
@@ -204,8 +217,9 @@ public class DatabaseHandler {
     eventQuery = "Insert into Events(date, title, day_of_week, description, duration)"
       + "Values( ?, ?, ?, ?, ?)";
     PreparedStatement theStat = conn.prepareStatement(eventQuery);
+    DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     Date setDate = new Date(e.getDate().getTime());
-    theStat.setString(1, e.getDate().toString());
+    theStat.setString(1, df.format(e.getDate()));
     theStat.setString(2, e.getTitle());
     theStat.setString(3, e.getDayOfWeek());
     theStat.setString(4, e.getDescription());
@@ -224,7 +238,7 @@ public class DatabaseHandler {
       for (int i = 0; i < users.size(); i++) {
         theStat2.setString(1, users.get(i));
        
-theStat2.setInt(2, theRow);
+        theStat2.setInt(2, theRow);
         theStat2.addBatch();
       }
       conn.setAutoCommit(false);
@@ -249,6 +263,17 @@ theStat2.setInt(2, theRow);
     ResultSet rs = theStat.executeQuery();
     while (rs.next()) {
       toReturn.add(rs.getString(1));
+    }
+    return toReturn;
+  }
+  public List<Integer> getGroupsFromUser(String user_name) throws SQLException {
+    List<Integer> toReturn = new ArrayList<Integer>();
+    String query = "Select group_id from User_Group where user_name = ?";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    ResultSet rs = theStat.executeQuery();
+    while (rs.next()) {
+      toReturn.add(rs.getInt(1));
     }
     return toReturn;
   }
@@ -284,7 +309,27 @@ theStat2.setInt(2, theRow);
     return groupEvents;
   }
   
-  public List<Event> getEventsFromUser(String user_name) throws SQLException {
+  public List<Event> getEventsFromGroup(int group_id) throws SQLException, ParseException {
+    String group_name = findGroup(group_id);
+    List<String> users = getUsersFromGroup(group_id);
+    String query = "Select event_id from Group_Event where group_id = ?";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setInt(1, group_id);
+    ResultSet rs = theStat.executeQuery();
+    List<Event> groupEvents = new ArrayList<Event>();
+    String query2 = "select * from Events where event_id = ?";
+    PreparedStatement theStat2 = conn.prepareStatement(query2);
+    while (rs.next()) {
+      theStat2.setInt(1, rs.getInt(1));
+      ResultSet rs2 = theStat2.executeQuery();
+      Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")), rs2.getString("title"), rs2.getString("day_of_week"),
+          users, group_name, rs2.getInt("duration"), rs2.getString("description"));
+      toAdd.setID(rs2.getInt("event_id"));
+      groupEvents.add(toAdd);
+    }
+    return groupEvents;
+  }
+  public List<Event> getPersonnalEventsFromUser(String user_name) throws SQLException, ParseException {
     String query = "Select event_id from User_Event where user_name = ?";
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, user_name);
@@ -296,13 +341,23 @@ theStat2.setInt(2, theRow);
       theStat2.setInt(1, rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
       List<String> users = getUsersFromEvent(rs2.getInt(1));
-      Event toAdd = new Event(rs2.getDate("date"), rs2.getString("title"), rs2.getString("day_of_week"),
-          users, "", rs2.getInt("duration"), rs2.getString("description"));
+      Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")),
+        rs2.getString("title"), rs2.getString("day_of_week"),
+        users, "", rs2.getInt("duration"), rs2.getString("description"));
       userEvents.add(toAdd);
     }
     return userEvents;
   }
-  
+
+  public List<Event> getAllEventsFromUser(String user_name) throws SQLException, ParseException {
+    List<Event> toReturn = new ArrayList<Event>();
+    toReturn.addAll(getPersonnalEventsFromUser(user_name));
+    List<Integer> groups = getGroupsFromUser(user_name);
+    for (int i = 0; i < groups.size(); i++) {
+      toReturn.addAll(getEventsFromGroup(groups.get(i)));
+    }
+    return toReturn;
+  }
   private void buildTable(String schema) throws SQLException {
     PreparedStatement myStat = conn.prepareStatement(schema);
     myStat.execute();

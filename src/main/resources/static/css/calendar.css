@@ -1,0 +1,120 @@
+body {
+	min-width: 1000px;
+	font-family: Helvetica;
+}
+
+.header {
+	width: 1000px;
+	margin: auto;
+}
+
+.date {
+	text-align: center;
+	font-size: 20px;
+	margin-top: 5px;
+}
+
+.cal-info {
+	height: 35px;
+	border: solid 1px;
+	border-radius: 6px 6px 0 0;
+	width: 1000px;
+	margin: auto;
+}
+
+.cal-col {
+  min-height: 1px;
+  height: 900px;
+  display: block;
+  float: left;
+}
+
+.cal-col {
+	width: 14.285%;
+	border-left: solid 1px;
+}
+
+.time {
+	height: 37.5px;
+	border-bottom: dashed 1px;
+	border-color: #D3D3D3;
+  	padding-top: 10px;
+  	padding-left: 4px;
+}
+
+.border-none {
+	border-right: none;
+}
+
+.calendar {
+	width: 1000px;
+	margin: auto;		
+    line-height: 1.33;
+    border-radius: 0 0 6px 6px;
+    border: solid 1px;
+    overflow-y: scroll;
+    height: 500px;
+    border-top: none;
+}
+
+.calendar-times, .calendar-days {
+	display: block;
+	float: left;
+}
+
+.calendar-times {
+	width: 45px;
+}
+
+.calendar-days {
+	width: 950px;
+}
+
+.choices {
+	width: 1000px;
+	margin: auto;
+	margin-bottom: 20px;
+}
+
+#logout-btn {
+	float: right;
+}
+
+.btn {
+	border-radius: 90px;
+}
+
+.btn-primary {
+	background-color: #2553A7;
+}
+
+.numeric-date {
+	position: fixed;
+  	z-index: 2;
+  	width: 30px;
+  	margin: 3px 0 0 3px;
+}
+
+.arrow {
+	float: right;
+	width: 27px;
+	margin-left: 10px;
+	margin-top: 3px;
+}
+
+.eventSlot {
+	height: 37.5px;
+	border-bottom: dashed 1px;
+	border-color: #D3D3D3;
+  	padding-top: 10px;
+  	padding-left: 4px;
+}
+
+.event {
+	display: block;
+	float: right;
+	border: 1px solid;
+	font-family: Helvetica;
+	min-height: 20px;
+	max-width: 135px;
+}
