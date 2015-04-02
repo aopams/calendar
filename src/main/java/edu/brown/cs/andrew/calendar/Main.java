@@ -31,8 +31,6 @@ import edu.brown.cs.andrew.handlers.JSONParser;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
 
-import com.google.gson.*;
-
 public class Main {
 
   private static final int RESSTAT = 500;
@@ -125,7 +123,8 @@ public class Main {
     System.out.println("spark?");
     // Setup Spark Routes
 
-    Spark.get("/calendar", new CodeHandler(), freeMarker);
+    Spark.get("/", new CodeHandler(), freeMarker);
+    Spark.get("/calendar", new FrontHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler(), freeMarker);
   }
 
@@ -160,8 +159,8 @@ public class Main {
         for (Event e : testEvents) {
           toFrontEnd.add(myJSONParser.eventToJson(e));
         }
-        Map<String, List<String>> variables = new ImmutableMap.Builder()
-        .put("events", testEvents).build();
+        Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
+            "events", toFrontEnd);
         return new ModelAndView(variables, "main.ftl");
       } catch (SQLException e1) {
         System.out.println("ERROR: SQLException");
