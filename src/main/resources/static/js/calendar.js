@@ -1,3 +1,6 @@
+var eventMap = {};
+eventMap['event1'] = {title: 'Soccer Game w/ Botswana'}
+
 function allowDrop(ev) {
     ev.preventDefault();
 }
@@ -12,7 +15,34 @@ function drop(ev) {
     ev.target.appendChild(document.getElementById(data));
 }
 
+function updateDisplayedEvents() {
+	postParameters = {input: "test"};
+	$.post("/calendar", postParameters, function(responseJSON){
+		console.log('here');
+		responseObject = JSON.parse(responseJSON);
+		var list = responseObject.events;
+		//clear current map of events
+		eventMap = {};
+		//add all events
+		for (var ev in list) {
+			eventMap[ev["id"]] = ev;
+		}
+		//display all events
+		for (var ev in eventMap) {
+			console.log('here');
+			var newElem = document.createElement("div");
+			newElem.className = "event";
+			var p = document.createTextNode(ev);
+			p.id = "description";
+			newElem.appendChild(p);
+			document.getElementById("312").appendChild(newElem);
+		}
+	});
+}
+
 $(document).ready(function(e) {
+	updateDisplayedEvents();
+
     $("#calendar").click(function(e) {
 	    var calendarRect = document.getElementById('cal-days').getBoundingClientRect();
 	    var offsetx = calendarRect.left;
