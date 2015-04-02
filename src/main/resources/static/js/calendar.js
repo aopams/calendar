@@ -17,7 +17,7 @@ function drop(ev) {
 
 function updateDisplayedEvents() {
 	postParameters = {input: "test"};
-	$.post("/calendar", postParameters, function(responseJSON){
+	$.post("/getevents", postParameters, function(responseJSON){
 		console.log('here');
 		responseObject = JSON.parse(responseJSON);
 		var list = responseObject.events;
