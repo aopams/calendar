@@ -36,6 +36,7 @@ public class Main {
   private static final int RESSTAT = 500;
   private static DatabaseHandler myDBHandler;
   private static JSONParser myJSONParser;
+
   public static void main(String[] args) {
     System.out.println("Hello World");
     System.out.println(System.currentTimeMillis() / 1000);
@@ -121,14 +122,9 @@ public class Main {
     FreeMarkerEngine freeMarker = createEngine();
     System.out.println("spark?");
     // Setup Spark Routes
-    Spark.get("/calendar", new FrontHandler(), freeMarker);
-<<<<<<< HEAD
-    Spark.get("/", new CodeHandler(), freeMarker);
 
-=======
+    Spark.get("/", new CodeHandler(), freeMarker);
     Spark.post("/calendar", new BTFEventHandler(), freeMarker);
-    
->>>>>>> db8fed2852e23ade1185dff1359cb79c7a11fcb9
   }
 
   private static class FrontHandler implements TemplateViewRoute {
@@ -141,10 +137,11 @@ public class Main {
       return new ModelAndView(variables, "main.ftl");
     }
   }
-  
+
   /**
-   * Back end to front end; for a given user, grabs all of that user's events
-   * so that they can be displayed on the calendar page when the user logs in.
+   * Back end to front end; for a given user, grabs all of that user's events so
+   * that they can be displayed on the calendar page when the user logs in.
+   *
    * @author wtruong02151
    *
    */
@@ -153,7 +150,7 @@ public class Main {
     public ModelAndView handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
       String testUser = "Harsha";
-      //list of events that this user has
+      // list of events that this user has
       List<Event> testEvents;
       try {
         testEvents = myDBHandler.getAllEventsFromUser(testUser);
@@ -169,11 +166,10 @@ public class Main {
       } catch (ParseException e1) {
         System.out.println("ERROR: SQLException");
       }
-      
+
       return null;
     }
   }
-  
 
   private static class CodeHandler implements TemplateViewRoute {
     @Override
