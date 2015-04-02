@@ -1,8 +1,15 @@
 package edu.brown.cs.andrew.calendar;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
+import edu.brown.cs.andrew.handlers.Event;
 
 public class Main {
   
@@ -25,11 +32,28 @@ public class Main {
       myHandler.addGroup("Harsha Squad");
       myHandler.addUserToGroup("Harsha", 1);
       myHandler.addUserToGroup("Harsha2", 1);
-      myHandler.removeUserFromGroup("Harsha2", 1);
+      Date myDate = new SimpleDateFormat("dd/M/yyyy").parse("03/4/2015");
+      System.out.println(myDate.toString());
+     List<String> hSquad = new ArrayList<String>();
+     hSquad.add("Harsha");
+     hSquad.add("Harsha2");
+     List<String> hGroup = new ArrayList<String>();
+     hGroup.add("Harsha");
+      Event e = new Event(myDate, "Party Time!!!!", "Friday",
+          hSquad, "",
+          180,
+          "Harsha Squad going Ham to Trap Queen for 3 hours");
+      Date myDate2 = new SimpleDateFormat("dd/M/yyyy").parse("06/4/2015");
+      Event e2 = new Event(myDate2, "Ninja Time!", "Monday",
+          hGroup, "",
+          30,
+          "Harsha going stealth-mode");
       System.out.println(myHandler.findGroup("Harsha Squad"));
-
+      myHandler.addEvent(e);
+      myHandler.addEvent(e2);
+      List<Event> events = myHandler.getEventsFromUser("Harsha");
       System.out.println(System.currentTimeMillis()/1000);
-    } catch (ClassNotFoundException | SQLException e) {
+    } catch (ClassNotFoundException | SQLException | ParseException e) {
       e.printStackTrace();
     }
   }
