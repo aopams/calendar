@@ -126,7 +126,7 @@ public class Main {
     // Setup Spark Routes
 
     Spark.get("/calendar", new CodeHandler(), freeMarker);
-    Spark.post("/calendar", new BTFEventHandler(), freeMarker);
+    Spark.post("/getevents", new BTFEventHandler(), freeMarker);
   }
 
   private static class FrontHandler implements TemplateViewRoute {
