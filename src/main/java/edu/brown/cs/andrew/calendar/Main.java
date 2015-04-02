@@ -39,8 +39,9 @@ public class Main {
      hSquad.add("Harsha2");
      List<String> hGroup = new ArrayList<String>();
      hGroup.add("Harsha");
+     System.out.println(myDate.toString());
       Event e = new Event(myDate, "Party Time!!!!", "Friday",
-          hSquad, "",
+          hSquad, "Harsha Squad",
           180,
           "Harsha Squad going Ham to Trap Queen for 3 hours");
       Date myDate2 = new SimpleDateFormat("dd/M/yyyy").parse("06/4/2015");
@@ -51,7 +52,10 @@ public class Main {
       System.out.println(myHandler.findGroup("Harsha Squad"));
       myHandler.addEvent(e);
       myHandler.addEvent(e2);
-      List<Event> events = myHandler.getEventsFromUser("Harsha");
+      List<Event> events = myHandler.getAllEventsFromUser("Harsha");
+      for (int i = 0; i < events.size(); i++) {
+        System.out.println(events.get(i).getAttendees().size());
+      }
       System.out.println(System.currentTimeMillis()/1000);
     } catch (ClassNotFoundException | SQLException | ParseException e) {
       e.printStackTrace();
