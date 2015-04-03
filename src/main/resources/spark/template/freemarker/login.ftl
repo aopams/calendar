@@ -9,7 +9,7 @@
 
   <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="css/calendar.css">
-  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" type="text/css" href="css/login.css">
   <script src="js/jquery-2.1.1.js"></script>
   <script src="js/login.js"></script>
 
