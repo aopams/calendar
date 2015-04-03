@@ -55,7 +55,8 @@ function updateDisplayedEvents() {
 
 function placeEvents(elem, event) {
 	var day = event.dayOfWeek;
-	console.log(event.dayOfWeek);
+	var date = event.date.split(" ");
+	var time = date[3].split(":")[0];
 	var dayInt;
 	switch(day) {
 		case "Monday":

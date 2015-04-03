@@ -9,7 +9,7 @@
 
   <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="css/calendar.css">
-  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" type="text/css" href="css/login.css">
   <script src="js/jquery-2.1.1.js"></script>
   <script src="js/login.js"></script>
 
@@ -19,22 +19,14 @@
   <div class="login-card">
   	<div class="logreg">
   		<img src="img/logo.png" id ="logo"><br>
-  		<button type="button" class="btn btn-primary" id ="loginbutton" name="loginbutton">Login</button>
-	    <button type="button" class="btn btn-primary" id ="registerbutton" name="registerbutton">Register</button>
-  	</div>
-  	
-  	<!login page>
-    <div class="loginpage">
-	<h1>Log-in</h1><br>
-	  <form method = "POST" action="/loginattempt">
+  		<form method = "POST" action="/calendar">
 	    <input type="text" name="user" placeholder="Username">
-	    <input type="password" name="pass" placeholder="Password">-
+	    <input type="password" name="pass" placeholder="Password">
 	    <input type="submit" name="login" class="btn btn-primary" value="Login">
 	  </form>
-	  
-	  <input type="image" src="img/leftarrow.png" class ="backbutton" name="backbutton">
-	   <div class="Result">${message}<br></p>
-    </div>
+	    <button type="button" class="btn btn-primary" id ="registerbutton" name="registerbutton">Register</button>
+	   <div class="Result">${message}<br></p></div>
+  	</div>
     
     <!register page>
     <div class="registerpage">
@@ -47,9 +39,7 @@
 	    <input type="text" name="email" placeholder="Google E-mail">	    
 	    <input type="submit" name="register" class="btn btn-primary" value="Register">
 	  </form>
-	  
 	  <input type="image" src="img/leftarrow.png" class ="backbutton" name="backbutton">
-	  
     </div>
   </div>
 
