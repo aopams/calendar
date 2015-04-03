@@ -54,6 +54,38 @@ function updateDisplayedEvents() {
 	})
 }
 
+function placeEvents(var elem, var event) {
+	var day = event.dayOfWeek;
+	
+	var dayInt;
+	switch(day) {
+		case "Monday":
+			dayInt = 1;
+			break;
+		case "Tuesday":
+			dayInt = 2;
+			break;
+		case "Wednesday":
+			dayInt = 3;
+			break;
+		case "Thursday":
+			dayInt = 4;
+			break;
+		case "Friday":
+			dayInt = 5;
+			break;
+		case "Saturday":
+			dayInt = 6;
+			break;
+		case "Sunday":
+			dayInt = 7;
+			break;
+			
+	document.getElementById(dayInt + "12").appendChild(newElem);
+	}
+}
+
+
 $(document).ready(function(e) {
 	updateDisplayedEvents();
 
