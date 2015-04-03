@@ -173,7 +173,6 @@
 				<div id="423" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 			</div>
 	    	<div class="cal-col"><img class="numeric-date"  src="img/five.png">
-	    		<div class="eventSlot" ondrop="" ondragover="allowDrop(event)"> </div>
 				<div id="500" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
 				<div id="501" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="502" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
