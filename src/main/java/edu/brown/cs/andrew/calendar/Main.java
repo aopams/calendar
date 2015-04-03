@@ -132,22 +132,12 @@ public class Main {
     // Setup Spark Routes
 
     Spark.get("/", new CodeHandler(), freeMarker);
-    Spark.get("/calendar", new FrontHandler(), freeMarker);
+    //Spark.get("/calendar", new FrontHandler(), freeMarker);
     Spark.get("/login", new LoginHandler(), freeMarker);
-    Spark.post("/loginattempt", new LoginEventHandler(), freeMarker);
+    Spark.post("/calendar", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
   }
 
-  private static class FrontHandler implements TemplateViewRoute {
-    @Override
-    public ModelAndView handle(Request req, Response res) {
-      Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
-          "message", "");
-      ServerCalls sc = new ServerCalls();
-      String html = sc.loginClicked();
-      return new ModelAndView(variables, "main.ftl");
-    }
-  }
   private static class LoginHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
@@ -182,7 +172,7 @@ public class Main {
       String newMessage = "The username or password entered was not found";
       Map<String, Object> variables = ImmutableMap.of("title",
           "Login", "message", newMessage);
-      return new ModelAndView(variables, "login.ftl");
+      return null;
       }
     }
   }

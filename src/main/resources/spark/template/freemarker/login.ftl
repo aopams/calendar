@@ -26,7 +26,7 @@
   	<!login page>
     <div class="loginpage">
 	<h1>Log-in</h1><br>
-	  <form method = "POST" action="/loginattempt">
+	  <form method = "POST" action="/calendar">
 	    <input type="text" name="user" placeholder="Username">
 	    <input type="password" name="pass" placeholder="Password">-
 	    <input type="submit" name="login" class="btn btn-primary" value="Login">
