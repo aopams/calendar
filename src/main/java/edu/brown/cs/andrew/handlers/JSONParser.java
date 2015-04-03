@@ -7,7 +7,6 @@ public class JSONParser {
   
   public String eventToJson(Event e) {
     String toReturn = gson.toJson(e);
-    System.out.println(toReturn);
     return toReturn;
   }
 }
