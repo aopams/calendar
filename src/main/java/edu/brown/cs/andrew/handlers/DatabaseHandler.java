@@ -31,18 +31,17 @@ public class DatabaseHandler {
     stmt.executeUpdate("Drop Table if Exists User_Group");
     stmt.executeUpdate("Drop Table if Exists User_Event");
     stmt.executeUpdate("Drop Table if Exists Group_Event");
-    
+    stmt.executeUpdate("Drop Table if Exists basic");
     stmt.executeUpdate("Drop Table if Exists Users");
     stmt.executeUpdate("Drop Table if Exists Groups");
     stmt.executeUpdate("Drop Table if Exists Events");
-    
-    
     
     stmt.close();
     String userTable = "CREATE TABLE Users ("
       + "user_name nvarchar(16) PRIMARY KEY," 
       + "user_password nvarchar(30) NOT NULL,"
       + "name nvarchar(30) NOT NULL,"
+      + "google_token nvarchar(75),"
       + "email nvarchar(30) NOT NULL);";
     String groupTable = "CREATE Table Groups ("
       + "group_id integer PRIMARY KEY AUTOINCREMENT,"
@@ -97,6 +96,14 @@ public class DatabaseHandler {
       toReturn = rs.getString(1);
     }
     return toReturn;
+  }
+  public boolean findUser(String user_name, String user_password) throws SQLException {
+    String query = "select user_name from Users where user_name = ? and user_password = ?";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    theStat.setString(2, user_password);
+    ResultSet rs = theStat.executeQuery();
+    return rs.next();
   }
   public void insertUser(String user_name, String password,
       String name, String email) throws SQLException {
@@ -362,6 +369,8 @@ public class DatabaseHandler {
     PreparedStatement myStat = conn.prepareStatement(schema);
     myStat.execute();
     myStat.close();
-    
+  }
+  public void closeConnection() throws SQLException {
+    conn.close();
   }
 }

@@ -39,7 +39,7 @@ public class Main {
   private static DatabaseHandler myDBHandler;
   private static JSONParser myJSONParser;
   private static Gson GSON = new Gson();
-
+  private static String testUser = "";
   public static void main(String[] args) {
     System.out.println("Hello World");
     System.out.println(System.currentTimeMillis() / 1000);
@@ -89,6 +89,12 @@ public class Main {
       e.printStackTrace();
     } finally {
       run(args);
+      //try {
+        //myDBHandler.closeConnection();
+      //} catch (SQLException e) {
+        // TODO Auto-generated catch block
+      //  e.printStackTrace();
+      //}
     }
   }
 
@@ -127,6 +133,8 @@ public class Main {
 
     Spark.get("/", new CodeHandler(), freeMarker);
     Spark.get("/calendar", new FrontHandler(), freeMarker);
+    Spark.get("/login", new LoginHandler(), freeMarker);
+    Spark.post("/loginattempt", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
   }
 
@@ -140,7 +148,44 @@ public class Main {
       return new ModelAndView(variables, "main.ftl");
     }
   }
-
+  private static class LoginHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
+          "message", "");
+      return new ModelAndView(variables, "login.ftl");
+    }
+  }
+  private static class LoginEventHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      String user = qm.value("user");
+      String pass = qm.value("pass");
+      boolean found = false;
+      try {
+        found = myDBHandler.findUser(user, pass);
+      } catch (SQLException e) {
+        String newMessage = "An Error Occurred while logging in, please try again.";
+        Map<String, Object> variables = ImmutableMap.of("title",
+            "Login", "message", newMessage);
+        return new ModelAndView(variables, "login.ftl");
+      }
+      if (found) {
+        Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
+            "message", "");
+        ServerCalls sc = new ServerCalls();
+        String html = sc.loginClicked();
+        testUser = user;
+        return new ModelAndView(variables, "main.ftl");
+      } else {
+      String newMessage = "The username or password entered was not found";
+      Map<String, Object> variables = ImmutableMap.of("title",
+          "Login", "message", newMessage);
+      return new ModelAndView(variables, "login.ftl");
+      }
+    }
+  }
   /**
    * Back end to front end; for a given user, grabs all of that user's events so
    * that they can be displayed on the calendar page when the user logs in.
@@ -152,7 +197,6 @@ public class Main {
 
     public Object handle(final Request req, final Response res) {
       QueryParamsMap qm = req.queryMap();
-      String testUser = "Harsha";
       // list of events that this user has
       List<Event> testEvents;
       try {

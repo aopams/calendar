@@ -28,12 +28,12 @@
 	<h1>Log-in</h1><br>
 	  <form>
 	    <input type="text" name="user" placeholder="Username">
-	    <input type="password" name="pass" placeholder="Password">
+	    <input type="password" name="pass" placeholder="Password">-
 	    <input type="submit" name="login" class="btn btn-primary" value="Login">
 	  </form>
 	  
 	  <input type="image" src="img/leftarrow.png" class ="backbutton" name="backbutton">
-	  
+	    <div class="Result">${message}<br></p>
     </div>
     
     <!register page>
@@ -54,7 +54,6 @@
   </div>
 
 <!-- <div id="error"><img src="https://dl.dropboxusercontent.com/u/23299152/Delete-icon.png" /> Your caps-lock is on.</div> -->
-
   <script src='http://codepen.io/assets/libs/fullpage/jquery_and_jqueryui.js'></script>
 
 </body>
