@@ -55,7 +55,8 @@ function updateDisplayedEvents() {
 
 function placeEvents(var elem, var event) {
 	var day = event.dayOfWeek;
-	
+	var date = event.date.split(" ");
+	var time = date[3].split(":")[0];
 	var dayInt;
 	switch(day) {
 		case "Monday":
@@ -79,8 +80,8 @@ function placeEvents(var elem, var event) {
 		case "Sunday":
 			dayInt = 7;
 			break;
-			
-	document.getElementById(dayInt + "12").appendChild(newElem);
+	elem.setAttribute(paddingBottom, 10px);
+	document.getElementById(dayInt + time).appendChild(elem);
 	}
 }
 
