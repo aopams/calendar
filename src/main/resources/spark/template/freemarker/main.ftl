@@ -64,7 +64,8 @@
 		<div id="cal-days" class="calendar-days">
 			<div class="cal-col">
 				<img class="numeric-date" src="img/one.png">
-				<div id="101" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="100" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="101" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="102" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="103" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="104" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
@@ -72,7 +73,7 @@
 				<div id="106" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="107" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="108" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
-				<div id="109" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
+				<div id="119" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="110" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="111" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="112" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
@@ -87,21 +88,21 @@
 				<div id="121" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="122" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="123" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
-				<div id="124" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 			</div>
 
 			<div class="cal-col"><img class="numeric-date"  src="img/two.png">
-				<div id="201" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="200" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="201" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="202" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="203" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="204" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="205" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
-				<div id="206" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
-				<div id="207" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)">
+				<div id="206" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)">
 					<div class="event" draggable="true" ondragstart="drag(event)" id="drag1"> 
 						<p class="description">Soccer Game w/ Botswana</p>
 					</div>
 				</div>
+				<div id="207" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="208" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="209" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="210" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
@@ -118,10 +119,10 @@
 				<div id="221" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="222" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="223" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
-				<div id="224" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 			</div>
 			<div class="cal-col"><img class="numeric-date"  src="img/three.png">
-				<div id="301" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="300" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="301" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="302" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="303" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="304" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
@@ -144,10 +145,10 @@
 				<div id="321" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="322" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="323" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
-				<div id="324" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 			</div>
 			<div class="cal-col"><img class="numeric-date"  src="img/four.png">
-				<div id="401" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="400" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="401" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="402" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="403" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="404" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
@@ -170,11 +171,11 @@
 				<div id="421" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="422" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="423" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
-				<div id="424" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 			</div>
 	    	<div class="cal-col"><img class="numeric-date"  src="img/five.png">
 	    		<div class="eventSlot" ondrop="" ondragover="allowDrop(event)"> </div>
-				<div id="501" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="500" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="501" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="502" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="503" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="504" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
@@ -197,10 +198,10 @@
 				<div id="521" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="522" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="523" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
-				<div id="524" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 	    	</div>
 	    	<div class="cal-col"><img class="numeric-date"  src="img/six.png">
-	    		<div id="601" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+	    		<div id="600" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="601" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="602" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="603" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="604" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
@@ -223,10 +224,10 @@
 				<div id="621" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="622" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="623" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
-				<div id="624" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 	    	</div>
 	    	<div class="cal-col border-none"><img  class="numeric-date"  src="img/seven.png">
-	    		<div id="701" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+	    		<div id="700" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+				<div id="701" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="702" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="703" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="704" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
@@ -249,7 +250,6 @@
 				<div id="721" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="722" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 				<div id="723" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
-				<div id="724" class="eventSlot" ondrop="drop(event)" ondragover="allowDrop(event)"> </div>
 	    	</div>
 	    </div>
 	</div>
