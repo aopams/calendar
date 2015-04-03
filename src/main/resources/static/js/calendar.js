@@ -35,27 +35,27 @@ function updateDisplayedEvents() {
 			var obj = JSON.parse(list[i]);
 			console.log(obj);
 			eventMap[obj.id] = obj;
+			eventArray.push(obj)
 		}
 		//display all events
-		var i = 0
-		for (var ev in eventMap) {
-			console.log(i);
-			i++;
+		console.log(eventArray);
+		for (var i = 0; i < eventArray.length; i++) {
 			var newElem = document.createElement("div");
 			newElem.className = "event";
 			newElem.setAttribute("draggable", "true"); 
 			newElem.setAttribute("ondragstart", "drag(event)");
-			var p = document.createTextNode(ev.title);
+			var p = document.createTextNode(eventArray[i].title);
+			console.log(eventArray[i].title);
 			p.id = "description";
 			newElem.appendChild(p);
-			document.getElementById("312").appendChild(newElem);
+			placeEvents(newElem, eventArray[i]);
 		}
 	})
 }
 
-function placeEvents(var elem, var event) {
+function placeEvents(elem, event) {
 	var day = event.dayOfWeek;
-	
+	console.log(event.dayOfWeek);
 	var dayInt;
 	switch(day) {
 		case "Monday":
@@ -79,9 +79,9 @@ function placeEvents(var elem, var event) {
 		case "Sunday":
 			dayInt = 7;
 			break;
-			
-	document.getElementById(dayInt + "12").appendChild(newElem);
 	}
+	document.getElementById(dayInt + "12").appendChild(elem);
+	
 }
 
 
