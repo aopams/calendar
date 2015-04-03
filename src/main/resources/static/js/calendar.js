@@ -35,20 +35,21 @@ function updateDisplayedEvents() {
 			var obj = JSON.parse(list[i]);
 			console.log(obj);
 			eventMap[obj.id] = obj;
+			eventArray.push(obj)
 		}
 		//display all events
-		var i = 0
-		for (var ev in eventMap) {
-			console.log(i);
-			i++;
+		console.log(eventArray);
+		for (var i = 0; i < eventArray.length; i++) {
+			console.log(eventArray[i].title);
 			var newElem = document.createElement("div");
 			newElem.className = "event";
 			newElem.setAttribute("draggable", "true"); 
 			newElem.setAttribute("ondragstart", "drag(event)");
-			var p = document.createTextNode(ev.title);
+			var p = document.createTextNode(eventArray[i].title);
+			console.log(ev.title);
 			p.id = "description";
 			newElem.appendChild(p);
-			document.getElementById("312").appendChild(newElem);
+			placeEvents(newElem, ev);
 		}
 	})
 }
