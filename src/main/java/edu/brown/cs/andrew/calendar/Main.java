@@ -19,11 +19,13 @@ import spark.ModelAndView;
 import spark.QueryParamsMap;
 import spark.Request;
 import spark.Response;
+import spark.Route;
 import spark.Spark;
 import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
 
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
 import edu.brown.cs.andrew.handlers.Event;
@@ -36,6 +38,7 @@ public class Main {
   private static final int RESSTAT = 500;
   private static DatabaseHandler myDBHandler;
   private static JSONParser myJSONParser;
+  private static Gson GSON = new Gson();
 
   public static void main(String[] args) {
     System.out.println("Hello World");
@@ -124,7 +127,7 @@ public class Main {
 
     Spark.get("/", new CodeHandler(), freeMarker);
     Spark.get("/calendar", new FrontHandler(), freeMarker);
-    Spark.post("/getevents", new BTFEventHandler(), freeMarker);
+    Spark.post("/getevents", new BTFEventHandler());
   }
 
   private static class FrontHandler implements TemplateViewRoute {
@@ -145,9 +148,9 @@ public class Main {
    * @author wtruong02151
    *
    */
-  private static class BTFEventHandler implements TemplateViewRoute {
-    @Override
-    public ModelAndView handle(Request req, Response res) {
+  private static class BTFEventHandler implements Route {
+
+    public Object handle(final Request req, final Response res) {
       QueryParamsMap qm = req.queryMap();
       String testUser = "Harsha";
       // list of events that this user has
@@ -160,7 +163,8 @@ public class Main {
         }
         Map<String, Object> variables = new ImmutableMap.Builder()
         .put("events", toFrontEnd).build();
-        return new ModelAndView(variables, "main.ftl");
+        System.out.println(GSON.toJson(variables));
+        return GSON.toJson(variables);
       } catch (SQLException e1) {
         System.out.println("ERROR: SQLException");
       } catch (ParseException e1) {

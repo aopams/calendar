@@ -1,5 +1,6 @@
 var eventMap = {};
-eventMap['event1'] = {title: 'Soccer Game w/ Botswana'}
+eventMap['harsha'] = {title: 'Soccer Game w/ Botswana'};
+var eventArray = [];
 
 function allowDrop(ev) {
     ev.preventDefault();
@@ -16,28 +17,40 @@ function drop(ev) {
 }
 
 function updateDisplayedEvents() {
-	postParameters = {input: "test"};
+	var postParameters = {string: "test"};
 	$.post("/getevents", postParameters, function(responseJSON){
-		console.log('here');
-		responseObject = JSON.parse(responseJSON);
+
+		var responseObject = JSON.parse(responseJSON);
 		var list = responseObject.events;
+
 		//clear current map of events
 		eventMap = {};
+		eventArray = [];
+		var paras = document.getElementsByClassName('event');
+		while(paras[0]) {
+			paras[0].parentNode.removeChild(paras[0]);
+		}
 		//add all events
-		for (var ev in list) {
-			eventMap[ev["id"]] = ev;
+		for (var i = 0; i < list.length; i++) {
+			var obj = JSON.parse(list[i]);
+			console.log(obj);
+			eventMap[obj.id] = obj;
 		}
 		//display all events
+		var i = 0
 		for (var ev in eventMap) {
-			console.log('here');
+			console.log(i);
+			i++;
 			var newElem = document.createElement("div");
 			newElem.className = "event";
-			var p = document.createTextNode(ev);
+			newElem.setAttribute("draggable", "true"); 
+			newElem.setAttribute("ondragstart", "drag(event)");
+			var p = document.createTextNode(ev.title);
 			p.id = "description";
 			newElem.appendChild(p);
 			document.getElementById("312").appendChild(newElem);
 		}
-	});
+	})
 }
 
 $(document).ready(function(e) {

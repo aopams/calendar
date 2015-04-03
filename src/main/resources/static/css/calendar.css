@@ -89,7 +89,7 @@ body {
 }
 
 .numeric-date {
-	position: fixed;
+	position: absolute;
   	z-index: 2;
   	width: 30px;
   	margin: 3px 0 0 3px;
