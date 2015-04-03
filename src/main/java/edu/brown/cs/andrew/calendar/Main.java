@@ -172,7 +172,7 @@ public class Main {
       String newMessage = "The username or password entered was not found";
       Map<String, Object> variables = ImmutableMap.of("title",
           "Login", "message", newMessage);
-      return null;
+      return new ModelAndView(variables, "login.ftl");
       }
     }
   }
