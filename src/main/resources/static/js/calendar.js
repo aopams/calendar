@@ -1,7 +1,4 @@
 var eventMap = {};
-eventMap['harsha'] = {title: 'Soccer Game w/ Botswana'};
-var eventArray = [];
-
 function allowDrop(ev) {
     ev.preventDefault();
 }
@@ -37,6 +34,7 @@ function updateDisplayedEvents() {
 			eventMap[obj.id] = obj;
 			eventArray.push(obj)
 		}
+/*
 		//display all events
 		console.log(eventArray);
 		for (var i = 0; i < eventArray.length; i++) {
@@ -50,6 +48,21 @@ function updateDisplayedEvents() {
 			newElem.appendChild(p);
 			placeEvents(newElem, eventArray[i]);
 		}
+*/
+		//display all events
+		var key, val;
+		for(key in eventMap) {
+			value = eventMap[key];
+			var newElem = document.createElement("div");
+			newElem.className = "event";
+			newElem.setAttribute("draggable", "true"); 
+			newElem.setAttribute("ondragstart", "drag(event)");
+			var p = document.createTextNode(value.title);
+			console.log(value.title);
+			p.id = "description";
+			newElem.appendChild(p);
+			placeEvents(newElem, value);
+		}
 	})
 }
 
@@ -57,6 +70,7 @@ function placeEvents(elem, event) {
 	var day = event.dayOfWeek;
 	var date = event.date.split(" ");
 	var time = date[3].split(":")[0];
+	var am = date[4];
 	var dayInt;
 	switch(day) {
 		case "Monday":
@@ -81,7 +95,22 @@ function placeEvents(elem, event) {
 			dayInt = 7;
 			break;
 	}
-	document.getElementById(dayInt + "12").appendChild(elem);
+	var givenTime;
+	switch(am) {
+		case "AM":
+			time = time%12;
+			break;
+		case "PM":
+			time = (time%12) + 12;
+			break;
+	}
+	console.log("time is " + time);
+	if(time < 10) {
+		time = "0" + time;
+		console.log(time);
+	}
+	console.log(dayInt + "" + time);
+	document.getElementById(dayInt + "" + time).appendChild(elem);
 	
 }
 
