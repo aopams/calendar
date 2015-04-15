@@ -16,10 +16,11 @@ public class Event {
   private String group;
   private List<String> attendees;
   private String description;
+  private String creator;
   
   public Event (Date date, String title,
       String dayOfWeek, List<String> attendees,  
-      String group, int duration, String description) {
+      String group, int duration, String description, String creator) {
     this.date = date;
     this.title = title;
     this.dayOfWeek = dayOfWeek;
@@ -27,6 +28,7 @@ public class Event {
     this.group = group;
     this.duration = duration;
     this.description = description;
+    this.creator = creator;
   }
   public int getId() {
     return id;
@@ -62,5 +64,8 @@ public class Event {
       toReturn.add(attendees.get(i));
     }
     return toReturn;
+  }
+  public String getCreator() {
+    return creator;
   }
 }

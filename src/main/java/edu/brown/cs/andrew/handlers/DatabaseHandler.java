@@ -10,8 +10,9 @@ import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DatabaseHandler {
   
@@ -52,7 +53,9 @@ public class DatabaseHandler {
       + "day_of_week nvarchar(10) not NULL,"
       + "date Date not NUll,"
       + "description nvarchar(150) not NULL,"
-      + "duration integer not Null);";
+      + "duration integer not Null"
+      + "creator nvarchar(30) "
+      + "FOREIGN KEY(creator)  references Users(user_name)";
     String friendsTable = "CREATE Table Friends ("
       + "user_name1 nvarchar(16) NOT NULL,"
       + "user_name2 nvarchar(16) NOT NULL,"
@@ -162,6 +165,24 @@ public class DatabaseHandler {
     theStat.executeUpdate();
     theStat.close();
   }
+  public List<String> getFriendsFromUser(String user_name) throws SQLException {
+    List<String> toReturn = new CopyOnWriteArrayList<String>();
+    String query = "Select user_name1 from Friends where user_name2 = ?";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    ResultSet rs = theStat.executeQuery();
+    while (rs.next()) {
+      toReturn.add(rs.getString(1));
+    }
+    String query2 = "Select user_name2 from Friends where user_name1 = ?";
+    PreparedStatement theStat2 = conn.prepareStatement(query2);
+    theStat.setString(1, user_name);
+    ResultSet rs2 = theStat2.executeQuery();
+    while (rs2.next()) {
+      toReturn.add(rs2.getString(1));
+    }
+    return toReturn;
+  }
   public int findGroup(String group_name) throws SQLException {
     String query = "select group_id from Groups where group_name = ?";
     PreparedStatement theStat = conn.prepareStatement(query);
@@ -263,7 +284,7 @@ public class DatabaseHandler {
     }
   }
   public List<String> getUsersFromGroup(int group_id) throws SQLException {
-    List<String> toReturn = new ArrayList<String>();
+    List<String> toReturn = new CopyOnWriteArrayList<String>();
     String query = "Select user_name from User_Group where group_id = ?";
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setInt(1, group_id);
@@ -273,8 +294,8 @@ public class DatabaseHandler {
     }
     return toReturn;
   }
-  public List<Integer> getGroupsFromUser(String user_name) throws SQLException {
-    List<Integer> toReturn = new ArrayList<Integer>();
+  public List<Integer> getGroupsIDFromUser(String user_name) throws SQLException {
+    List<Integer> toReturn = new CopyOnWriteArrayList<Integer>();
     String query = "Select group_id from User_Group where user_name = ?";
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, user_name);
@@ -284,8 +305,22 @@ public class DatabaseHandler {
     }
     return toReturn;
   }
+  public ConcurrentHashMap<Integer, String> getGroupsNameFromUser(String user_name) throws SQLException {
+    ConcurrentHashMap<Integer, String> toReturn = new ConcurrentHashMap<Integer, String>();
+    List<Integer> ids = getGroupsIDFromUser(user_name);
+    String query = "Select group_name from Groups where group_id = ?";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    for (int i = 0; i < ids.size(); i++) {
+      theStat.setInt(1, ids.get(i));
+      ResultSet rs = theStat.executeQuery();
+      if (rs.next()){
+        toReturn.put(ids.get(i),rs.getString(1));
+      }
+    }
+    return toReturn;
+  }
   public List<String> getUsersFromEvent(int event_id) throws SQLException {
-    List<String> toReturn = new ArrayList<String>();
+    List<String> toReturn = new CopyOnWriteArrayList<String>();
     String query = "Select user_name from User_Event where event_id = ?";
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setInt(1, event_id);
@@ -302,14 +337,14 @@ public class DatabaseHandler {
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setInt(1, group_id);
     ResultSet rs = theStat.executeQuery();
-    List<Event> groupEvents = new ArrayList<Event>();
+    List<Event> groupEvents = new CopyOnWriteArrayList<Event>();
     String query2 = "select * from Events where event_id = ?";
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     while (rs.next()) {
       theStat2.setInt(1, rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
       Event toAdd = new Event(rs2.getDate("date"), rs2.getString("title"), rs2.getString("day_of_week"),
-          users, group_name, rs2.getInt("duration"), rs2.getString("description"));
+          users, group_name, rs2.getInt("duration"), rs2.getString("description"), rs2.getString("creator"));
       toAdd.setID(rs2.getInt("event_id"));
       groupEvents.add(toAdd);
     }
@@ -323,14 +358,14 @@ public class DatabaseHandler {
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setInt(1, group_id);
     ResultSet rs = theStat.executeQuery();
-    List<Event> groupEvents = new ArrayList<Event>();
+    List<Event> groupEvents = new CopyOnWriteArrayList<Event>();
     String query2 = "select * from Events where event_id = ?";
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     while (rs.next()) {
       theStat2.setInt(1, rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
       Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")), rs2.getString("title"), rs2.getString("day_of_week"),
-          users, group_name, rs2.getInt("duration"), rs2.getString("description"));
+          users, group_name, rs2.getInt("duration"), rs2.getString("description"),  rs2.getString("creator"));
       toAdd.setID(rs2.getInt("event_id"));
       groupEvents.add(toAdd);
     }
@@ -341,7 +376,7 @@ public class DatabaseHandler {
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, user_name);
     ResultSet rs = theStat.executeQuery();
-    List<Event> userEvents = new ArrayList<Event>();
+    List<Event> userEvents = new CopyOnWriteArrayList<Event>();
     String query2 = "select * from Events where event_id = ?";
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     while (rs.next()) {
@@ -350,18 +385,35 @@ public class DatabaseHandler {
       List<String> users = getUsersFromEvent(rs2.getInt(1));
       Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")),
         rs2.getString("title"), rs2.getString("day_of_week"),
-        users, "", rs2.getInt("duration"), rs2.getString("description"));
+        users, "", rs2.getInt("duration"), rs2.getString("description"),
+        rs2.getString("creator"));
       userEvents.add(toAdd);
     }
     return userEvents;
   }
 
-  public List<Event> getAllEventsFromUser(String user_name) throws SQLException, ParseException {
-    List<Event> toReturn = new ArrayList<Event>();
-    toReturn.addAll(getPersonnalEventsFromUser(user_name));
-    List<Integer> groups = getGroupsFromUser(user_name);
+  public ConcurrentHashMap<Integer, Event> getAllEventsFromUser(String user_name) throws SQLException, ParseException {
+    List<Event> eventList = new CopyOnWriteArrayList<Event>();
+    eventList.addAll(getPersonnalEventsFromUser(user_name));
+    List<Integer> groups = getGroupsIDFromUser(user_name);
     for (int i = 0; i < groups.size(); i++) {
-      toReturn.addAll(getEventsFromGroup(groups.get(i)));
+      eventList.addAll(getEventsFromGroup(groups.get(i)));
+    }
+    ConcurrentHashMap<Integer, Event> actualReturn = new ConcurrentHashMap<Integer, Event>();
+    for (int i = 0; i < eventList.size(); i++) {
+      Event curr = eventList.get(i);
+      actualReturn.put(curr.getId(), curr);
+    }
+    return actualReturn;
+  }
+  public int getMaxrGroupID(String user_name) throws SQLException {
+    int toReturn = -1;
+    String query = "Select MAX(group_id) from User_Group where user_name = ?";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    ResultSet rs = theStat.executeQuery();
+    if (rs.next()) {
+      toReturn = rs.getInt(1);
     }
     return toReturn;
   }

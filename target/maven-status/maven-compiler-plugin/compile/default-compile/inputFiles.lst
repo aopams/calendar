@@ -1,5 +1,6 @@
 /home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/calendar/Main.java
 /home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/handlers/Event.java
+/home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/handlers/SparkHandler.java
 /home/andrew/cs032/calendar/src/main/java/edu/brown/cs/rmchandr/APICalls/ServerCalls.java
 /home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/handlers/DatabaseHandler.java
 /home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/handlers/JSONParser.java
