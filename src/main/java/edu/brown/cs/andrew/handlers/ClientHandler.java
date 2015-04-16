@@ -2,7 +2,10 @@ package edu.brown.cs.andrew.handlers;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -45,6 +48,26 @@ public class ClientHandler {
   }
   public synchronized DatabaseHandler getDB() {
     return myDBHandler;
+  }
+  
+  public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date start) {
+    ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
+    for (Entry<Integer, Event> e : events.entrySet()) {
+      try {
+        Date eventDate = e.getValue().getDate();
+        Calendar c = Calendar.getInstance();
+        c.setTime(start);
+        c.add(Calendar.DATE, 6);
+        Date endDate = c.getTime();
+        if (eventDate.after(start) && eventDate.before(endDate)) {
+          toReturn.put(e.getKey(), e.getValue());
+        }
+      } catch (ParseException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+    }
+    return toReturn;
   }
   
   public synchronized void setFriends(ConcurrentHashMap<String, String> friends) {
