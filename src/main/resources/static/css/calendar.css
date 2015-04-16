@@ -126,16 +126,16 @@ body {
     display: none;
 }
 
-#x-button, #check-button {
+#x-button, #check-button, #delete-button {
 	height: 30px;
 }
 
-#x-button {
+#x-button, #check-button {
 	float: right;
 }
 
-#check-button {
-	float: right;
+#delete-button {
+	float: left;
 }
 
 /* dialog styling */
@@ -160,4 +160,18 @@ body {
 /* inner box of dialog */
 #ui-id-1 {
 	width: 300px;
+}
+
+/*dialog inner styling */
+#duration {
+	width: 70px;
+}
+
+#dialog-time {
+	width: 93px;
+}
+
+#descrip {
+	resize: none;
+	width: 260px;
 }
