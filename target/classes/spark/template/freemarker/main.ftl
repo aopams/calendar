@@ -23,7 +23,7 @@
 
 <body>
 	<div class="row header">
-		<img src="\img/logo.png" style="width:140px;">
+		<img src="/img/logo.png" style="width:140px;">
 	</div>
 	<div class="row choices">
 		<a class="btn btn-default btn-primary" href="#" role="button">Calendar</a>
@@ -75,7 +75,7 @@
 		</div>
 		<div id="cal-days" class="calendar-days">
 			<div class="cal-col">
-				<img class="numeric-date" id="day1" src="/img/one.png">
+				<img class="numeric-date" id="day1" src="">
 				<div id="100" class="eventSlot"></div>
 				<div id="101" class="eventSlot"> </div>
 				<div id="102" class="eventSlot"> </div>
@@ -102,7 +102,7 @@
 				<div id="123" class="eventSlot"> </div>
 			</div>
 
-			<div class="cal-col"><img class="numeric-date" id="day2" src="/img/two.png">
+			<div class="cal-col"><img class="numeric-date" id="day2" src="">
 				<div id="200" class="eventSlot"></div>
 				<div id="201" class="eventSlot"> </div>
 				<div id="202" class="eventSlot"> </div>
@@ -128,7 +128,7 @@
 				<div id="222" class="eventSlot"> </div>
 				<div id="223" class="eventSlot"> </div>
 			</div>
-			<div class="cal-col"><img class="numeric-date" id="day3" src="/img/three.png">
+			<div class="cal-col"><img class="numeric-date" id="day3" src="">
 				<div id="300" class="eventSlot"></div>
 				<div id="301" class="eventSlot"> </div>
 				<div id="302" class="eventSlot"> </div>
@@ -154,7 +154,7 @@
 				<div id="322" class="eventSlot"> </div>
 				<div id="323" class="eventSlot"> </div>
 			</div>
-			<div class="cal-col"><img class="numeric-date" id="day4" src="/img/four.png">
+			<div class="cal-col"><img class="numeric-date" id="day4" src="">
 				<div id="400" class="eventSlot"></div>
 				<div id="401" class="eventSlot"> </div>
 				<div id="402" class="eventSlot"> </div>
@@ -180,7 +180,7 @@
 				<div id="422" class="eventSlot"> </div>
 				<div id="423" class="eventSlot"> </div>
 			</div>
-	    	<div class="cal-col"><img class="numeric-date" id="day5" src="/img/five.png">
+	    	<div class="cal-col"><img class="numeric-date" id="day5" src="">
 				<div id="500" class="eventSlot"></div>
 				<div id="501" class="eventSlot"> </div>
 				<div id="502" class="eventSlot"> </div>
@@ -206,7 +206,7 @@
 				<div id="522" class="eventSlot"> </div>
 				<div id="523" class="eventSlot"> </div>
 	    	</div>
-	    	<div class="cal-col"><img class="numeric-date" id="day6" src="\img/six.png">
+	    	<div class="cal-col"><img class="numeric-date" id="day6" src="">
 	    		<div id="600" class="eventSlot"></div>
 				<div id="601" class="eventSlot"> </div>
 				<div id="602" class="eventSlot"> </div>
@@ -232,7 +232,7 @@
 				<div id="622" class="eventSlot"> </div>
 				<div id="623" class="eventSlot"> </div>
 	    	</div>
-	    	<div class="cal-col border-none"><img  class="numeric-date" id="day7" src="/img/seven.png">
+	    	<div class="cal-col border-none"><img  class="numeric-date" id="day7" src="">
 	    		<div id="700" class="eventSlot"></div>
 				<div id="701" class="eventSlot"> </div>
 				<div id="702" class="eventSlot"> </div>
