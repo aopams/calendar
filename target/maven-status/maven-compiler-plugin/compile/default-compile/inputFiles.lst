@@ -5,4 +5,6 @@
 /home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/handlers/ClientHandler.java
 /home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/handlers/DatabaseHandler.java
 /home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/clientThreads/HeartBeatThread.java
+/home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/clientThreads/ContactsThread.java
 /home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/handlers/JSONParser.java
+/home/andrew/cs032/calendar/src/main/java/edu/brown/cs/andrew/clientThreads/CalendarThread.java
