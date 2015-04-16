@@ -39,7 +39,7 @@ function createFriends() {
 		if (count == 5) {
 			
 		}
-		var col = document.getElementByClass('contacts-row').getElementById('1');
+/* 		var col = document.getElementByClass('contacts-row').getElementById('1'); */
 		col.appendChild(friend);
 		count++;
 	}
