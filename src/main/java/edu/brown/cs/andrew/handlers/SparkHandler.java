@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -90,6 +91,10 @@ public class SparkHandler {
       QueryParamsMap qm = req.queryMap();
       String user = qm.value("user");
       String pass = qm.value("pass");
+      while (clients.containsKey(randomHolder)) {
+        randomHolder = (int)(Math.random() * 1000000);
+      }
+      String form =   "<form method = \"POST\" action=\"/calendar/" + randomHolder +"\">";
       int id =Integer.parseInt(req.params(":id"));
       boolean found = false;
       try {
@@ -97,21 +102,21 @@ public class SparkHandler {
       } catch (SQLException e) {
         String newMessage = "An Error Occurred while logging in, please try again.";
         Map<String, Object> variables = ImmutableMap.of("title",
-            "Login", "message", newMessage);
+            "Login", "message", newMessage, "form", form);
         return new ModelAndView(variables, "login.ftl");
       }
       if (found) {
         Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
             "message", "");
-        //ServerCalls sc = new ServerCalls();
-        //String html = sc.loginClicked();
+        ServerCalls sc = new ServerCalls();
+        String html = sc.loginClicked();
         ClientHandler newClient = new ClientHandler(database, user);
         clients.put(id, newClient);
         return new ModelAndView(variables, "main.ftl");
       } else {
         String newMessage = "The username or password entered was not found";
         Map<String, Object> variables = ImmutableMap.of("title",
-            "Login", "message", newMessage);
+            "Login", "message", newMessage, "form", form);
         return new ModelAndView(variables, "login.ftl");
       }
     }
@@ -134,9 +139,7 @@ public class SparkHandler {
       System.out.println(clientID);
       ConcurrentHashMap<Integer, Event> testEvents;
       try {
-        System.out.println(clients.get(clientID).getClient());
         testEvents = myDBHandler.getAllEventsFromUser(clients.get(clientID).getClient());
-        System.out.println(clients.get(clientID).getClient());
         List<String> toFrontEnd = new ArrayList<String>();
         for (Entry<Integer, Event> e : testEvents.entrySet()) {
           Event curr = e.getValue();
@@ -165,7 +168,8 @@ public class SparkHandler {
           req.queryString().indexOf('=') + 1);
       System.out.println(code);
       ServerCalls sc = new ServerCalls();
-      sc.authorize(code);
+      HashMap<String, String> map = sc.authorize(code);
+      map.get("access_token");
 
       return new ModelAndView(variables, "main.ftl");
     }

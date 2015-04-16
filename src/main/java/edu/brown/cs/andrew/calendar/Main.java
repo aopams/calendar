@@ -73,7 +73,7 @@ public class Main {
           "Harsha Squad", 180,
           "Harsha Squad going Ham to Trap Queen for 3 hours",
           "Harsha");
-      Date myDate2 = new SimpleDateFormat("dd/MM/yyyy").parse("06/4/2015");
+      Date myDate2 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("06/4/2015 13:00");
       System.out.println(myDate2);
       Event e2 = new Event(myDate2, "Ninja Time!", "Monday", hGroup, "", 30,
           "Harsha going stealth-mode",
@@ -81,7 +81,6 @@ public class Main {
       System.out.println(myDBHandler.findGroup("Harsha Squad"));
       myDBHandler.addEvent(e);
       myDBHandler.addEvent(e2);
-      myDBHandler.removeEvent(e);
       myJSONParser = new JSONParser();
       myJSONParser.eventToJson(e);
       System.out.println(System.currentTimeMillis() / 1000);

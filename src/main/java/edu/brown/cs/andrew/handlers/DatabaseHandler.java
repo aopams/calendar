@@ -42,7 +42,7 @@ public class DatabaseHandler {
       + "user_name nvarchar(16) PRIMARY KEY," 
       + "user_password nvarchar(30) NOT NULL,"
       + "name nvarchar(30) NOT NULL,"
-      + "google_token nvarchar(75),"
+      + "google_token nvarchar(200),"
       + "email nvarchar(30) NOT NULL);";
     String groupTable = "CREATE Table Groups ("
       + "group_id integer PRIMARY KEY AUTOINCREMENT,"

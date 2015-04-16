@@ -14,6 +14,8 @@ public class ClientHandler {
   private ConcurrentHashMap<String, String> friends;
   private ConcurrentHashMap<Integer, String> groups;
   private ConcurrentHashMap<Integer, Event> events;
+  String refreshToken;
+  String accessToken;
   private List<String> updateList;
   private int maxGroupId;
 
