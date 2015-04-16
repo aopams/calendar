@@ -71,6 +71,7 @@ public class SparkHandler {
     Spark.get("/login", new LoginHandler(), freeMarker);
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
+    Spark.get("/randnum", new RandNumHandler(), freeMarker);
   }
 
   private static class LoginHandler implements TemplateViewRoute {
@@ -114,6 +115,7 @@ public class SparkHandler {
         clients.put(id, newClient);
         return new ModelAndView(variables, "main.ftl");
       } else {
+        System.out.println("here");
         String newMessage = "The username or password entered was not found";
         Map<String, Object> variables = ImmutableMap.of("title",
             "Login", "message", newMessage, "form", form);
@@ -135,7 +137,7 @@ public class SparkHandler {
       // list of events that this user has
       System.out.println(qm.value("string"));
       int clientID = Integer.parseInt(qm.value("string").substring(10));
-      
+     
       System.out.println(clientID);
       ConcurrentHashMap<Integer, Event> testEvents;
       try {
@@ -158,6 +160,18 @@ public class SparkHandler {
       return null;
     }
   }
+  
+  private static class RandNumHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request arg0, Response arg1) {
+      while (clients.containsKey(randomHolder)) {
+        randomHolder = (int)(Math.random() * 1000000);
+      }
+      Map<String, String> variables = new ImmutableMap.Builder()
+      .put("num", randomHolder).build();
+      return new ModelAndView(variables, "login.ftl");
+    }
+  }
 
   private static class CodeHandler implements TemplateViewRoute {
     @Override
@@ -174,7 +188,7 @@ public class SparkHandler {
       return new ModelAndView(variables, "main.ftl");
     }
   }
-
+  
   private static class ExceptionPrinter implements ExceptionHandler {
     @Override
     public void handle(Exception e, Request req, Response res) {
