@@ -283,6 +283,23 @@ public class DatabaseHandler {
       theStat2.close();
     }
   }
+  public void removeEvent(Event e) throws SQLException, ParseException {
+    int eventID = e.getId();
+    List<String> attendees = e.getAttendees();
+    String group = e.getGroup();
+    String query = "Delete From Events where id = ?";
+    PreparedStatement stat = conn.prepareStatement(query);
+    stat.setInt(1, eventID);
+    stat.executeUpdate(); 
+    String query2 = "Delete From User_Event where event_id = ? && user_id = ?";
+    PreparedStatement stat2 = conn.prepareStatement(query2);
+    for (int i = 0; i < attendees.size(); i++) {
+      stat2.setInt(1, eventID);
+      stat2.setString(1, attendees.get(i));
+      stat2.addBatch();
+    }
+    stat2.executeQuery();
+  }
   public List<String> getUsersFromGroup(int group_id) throws SQLException {
     List<String> toReturn = new CopyOnWriteArrayList<String>();
     String query = "Select user_name from User_Group where group_id = ?";
