@@ -14,6 +14,45 @@ public class ServerCalls {
   private final String clientID = "223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com";
   private final String clientSecret = "6rmO_xu590Oe89yGFL-kX-l8";
   private final String redirectURI = "http://localhost:1234";
+  
+  
+  public void openURLInBrowser(String url) {
+    String os = System.getProperty("os.name").toLowerCase();
+    Runtime rt = Runtime.getRuntime();
+   
+    try{
+   
+        if (os.indexOf( "win" ) >= 0) {
+   
+            // this doesn't support showing urls in the form of "page.html#nameLink" 
+            rt.exec( "rundll32 url.dll,FileProtocolHandler " + url);
+   
+        } else if (os.indexOf( "mac" ) >= 0) {
+   
+            rt.exec( "open " + url);
+   
+              } else if (os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0) {
+   
+            // Do a best guess on unix until we get a platform independent way
+            // Build a list of browsers to try, in this order.
+            String[] browsers = {"epiphany", "firefox", "mozilla", "konqueror",
+                             "netscape","opera","links","lynx"};
+   
+            // Build a command string which looks like "browser1 "url" || browser2 "url" ||..."
+            StringBuffer cmd = new StringBuffer();
+            for (int i=0; i<browsers.length; i++)
+                cmd.append( (i==0  ? "" : " || " ) + browsers[i] +" \"" + url + "\" ");
+   
+            rt.exec(new String[] { "sh", "-c", cmd.toString() });
+   
+             } else {
+                  return;
+             }
+         }catch (Exception e){
+        return;
+         }
+        return; 
+  }
 
   public String loginClicked() {
 
@@ -59,7 +98,7 @@ public class ServerCalls {
 
     try {
 
-      String website = "http://www.googleapis.com/oauth2/v3/token";
+      String website = "https://www.googleapis.com/oauth2/v3/token";
       URL url = new URL(website);
 
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -77,6 +116,10 @@ public class ServerCalls {
       paramsMap.put("grant_type", "authorization_code");
       String params = urlEncodedString(paramsMap);
       System.out.println(params);
+      System.out.println("code " + code);
+      System.out.println(clientID);
+      System.out.println(clientSecret);
+      System.out.println(redirectURI);
 
       conn.setUseCaches(false);
       conn.setDoInput(true);
@@ -91,8 +134,12 @@ public class ServerCalls {
       System.out.println("Post parameters : " + params);
       System.out.println("Response Code : " + responseCode);
 
-      BufferedReader in = new BufferedReader(new InputStreamReader(
-          conn.getInputStream()));
+      BufferedReader in;
+      if (responseCode == 200) {
+        in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      } else {
+        in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+      }
       String inputLine;
       StringBuffer response = new StringBuffer();
 
@@ -113,6 +160,54 @@ public class ServerCalls {
 
   }
 
+  public void getCalendarList(String accessToken) {
+
+    try {
+      String website = "https://www.googleapis.com/auth/calendar/v3/users/me/calendarList";
+      URL url = new URL(website);
+
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+      conn.setRequestMethod("GET");
+      conn.setRequestProperty("Authorization", "Bearer " + accessToken);
+      // conn.setRequestProperty("Content-Type",
+      // "application/x-www-form-urlencoded");
+
+      conn.setUseCaches(false);
+      conn.setDoInput(true);
+      conn.setDoOutput(true);
+      DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+      wr.flush();
+      wr.close();
+
+      int responseCode = conn.getResponseCode();
+      System.out.println("\nSending 'GET' request to URL : " + url);
+      System.out.println("Response Code : " + responseCode);
+
+      BufferedReader in;
+      if (responseCode == 200) {
+        in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      } else {
+        in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+      }
+      String inputLine;
+      StringBuffer response = new StringBuffer();
+
+      while ((inputLine = in.readLine()) != null) {
+        response.append(inputLine);
+      }
+      in.close();
+
+      // print result
+      System.out.println(response.toString());
+
+    } catch (Exception e) {
+      System.out.println("ERROR:");
+      e.printStackTrace();
+
+    }
+  }
+
   public String urlEncodedString(HashMap<String, String> params) {
     String toReturn = "";
     for (String key : params.keySet()) {
@@ -127,10 +222,23 @@ public class ServerCalls {
 
   public HashMap<String, String> parseQueryString(String query) {
     HashMap<String, String> toReturn = new HashMap<String, String>();
-    String[] pairs = query.split("&");
+    query = query.substring(2);
+    // query = query.replaceAll("\"", "");
+    System.out.println(query);
+    String[] pairs = query.split(", ");
     for (String pair : pairs) {
-      String[] elements = pair.split("=");
-      toReturn.put(elements[0], elements[1]);
+      String[] elements = pair.split(": ");
+      String key = elements[0];
+      String value = elements[1];
+      key = key.replace("\"", "");
+      key = key.replace("{", "");
+      key = key.replace("}", "");
+      value = value.replace("\"", "");
+      value = value.replace("{", "");
+      value = value.replace("}", "");
+      toReturn.put(key, value);
+      System.out.println(key);
+      System.out.println(value);
     }
     return toReturn;
   }

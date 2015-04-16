@@ -10,4 +10,31 @@ jQuery(document).ready(function($) {
 		$(".logreg").show(0);
 		$(".registerpage").hide(0);
 	});
+	
+	
+	$("#login").bind('click', function(event) {
+		var username = $("#user").val();
+		username = JSON.stringify(username);
+		var password = $("#password").val();
+		password = JSON.stringify(password);
+		var randNum = 0;
+		$.get("/randnum", function(responseJSON){
+			responseObject = JSON.parse(responseJSON);
+			randNum = responseObject.num;
+		});
+		var postParameters = {
+			username : username,
+			password : password,
+			randNum : randNum
+		}
+		
+		var string = "/calendar/" +randNum;
+		
+		console.log(string);
+		
+		$.post("/calendar/" + randNum, postParameters, function(response) {
+			
+		});
+
+	})
 });

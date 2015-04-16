@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,12 +35,13 @@ public class SparkHandler {
   private static DatabaseHandler myDBHandler;
   private static JSONParser myJSONParser;
   private static Gson GSON = new Gson();
-  private static String testUser = "";
+  private static int randomHolder = (int)(Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
   public SparkHandler(String db) {
     try {
       myDBHandler = new DatabaseHandler(db);
       database = db;
+      clients = new ConcurrentHashMap<Integer, ClientHandler>();
     } catch (ClassNotFoundException | SQLException e) {
       System.out.println("Error connecting to the Database: " + db);
     }
@@ -67,15 +69,19 @@ public class SparkHandler {
     Spark.get("/", new CodeHandler(), freeMarker);
     //Spark.get("/calendar", new FrontHandler(), freeMarker);
     Spark.get("/login", new LoginHandler(), freeMarker);
-    Spark.post("/calendar", new LoginEventHandler(), freeMarker);
+    Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
   }
 
   private static class LoginHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
+      while (clients.containsKey(randomHolder)) {
+        randomHolder = (int)(Math.random() * 1000000);
+      }
+      String form =   "<form method = \"POST\" action=\"/calendar/" + randomHolder +"\">";
       Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
-          "message", "");
+          "message", "", "form", form);
       return new ModelAndView(variables, "login.ftl");
     }
   }
@@ -85,26 +91,32 @@ public class SparkHandler {
       QueryParamsMap qm = req.queryMap();
       String user = qm.value("user");
       String pass = qm.value("pass");
+      while (clients.containsKey(randomHolder)) {
+        randomHolder = (int)(Math.random() * 1000000);
+      }
+      String form =   "<form method = \"POST\" action=\"/calendar/" + randomHolder +"\">";
+      int id =Integer.parseInt(req.params(":id"));
       boolean found = false;
       try {
         found = myDBHandler.findUser(user, pass);
       } catch (SQLException e) {
         String newMessage = "An Error Occurred while logging in, please try again.";
         Map<String, Object> variables = ImmutableMap.of("title",
-            "Login", "message", newMessage);
+            "Login", "message", newMessage, "form", form);
         return new ModelAndView(variables, "login.ftl");
       }
       if (found) {
         Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
             "message", "");
-        //ServerCalls sc = new ServerCalls();
-        //String html = sc.loginClicked();
+        ServerCalls sc = new ServerCalls();
+        String html = sc.loginClicked();
         ClientHandler newClient = new ClientHandler(database, user);
+        clients.put(id, newClient);
         return new ModelAndView(variables, "main.ftl");
       } else {
         String newMessage = "The username or password entered was not found";
         Map<String, Object> variables = ImmutableMap.of("title",
-            "Login", "message", newMessage);
+            "Login", "message", newMessage, "form", form);
         return new ModelAndView(variables, "login.ftl");
       }
     }
@@ -121,13 +133,18 @@ public class SparkHandler {
     public Object handle(final Request req, final Response res) {
       QueryParamsMap qm = req.queryMap();
       // list of events that this user has
+      System.out.println(qm.value("string"));
+      int clientID = Integer.parseInt(qm.value("string").substring(10));
+      
+      System.out.println(clientID);
       ConcurrentHashMap<Integer, Event> testEvents;
       try {
-        testEvents = myDBHandler.getAllEventsFromUser(testUser);
+        testEvents = myDBHandler.getAllEventsFromUser(clients.get(clientID).getClient());
         List<String> toFrontEnd = new ArrayList<String>();
         for (Entry<Integer, Event> e : testEvents.entrySet()) {
           Event curr = e.getValue();
-          toFrontEnd.add(myJSONParser.eventToJson(curr));
+          Gson gson = new Gson();
+          toFrontEnd.add(gson.toJson(curr));
         }
         Map<String, Object> variables = new ImmutableMap.Builder()
         .put("events", toFrontEnd).build();
@@ -151,8 +168,8 @@ public class SparkHandler {
           req.queryString().indexOf('=') + 1);
       System.out.println(code);
       ServerCalls sc = new ServerCalls();
-      sc.authorize(code);
-
+      HashMap<String, String> map = sc.authorize(code);
+      map.get("access_token");
       return new ModelAndView(variables, "main.ftl");
     }
   }
