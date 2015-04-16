@@ -81,6 +81,7 @@ public class Main {
       System.out.println(myDBHandler.findGroup("Harsha Squad"));
       myDBHandler.addEvent(e);
       myDBHandler.addEvent(e2);
+      myDBHandler.removeEvent(e);
       myJSONParser = new JSONParser();
       myJSONParser.eventToJson(e);
       System.out.println(System.currentTimeMillis() / 1000);
