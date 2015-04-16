@@ -22,7 +22,7 @@ function openDialog(key) {
 	console.log(time);
 	form =
 	'<form class="form-inline">' +
-	'<img id="x-button" src="\\img/x.png"/>' +
+	'<img id="x-button" src="/img/x.png"/>' +
 	'<div class="form-group">' +
 	    '<div class="input-group">' +
 		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '">' +
@@ -45,7 +45,7 @@ function openDialog(key) {
 		    '<div class="input-group-addon">@</div>' +
 		    '<input type="text" class="form-control" id="title" placeholder="Groups" value="'+ value.group +'"/>' +
 		'</div>' +
-	 '<img id="delete-button" src="img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
+	 '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
 	'</form>'
 	//$('<div>' + value.title + '<p>'+ value.description + '</p>' + '</div>').dialog({modal: true});
 	$(form).dialog({modal: true});
@@ -223,7 +223,6 @@ function getEventHeight(dur) {
 function changeWeekNumbers() {
 	for (var i = 0; i < 7; i++) {
 		var imgID = "day" + (i+1);
-		console.log(week[i].day);
 		document.getElementById(imgID).src="/img/num/" + week[i].day + ".png";
 	}
 }
