@@ -115,8 +115,49 @@ body {
 	font-family: Helvetica;
 	min-height: 20px;
 	width: 132px;
+    cursor: pointer;
 }
 
 .footer {
 	height: 50px;
+}
+
+#dialogg {
+    display: none;
+}
+
+#x-button, #check-button {
+	height: 30px;
+}
+
+#x-button {
+	float: right;
+}
+
+#check-button {
+	float: right;
+}
+
+/* dialog styling */
+.ui-dialog, .ui-dialog-title, .ui-state-default, .ui-widget-content, .ui-state-default {
+	display: none;
+	border: none;
+}
+
+.ui-draggable .ui-dialog-titlebar {
+	border: none;
+}
+
+.ui-dialog .ui-dialog-content {
+	padding: 2px 2px;
+}
+
+.ui-widget-header {
+	background: #00000;
+	height: 2px;
+}
+
+/* inner box of dialog */
+#ui-id-1 {
+	width: 300px;
 }

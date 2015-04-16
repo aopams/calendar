@@ -42,6 +42,8 @@
 	  <input type="image" src="img/leftarrow.png" class ="backbutton" name="backbutton">
     </div>
   </div>
+  
+  <!-- change register button to make connection to google api -->
 
 <!-- <div id="error"><img src="https://dl.dropboxusercontent.com/u/23299152/Delete-icon.png" /> Your caps-lock is on.</div> -->
   <script src='http://codepen.io/assets/libs/fullpage/jquery_and_jqueryui.js'></script>
