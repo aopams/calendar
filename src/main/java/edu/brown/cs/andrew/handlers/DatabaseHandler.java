@@ -176,7 +176,7 @@ public class DatabaseHandler {
     }
     String query2 = "Select user_name2, status from Friends where user_name1 = ?";
     PreparedStatement theStat2 = conn.prepareStatement(query2);
-    theStat.setString(1, user_name);
+    theStat2.setString(1, user_name);
     ResultSet rs2 = theStat2.executeQuery();
     while (rs2.next()) {
       toReturn.put(rs2.getString(1), rs2.getString(2));

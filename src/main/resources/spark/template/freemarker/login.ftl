@@ -19,7 +19,8 @@
   <div class="login-card">
   	<div class="logreg">
   		<img src="img/logo.png" id ="logo"><br>
-  		<form method = "POST" action="/calendar">
+<!--  		<form method = "POST" action="/calendar/?" onclick = "(Math.floor(Math.random() * 10000000))"> -->
+		${form}
 	    <input type="text" name="user" placeholder="Username">
 	    <input type="password" name="pass" placeholder="Password">
 	    <input type="submit" name="login" class="btn btn-primary" value="Login">
