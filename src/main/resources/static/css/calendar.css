@@ -118,6 +118,10 @@ body {
     cursor: pointer;
 }
 
+.google-event {
+	background-color: rgba(62, 115, 240, 0.57);
+}
+
 .footer {
 	height: 50px;
 }

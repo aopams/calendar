@@ -71,7 +71,7 @@ public class SparkHandler {
     Spark.get("/login", new LoginHandler(), freeMarker);
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
-    Spark.get("/randnum", new RandNumHandler(), freeMarker);
+    Spark.get("/randnum", new RandNumHandler());
   }
 
   private static class LoginHandler implements TemplateViewRoute {
@@ -161,15 +161,15 @@ public class SparkHandler {
     }
   }
   
-  private static class RandNumHandler implements TemplateViewRoute {
+  private static class RandNumHandler implements Route {
     @Override
-    public ModelAndView handle(Request arg0, Response arg1) {
+    public Object handle(Request arg0, Response arg1) {
       while (clients.containsKey(randomHolder)) {
         randomHolder = (int)(Math.random() * 1000000);
       }
       Map<String, String> variables = new ImmutableMap.Builder()
       .put("num", randomHolder).build();
-      return new ModelAndView(variables, "login.ftl");
+      return GSON.toJson(variables);
     }
   }
 
