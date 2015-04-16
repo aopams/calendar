@@ -161,15 +161,15 @@ public class SparkHandler {
     }
   }
   
-  private static class RandNumHandler implements TemplateViewRoute {
+  private static class RandNumHandler implements Route {
     @Override
-    public ModelAndView handle(Request arg0, Response arg1) {
+    public Object handle(Request arg0, Response arg1) {
       while (clients.containsKey(randomHolder)) {
         randomHolder = (int)(Math.random() * 1000000);
       }
       Map<String, String> variables = new ImmutableMap.Builder()
       .put("num", randomHolder).build();
-      return new ModelAndView(variables, "login.ftl");
+      return GSON.toJson(variables);
     }
   }
 
