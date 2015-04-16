@@ -229,11 +229,19 @@ function changeWeekNumbers() {
 
 $(document).ready(function(e) {
 	updateDisplayedEvents();
+<<<<<<< HEAD
+	
+	$("#x-button").click(function(e) {
+		console.log("here");
+		dialog.close();
+		$('#terms').dialog('close');
+=======
 	changeWeekNumbers();
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {
 		createEvent(e.target);
+>>>>>>> 7c47b7d29f6bbe72b151e3eb8cf9b9e9a9aa0947
 	});
 
 	/* when they click an event open the dialog
