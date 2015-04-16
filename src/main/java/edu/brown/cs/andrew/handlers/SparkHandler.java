@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +37,6 @@ public class SparkHandler {
   private static String database;
   private static final int RESSTAT = 500;
   private static DatabaseHandler myDBHandler;
-  private static JSONParser myJSONParser;
   private static Gson GSON = new Gson();
   private static int randomHolder = (int)(Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
@@ -94,7 +97,7 @@ public class SparkHandler {
       while (clients.containsKey(randomHolder)) {
         randomHolder = (int)(Math.random() * 1000000);
       }
-      String form =   "<form method = \"POST\" action=\"/calendar/" + randomHolder +"\">";
+      String form = "<form method = \"POST\" action=\"/calendar/" + randomHolder +"\">";
       int id =Integer.parseInt(req.params(":id"));
       boolean found = false;
       try {
@@ -121,6 +124,34 @@ public class SparkHandler {
       }
     }
   }
+  private static DateHandler parseDate(Date d) {
+    System.out.println("Parsing Date");
+    String date = d.toString();
+    String month = date.substring(4, 7);
+    System.out.println(date.substring(8,10));
+    int day = Integer.parseInt(date.substring(8,10));
+    System.out.println(date.substring(date.length()-4, date.length()));
+    int year = Integer.parseInt(date.substring(date.length()-4, date.length()));
+    DateHandler dH = new DateHandler(month, day, year);
+    return dH;
+  }
+  
+  private static List<DateHandler> getCurrentWeek() {
+    Date date = new Date();
+    Calendar c = Calendar.getInstance();
+    c.setTime(date);
+    int week = c.get(Calendar.WEEK_OF_YEAR);
+    c.set(Calendar.WEEK_OF_YEAR, week);
+    c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
+    List<DateHandler> currentWeek = new ArrayList<DateHandler>();
+    currentWeek.add(parseDate(c.getTime()));
+    for(int i = 0; i < 6; i++) {
+      c.add(Calendar.DATE, 1);
+      System.out.println(c.getTime());
+      currentWeek.add(parseDate(c.getTime()));
+    }
+    return currentWeek;
+  }
   /**
    * Back end to front end; for a given user, grabs all of that user's events so
    * that they can be displayed on the calendar page when the user logs in.
@@ -133,9 +164,16 @@ public class SparkHandler {
     public Object handle(final Request req, final Response res) {
       QueryParamsMap qm = req.queryMap();
       // list of events that this user has
-      System.out.println(qm.value("string"));
+      Gson gson = new Gson();
+      List<DateHandler> currentWeek = getCurrentWeek();
+      System.out.println("EYYY");
+      //List<String> week = new ArrayList<String>();
+      //for (int i = 0; i < 7; i++) {
+        //DateHandler curr = currentWeek.get(i);
+        //System.out.println(gson.toJson(curr));
+        //week.add(currentWeek.get(i));
+      //}
       int clientID = Integer.parseInt(qm.value("string").substring(10));
-      
       System.out.println(clientID);
       ConcurrentHashMap<Integer, Event> testEvents;
       try {
@@ -143,11 +181,12 @@ public class SparkHandler {
         List<String> toFrontEnd = new ArrayList<String>();
         for (Entry<Integer, Event> e : testEvents.entrySet()) {
           Event curr = e.getValue();
-          Gson gson = new Gson();
           toFrontEnd.add(gson.toJson(curr));
         }
+      
         Map<String, Object> variables = new ImmutableMap.Builder()
-        .put("events", toFrontEnd).build();
+        .put("events", toFrontEnd)
+        .put("week", currentWeek).build();
         System.out.println(GSON.toJson(variables));
         return GSON.toJson(variables);
       } catch (SQLException e1) {
