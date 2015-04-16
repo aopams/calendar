@@ -7,18 +7,18 @@
 
   <title>Login</title>
 
-  <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
-  <link rel="stylesheet" type="text/css" href="css/calendar.css">
-  <link rel="stylesheet" type="text/css" href="css/login.css">
-  <script src="js/jquery-2.1.1.js"></script>
-  <script src="js/login.js"></script>
+  <link rel="stylesheet" type="text/css" href="\css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="\css/calendar.css">
+  <link rel="stylesheet" type="text/css" href="\css/login.css">
+  <script src="\js/jquery-2.1.1.js"></script>
+  <script src="\js/login.js"></script>
 
 </head>
 
 <body>
   <div class="login-card">
   	<div class="logreg">
-  		<img src="img/logo.png" id ="logo"><br>
+  		<img src="\img/logo.png" id ="logo"><br>
 <!--  		<form method = "POST" action="/calendar/?" onclick = "(Math.floor(Math.random() * 10000000))"> -->
 		${form}
 	    <input type="text" name="user" placeholder="Username">
@@ -40,7 +40,7 @@
 	    <input type="text" name="email" placeholder="Google E-mail">	    
 	    <input type="submit" name="register" class="btn btn-primary" value="Register">
 	  </form>
-	  <input type="image" src="img/leftarrow.png" class ="backbutton" name="backbutton">
+	  <input type="image" src="\img/leftarrow.png" class ="backbutton" name="backbutton">
     </div>
   </div>
   

@@ -34,6 +34,7 @@ import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
 
 public class SparkHandler {
+  private static Date currentWeekStart;
   private static String database;
   private static final int RESSTAT = 500;
   private static DatabaseHandler myDBHandler;
@@ -89,27 +90,32 @@ public class SparkHandler {
       return new ModelAndView(variables, "login.ftl");
     }
   }
+  private static String getRandomForm() {
+    while (clients.containsKey(randomHolder)) {
+      randomHolder = (int)(Math.random() * 1000000);
+    }
+    String form = "<form method = \"POST\" action=\"/calendar/" + randomHolder +"\">";
+    return form;
+  }
   private static class LoginEventHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
       String user = qm.value("user");
       String pass = qm.value("pass");
-      while (clients.containsKey(randomHolder)) {
-        randomHolder = (int)(Math.random() * 1000000);
-      }
-      String form = "<form method = \"POST\" action=\"/calendar/" + randomHolder +"\">";
       int id =Integer.parseInt(req.params(":id"));
       boolean found = false;
       try {
         found = myDBHandler.findUser(user, pass);
       } catch (SQLException e) {
+        String form = getRandomForm();
         String newMessage = "An Error Occurred while logging in, please try again.";
         Map<String, Object> variables = ImmutableMap.of("title",
             "Login", "message", newMessage, "form", form);
         return new ModelAndView(variables, "login.ftl");
       }
       if (found) {
+        
         Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
             "message", "");
         ServerCalls sc = new ServerCalls();
@@ -118,7 +124,8 @@ public class SparkHandler {
         clients.put(id, newClient);
         return new ModelAndView(variables, "main.ftl");
       } else {
-        System.out.println("here");
+        clients.remove(randomHolder);
+        String form = getRandomForm();
         String newMessage = "The username or password entered was not found";
         Map<String, Object> variables = ImmutableMap.of("title",
             "Login", "message", newMessage, "form", form);
@@ -164,11 +171,17 @@ public class SparkHandler {
   private static class BTFEventHandler implements Route {
 
     public Object handle(final Request req, final Response res) {
+      Date date = new Date();
+      Calendar c = Calendar.getInstance();
+      c.setTime(date);
+      int week = c.get(Calendar.WEEK_OF_YEAR);
+      c.set(Calendar.WEEK_OF_YEAR, week);
+      c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
+      currentWeekStart = c.getTime();
       QueryParamsMap qm = req.queryMap();
       // list of events that this user has
       Gson gson = new Gson();
       List<DateHandler> currentWeek = getCurrentWeek();
-      System.out.println("EYYY");
       //List<String> week = new ArrayList<String>();
       //for (int i = 0; i < 7; i++) {
         //DateHandler curr = currentWeek.get(i);
@@ -179,27 +192,20 @@ public class SparkHandler {
 
       System.out.println(clientID);
       ConcurrentHashMap<Integer, Event> testEvents;
-      try {
-        testEvents = myDBHandler.getAllEventsFromUser(clients.get(clientID).getClient());
-        List<String> toFrontEnd = new ArrayList<String>();
-        for (Entry<Integer, Event> e : testEvents.entrySet()) {
-          Event curr = e.getValue();
-          toFrontEnd.add(gson.toJson(curr));
-        }
-      
-        Map<String, Object> variables = new ImmutableMap.Builder()
-        .put("events", toFrontEnd)
-        .put("week", currentWeek).build();
-        System.out.println(GSON.toJson(variables));
-        return GSON.toJson(variables);
-      } catch (SQLException e1) {
-        System.out.println("ERROR: SQLException");
-      } catch (ParseException e1) {
-        System.out.println("ERROR: SQLException");
+      testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
+      List<String> toFrontEnd = new ArrayList<String>();
+      for (Entry<Integer, Event> e : testEvents.entrySet()) {
+        Event curr = e.getValue();
+        toFrontEnd.add(gson.toJson(curr));
       }
-      return null;
-    }
+
+      Map<String, Object> variables = new ImmutableMap.Builder()
+      .put("events", toFrontEnd)
+      .put("week", currentWeek).build();
+      System.out.println(GSON.toJson(variables));
+      return GSON.toJson(variables);
   }
+ }
   
   private static class RandNumHandler implements Route {
     @Override
