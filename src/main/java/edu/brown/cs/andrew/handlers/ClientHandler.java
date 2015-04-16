@@ -81,4 +81,7 @@ public class ClientHandler {
     maxGroupId++;
     groups.put(maxGroupId, group);
   }
+  public void removeGroup(String group) {
+    groups.remove(group);
+  }
 }

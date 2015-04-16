@@ -53,8 +53,11 @@ public class ContactsThread implements Runnable {
           for (int i = 0; i < groupMembers.size(); i++) {
             myDBHandler.addUserToGroup(groupMembers.get(i), groupId);
           }
+          break;
         case "rufg" :
+          client1.removeGroup(groupName);
           myDBHandler.removeUserFromGroup(user1, groupId);
+          break;
       }
     } catch (SQLException e) {
       e.printStackTrace();
