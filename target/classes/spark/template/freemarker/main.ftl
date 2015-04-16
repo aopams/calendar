@@ -70,7 +70,6 @@
 				</div>
 			</div>
 		</div>
-<<<<<<< HEAD
 	</div>
 	
 	<div id="calWrap">
@@ -301,7 +300,6 @@
 		    	</div>
 		    </div>
 		</div>
-=======
 		<div class="col-md-4">
 			<img class="arrow" src="\img/rightarrow.png">
 			<img class="arrow" src="\img/leftarrow.png">
@@ -520,7 +518,6 @@
 				<div id="723" class="eventSlot"> </div>
 	    	</div>
 	    </div>
->>>>>>> 7c47b7d29f6bbe72b151e3eb8cf9b9e9a9aa0947
 	</div>
 	<div class="footer">
 	</div>
