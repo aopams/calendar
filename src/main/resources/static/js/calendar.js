@@ -50,7 +50,7 @@ function newEventDialog(date, time) {
 	'<img id="x-button" src="img/x.png"/>' +
 	'<div class="form-group">' +
 	    '<div class="input-group">' +
-		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '">' +
+		    '<input type="text" class="form-control" id="title" placeholder="Title">' +
 	    '</div>' +
 	    '<div class="input-group">' +
 		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' +
