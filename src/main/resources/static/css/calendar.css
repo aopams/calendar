@@ -67,7 +67,7 @@ body {
 }
 
 .calendar-days {
-	width: 950px;
+	width: 938px;
 }
 
 .choices {
@@ -106,8 +106,6 @@ body {
 	height: 37.5px;
 	border-bottom: dashed 1px;
 	border-color: #D3D3D3;
-  	padding-top: 10px;
-  	padding-left: 4px;
 }
 
 .event {
@@ -116,7 +114,7 @@ body {
 	border: 1px solid;
 	font-family: Helvetica;
 	min-height: 20px;
-	max-width: 135px;
+	width: 132px;
 }
 
 .footer {
