@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import edu.brown.cs.andrew.clientThreads.HeartBeatThread;
+
 public class ClientHandler {
   String user;
   private DatabaseHandler myDBHandler;
-  private List<String> friends;
+  private ConcurrentHashMap<String, String> friends;
   private ConcurrentHashMap<Integer, String> groups;
   private ConcurrentHashMap<Integer, Event> events;
   private List<String> updateList;
@@ -20,17 +22,17 @@ public class ClientHandler {
     try {
       myDBHandler = new DatabaseHandler(db);
       this.user = user;
-      friends = myDBHandler.getFriendsFromUser(user);
-      groups = myDBHandler.getGroupsNameFromUser(user);      // TODO Auto-generated catch block
-      events = myDBHandler.getAllEventsFromUser(user);
       updateList = new CopyOnWriteArrayList<String>();
-      maxGroupId = myDBHandler.getMaxrGroupID(user);
-    } catch (ClassNotFoundException | SQLException | ParseException e) {
+      ConcurrentHashMap<Integer, ClientHandler> dummyMap = new ConcurrentHashMap<Integer, ClientHandler>();
+      dummyMap.put(0, this);
+      HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
+      initThread.run();
+    } catch (ClassNotFoundException | SQLException e) {
       e.printStackTrace();
     }
   }
   
-  public synchronized List<String> getFriends() {
+  public synchronized ConcurrentHashMap<String, String> getFriends() {
     return friends;
   }
   public synchronized ConcurrentHashMap<Integer, String> getGroups() {
@@ -38,6 +40,26 @@ public class ClientHandler {
   }
   public synchronized ConcurrentHashMap<Integer, Event> getEvents() {
     return events;
+  }
+  public synchronized DatabaseHandler getDB() {
+    return myDBHandler;
+  }
+  
+  public synchronized void setFriends(ConcurrentHashMap<String, String> friends) {
+    this.friends = friends;
+  }
+  public synchronized void setGroups(ConcurrentHashMap<Integer, String> groups) {
+    this.groups = groups;
+  }
+  public synchronized void setEvents(ConcurrentHashMap<Integer, Event> events) {
+    this.events = events;
+  } 
+  public synchronized void setMaxGroupId(int maxID) {
+    this.maxGroupId = maxID;
+  }
+  
+  public synchronized String getClient() {
+    return user;
   }
   public void editUpdateList(String edit) {
     updateList.add(edit);
@@ -47,7 +69,10 @@ public class ClientHandler {
     friends.remove(user_name);
   }
   public void acceptFriend(String user_name) {
-    friends.add(user_name);
+    friends.put(user_name, "accepted");
+  }
+  public void requestFriend(String user_name) {
+    friends.put(user_name, "pending");
   }
   public void addEvent(Event e) {
     events.put(e.getId(), e);

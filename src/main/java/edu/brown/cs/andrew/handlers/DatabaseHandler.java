@@ -53,9 +53,9 @@ public class DatabaseHandler {
       + "day_of_week nvarchar(10) not NULL,"
       + "date Date not NUll,"
       + "description nvarchar(150) not NULL,"
-      + "duration integer not Null"
-      + "creator nvarchar(30) "
-      + "FOREIGN KEY(creator)  references Users(user_name)";
+      + "duration integer not Null,"
+      + "creator nvarchar(30), "
+      + "FOREIGN KEY(creator)  references Users(user_name))";
     String friendsTable = "CREATE Table Friends ("
       + "user_name1 nvarchar(16) NOT NULL,"
       + "user_name2 nvarchar(16) NOT NULL,"
@@ -165,21 +165,21 @@ public class DatabaseHandler {
     theStat.executeUpdate();
     theStat.close();
   }
-  public List<String> getFriendsFromUser(String user_name) throws SQLException {
-    List<String> toReturn = new CopyOnWriteArrayList<String>();
-    String query = "Select user_name1 from Friends where user_name2 = ?";
+  public ConcurrentHashMap<String, String> getFriendsFromUser(String user_name) throws SQLException {
+    ConcurrentHashMap<String, String> toReturn = new ConcurrentHashMap<String, String>();
+    String query = "Select user_name1, status from Friends where user_name2 = ?";
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, user_name);
     ResultSet rs = theStat.executeQuery();
     while (rs.next()) {
-      toReturn.add(rs.getString(1));
+      toReturn.put(rs.getString(1), rs.getString(2));
     }
-    String query2 = "Select user_name2 from Friends where user_name1 = ?";
+    String query2 = "Select user_name2, status from Friends where user_name1 = ?";
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     theStat.setString(1, user_name);
     ResultSet rs2 = theStat2.executeQuery();
     while (rs2.next()) {
-      toReturn.add(rs2.getString(1));
+      toReturn.put(rs2.getString(1), rs2.getString(2));
     }
     return toReturn;
   }
