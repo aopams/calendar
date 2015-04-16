@@ -71,7 +71,7 @@ public class SparkHandler {
     Spark.get("/login", new LoginHandler(), freeMarker);
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
-    Spark.get("/randnum", new RandNumHandler(), freeMarker);
+    Spark.get("/randnum", new RandNumHandler());
   }
 
   private static class LoginHandler implements TemplateViewRoute {

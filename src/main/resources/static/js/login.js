@@ -18,17 +18,21 @@ jQuery(document).ready(function($) {
 		var password = $("#password").val();
 		password = JSON.stringify(password);
 		var randNum = 0;
-		$.get("/randnum", function(responseJSON){
+		
+		console.log("shiiii");
+		$.get("/randnum", function(responseJSON) {
+			console.log("get request");
 			responseObject = JSON.parse(responseJSON);
 			randNum = responseObject.num;
 		});
+		
 		var postParameters = {
 			username : username,
 			password : password,
 			randNum : randNum
 		}
 		
-		var string = "/calendar/" +randNum;
+		var string = "/calendar/" + randNum;
 		
 		console.log(string);
 		
