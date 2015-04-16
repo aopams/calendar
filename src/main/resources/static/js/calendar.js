@@ -147,7 +147,7 @@ function getEventHeight(dur) {
 
 $(document).ready(function(e) {
 	updateDisplayedEvents();
-
+	
 	$("#x-button").click(function(e) {
 		console.log("here");
 		dialog.close();

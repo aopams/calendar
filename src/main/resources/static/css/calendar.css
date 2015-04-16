@@ -161,3 +161,58 @@ body {
 #ui-id-1 {
 	width: 300px;
 }
+
+
+/* contacts page stuff */
+
+#contactsWindow {
+	width: 1000px;
+	height: 535px;
+	border: solid 1px;
+	border-radius: 6px 6px 6px 6px;
+	margin: auto;
+}
+
+#addFriendBar{
+	width: 700px;
+	height:80px;
+	margin-left: 15%;
+	margin-right: 15%;
+	padding-bottom: 20px;
+	padding-top: 20px;
+}
+
+#form_inline {
+	width:100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#addFriend {
+	width:570px;
+}
+
+#sendInvite {
+	width: 120px;
+}
+
+#contactsGrid {
+	width: 100%;
+	height: 455px;
+	border-top: 1px solid;
+}
+
+.contacts-row {
+	width: 100%;
+	height: 20%;
+	float:left;
+	border-left: : 1px solid;
+}
+
+.friend {
+	width: 20%;
+	height: 100%;
+	border:1px solid;
+	display:block;
+	float:left;
+}
