@@ -2,8 +2,6 @@ package edu.brown.cs.andrew.clientThreads;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
 import edu.brown.cs.andrew.handlers.ClientHandler;
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
 
@@ -59,6 +57,7 @@ public class ContactsThread implements Runnable {
           myDBHandler.removeUserFromGroup(user1, groupId);
           break;
       }
+      myDBHandler.closeConnection();
     } catch (SQLException e) {
       e.printStackTrace();
     }
