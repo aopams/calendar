@@ -34,7 +34,6 @@ public class SparkHandler {
   private static DatabaseHandler myDBHandler;
   private static JSONParser myJSONParser;
   private static Gson GSON = new Gson();
-  private static String testUser = "";
   private static int randomHolder = (int)(Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
   public SparkHandler(String db) {
@@ -129,13 +128,20 @@ public class SparkHandler {
     public Object handle(final Request req, final Response res) {
       QueryParamsMap qm = req.queryMap();
       // list of events that this user has
+      System.out.println(qm.value("string"));
+      int clientID = Integer.parseInt(qm.value("string").substring(10));
+      
+      System.out.println(clientID);
       ConcurrentHashMap<Integer, Event> testEvents;
       try {
-        testEvents = myDBHandler.getAllEventsFromUser(testUser);
+        System.out.println(clients.get(clientID).getClient());
+        testEvents = myDBHandler.getAllEventsFromUser(clients.get(clientID).getClient());
+        System.out.println(clients.get(clientID).getClient());
         List<String> toFrontEnd = new ArrayList<String>();
         for (Entry<Integer, Event> e : testEvents.entrySet()) {
           Event curr = e.getValue();
-          toFrontEnd.add(myJSONParser.eventToJson(curr));
+          Gson gson = new Gson();
+          toFrontEnd.add(gson.toJson(curr));
         }
         Map<String, Object> variables = new ImmutableMap.Builder()
         .put("events", toFrontEnd).build();
