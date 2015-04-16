@@ -1,16 +1,58 @@
 var eventMap = {};
-function allowDrop(ev) {
-    ev.preventDefault();
+
+/* opens dialog window for events that creators have control over editing */
+function openDialog(key) {
+	value = eventMap[key.id];
+	console.log(value);
+	var date = value.date.split(" ");
+	var day = date[0] + " " + date[1] + " " + date[2];
+	var T = date[3];
+	var am = date[4];
+	var time = date[3].substring(0, T.length - 3) + " " + am;
+	var dur = value.duration;
+	console.log(time);
+	form = '<form class="form-inline">' +
+	  '<img id="x-button" src="img/x.png"/> ' +
+	  '<div class="form-group">' +
+	    '<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>' +
+	    '<div class="input-group">' +
+		    '<div class="input-group-addon">T</div>' +
+		    '<input type="text" class="form-control" id="title" value="' + value.title + '">' +
+	    '</div>' +
+	    '<div class="input-group">' +
+		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' +
+		    '<input type="text" id="datepicker" onclick="datePicker()" value="' + day + '"/>' +
+	    '</div>' +
+	    '<div class="input-group">' +
+	    '<input id="basicExample" type="text" class="time" data-scroll-default="6:00am" onclick="timePicker()" value="' + 
+	    time + '" />' +
+	    'Duration <input type="text" value="' + dur + '"/>' +
+	    '</div>' +
+	    '<div class="input-group">' +
+	      '<textarea type="text" class="form-control" id="descrip">'+ value.description + '</textarea>' +
+	    '</div>' +
+	  '</div>' +
+	 '<img id="check-button" src="img/check.png"/>' +
+	'</form>';
+	//$('<div>' + value.title + '<p>'+ value.description + '</p>' + '</div>').dialog({modal: true});
+	$(form).dialog({modal: true});
 }
 
-function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
+function datePicker() {
+	$( "#datepicker" ).datepicker({
+	    'format': 'M d, yyyy',
+	    'autoclose': true
+	});
+}
+  
+function timePicker() {
+	console.log('timepicker');
+	$('#basicExample').timepicker();
 }
 
-function drop(ev) {
-    ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-    ev.target.appendChild(document.getElementById(data));
+                
+function isTime(time) {
+    return time.match(/(^([0-9]|[0-1][0-9]|[2][0-3]):([0-5][0-9])$)|(^([0-9]|[1][0-9]|[2][0-3])$)/);
 }
 
 function updateDisplayedEvents() {
@@ -22,7 +64,6 @@ function updateDisplayedEvents() {
 
 		//clear current map of events
 		eventMap = {};
-		eventArray = [];
 		var paras = document.getElementsByClassName('event');
 		while(paras[0]) {
 			paras[0].parentNode.removeChild(paras[0]);
@@ -30,33 +71,18 @@ function updateDisplayedEvents() {
 		//add all events
 		for (var i = 0; i < list.length; i++) {
 			var obj = JSON.parse(list[i]);
-			console.log(obj);
 			eventMap[obj.id] = obj;
-			eventArray.push(obj)
 		}
-/*
+
 		//display all events
-		console.log(eventArray);
-		for (var i = 0; i < eventArray.length; i++) {
-			var newElem = document.createElement("div");
-			newElem.className = "event";
-			newElem.setAttribute("draggable", "true"); 
-			newElem.setAttribute("ondragstart", "drag(event)");
-			var p = document.createTextNode(eventArray[i].title);
-			console.log(eventArray[i].title);
-			p.id = "description";
-			newElem.appendChild(p);
-			placeEvents(newElem, eventArray[i]);
-		}
-*/
-		//display all events
-		var key, val;
+		var key;
 		for(key in eventMap) {
 			value = eventMap[key];
 			var newElem = document.createElement("div");
 			newElem.className = "event";
-			newElem.setAttribute("draggable", "true"); 
-			newElem.setAttribute("ondragstart", "drag(event)");
+			newElem.setAttribute("id", key);
+			//newElem.setAttribute("onclick", "openDialog(this)");
+			newElem.setAttribute("style", "height:"+getEventHeight(value.duration)+"px");
 			var p = document.createTextNode(value.title);
 			console.log(value.title);
 			p.id = "description";
@@ -95,6 +121,8 @@ function placeEvents(elem, event) {
 			dayInt = 7;
 			break;
 	}
+
+	//set time
 	var givenTime;
 	switch(am) {
 		case "AM":
@@ -104,64 +132,42 @@ function placeEvents(elem, event) {
 			time = (time%12) + 12;
 			break;
 	}
-	console.log("time is " + time);
+
+	//adjust time by AM/PM
 	if(time < 10) {
 		time = "0" + time;
-		console.log(time);
 	}
-	console.log(dayInt + "" + time);
+
 	document.getElementById(dayInt + "" + time).appendChild(elem);
-	
 }
 
+function getEventHeight(dur) {
+	return (dur/60) * 37.5;
+}
 
 $(document).ready(function(e) {
 	updateDisplayedEvents();
 
-    $("#calendar").click(function(e) {
-	    var calendarRect = document.getElementById('cal-days').getBoundingClientRect();
-	    var offsetx = calendarRect.left;
-	    var offsety = (calendarRect.top + Math.abs(calendarRect.top))/2;
-	    var relativePosition = {
-	      left: $(document.getElementById('calendar')).scrollLeft(),
-	      top : $(document.getElementById('calendar')).scrollTop()
-	    };
-	    var x = e.clientX - offsetx + relativePosition.left;
-	    var y = e.clientY - offsety + relativePosition.top;
-	    // console.log('relative x: ' + relativePosition.left + ' y: ' + relativePosition.top);
-	     console.log('offset x: ' + offsetx + ' y: ' + offsety);
-	    // console.log('position x: ' + e.clientX + 'position y: ' + e.clientY);
-	    console.log('x: ' + x + ' y: ' + y);
+	$("#x-button").click(function(e) {
+		console.log("here");
+		dialog.close();
+		$('#terms').dialog('close');
 	});
 
-	$(function() {
-    	$( "#dialog" ).dialog();
-  	});
-
-	$(".eventSlot").on("drop", drop(event));
-
-	$(".eventSlot").on("drag", drag(event));	
-
-	$(".eventSlot").on("allowDrop", allowDrop(event));	
-
-
-
- //    $("eventSlot").click(function(){
- //    	console.log('here');
-	//   $(this).ondragover = function(event) {
-	//     allowDrop(event);
-	//   };
-	//   $(this).ondrop = function(event) {
-	//     drop(event);
-	//   };
-	// });
-       
-	// /* Events fired on the drop target */
-	// document.getElementById("eventSlot").ondragover = function(event) {
-	//     allowDrop(event);
-	// };
-
-	// document.getElementById("eventSlot").ondrop = function(event) {
-	//     drop(event);
-	// };
+	$(document).on('click','.event', function(e) {
+		console.log();
+	   openDialog(e.target);
+	});
+	
+	$("#check-button").bind("click", function() {
+		console.log("here");
+		dialog.close();
+		$('#terms').dialog('close');
+	});
+	
+	$(document).on('click','#x-button', function(e) {
+	    var $dialog = $(this).parents('.ui-dialog-content');
+	    $dialog.dialog('close');
+	});
+	
 });
