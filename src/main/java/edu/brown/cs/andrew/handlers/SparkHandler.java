@@ -35,11 +35,13 @@ public class SparkHandler {
   private static JSONParser myJSONParser;
   private static Gson GSON = new Gson();
   private static String testUser = "";
+  private static int randomHolder = (int)(Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
   public SparkHandler(String db) {
     try {
       myDBHandler = new DatabaseHandler(db);
       database = db;
+      clients = new ConcurrentHashMap<Integer, ClientHandler>();
     } catch (ClassNotFoundException | SQLException e) {
       System.out.println("Error connecting to the Database: " + db);
     }
@@ -67,15 +69,19 @@ public class SparkHandler {
     Spark.get("/", new CodeHandler(), freeMarker);
     //Spark.get("/calendar", new FrontHandler(), freeMarker);
     Spark.get("/login", new LoginHandler(), freeMarker);
-    Spark.post("/calendar", new LoginEventHandler(), freeMarker);
+    Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
   }
 
   private static class LoginHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
+      while (clients.containsKey(randomHolder)) {
+        randomHolder = (int)(Math.random() * 1000000);
+      }
+      String form =   "<form method = \"POST\" action=\"/calendar/" + randomHolder +"\">";
       Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
-          "message", "");
+          "message", "", "form", form);
       return new ModelAndView(variables, "login.ftl");
     }
   }
@@ -85,6 +91,7 @@ public class SparkHandler {
       QueryParamsMap qm = req.queryMap();
       String user = qm.value("user");
       String pass = qm.value("pass");
+      int id =Integer.parseInt(req.params(":id"));
       boolean found = false;
       try {
         found = myDBHandler.findUser(user, pass);
@@ -100,6 +107,7 @@ public class SparkHandler {
         //ServerCalls sc = new ServerCalls();
         //String html = sc.loginClicked();
         ClientHandler newClient = new ClientHandler(database, user);
+        clients.put(id, newClient);
         return new ModelAndView(variables, "main.ftl");
       } else {
         String newMessage = "The username or password entered was not found";
