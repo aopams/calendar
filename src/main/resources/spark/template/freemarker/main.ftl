@@ -70,6 +70,7 @@
 				</div>
 			</div>
 		</div>
+<<<<<<< HEAD
 	</div>
 	
 	<div id="calWrap">
