@@ -16,10 +16,9 @@ public class ServerCalls {
   private final String redirectURI = "http://localhost:1234";
   
   
-  public void openURLInBrowser() {
-    String url = "https://accounts.google.com/o/oauth2/auth?scope=email%20profile&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com";
+  public void openURLInBrowser(String url) {
     String os = System.getProperty("os.name").toLowerCase();
-          Runtime rt = Runtime.getRuntime();
+    Runtime rt = Runtime.getRuntime();
    
     try{
    
