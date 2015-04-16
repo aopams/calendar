@@ -1,25 +1,14 @@
 var eventMap = {};
-var week = [
-		    {"month":"Jan", "day":"1", "year":"2015"}, 
-		    {"month":"Jan", "day":"2", "year":"2015"}, 
-		    {"month":"Jan", "day":"3", "year":"2015"}, 
-		    {"month":"Jan", "day":"4", "year":"2015"}, 
-		    {"month":"Jan", "day":"5", "year":"2015"},
-		    {"month":"Jan", "day":"6", "year":"2015"},
-		    {"month":"Jan", "day":"7", "year":"2015"}
-		];
 
 /* opens dialog window for events that creators have control over editing */
 function openDialog(key) {
 	value = eventMap[key.id];
-	console.log(value);
 	var date = value.date.split(" ");
 	var day = date[0] + " " + date[1] + " " + date[2];
 	var T = date[3];
 	var am = date[4];
 	var time = date[3].substring(0, T.length - 3) + " " + am;
 	var dur = value.duration;
-	console.log(time);
 	form =
 	'<form class="form-inline">' +
 	'<img id="x-button" src="/img/x.png"/>' +
@@ -109,7 +98,7 @@ function createEvent(eventSlot) {
 
 function getDay(day) {
 	var int = parseInt(day) - 1;
-	return week[int].month + " " + week[int].day + ", " + week[int].year;
+	return weekArray[int].month + " " + weekArray[int].day + ", " + weekArray[int].year;
 }
 
 function getTime(time) {
@@ -133,13 +122,21 @@ function getTime(time) {
 function updateDisplayedEvents() {
 	var postParameters = {string: window.location.pathname};
 	$.post("/getevents", postParameters, function(responseJSON){
-
 		var responseObject = JSON.parse(responseJSON);
 		var list = responseObject.events;
-		//update week array
-		
+		var weekList = responseObject.week;
+		//clear week array
+		var weekArray = [];
+
+		for (var i = 0; i < weekList.length; i++) {
+			weekArray.push(weekList[i]);
+		}
+		// update week numbers
+		changeWeekNumbers(weekArray);
+
 		//clear current map of events
 		eventMap = {};
+		
 		var paras = document.getElementsByClassName('event');
 		while(paras[0]) {
 			paras[0].parentNode.removeChild(paras[0]);
@@ -174,30 +171,30 @@ function placeEvents(elem, event) {
 	var am = date[4];
 	var dayInt;
 	switch(day) {
-		case "Monday":
+		case "Sunday":
 			dayInt = 1;
 			break;
-		case "Tuesday":
+		case "Monday":
 			dayInt = 2;
 			break;
-		case "Wednesday":
+		case "Tuesday":
 			dayInt = 3;
 			break;
-		case "Thursday":
+		case "Wednesday":
 			dayInt = 4;
 			break;
-		case "Friday":
+		case "Thursday":
 			dayInt = 5;
 			break;
-		case "Saturday":
+		case "Friday":
 			dayInt = 6;
 			break;
-		case "Sunday":
+		case "Saturday":
 			dayInt = 7;
 			break;
 	}
 
-	//set time
+	// set time
 	var givenTime;
 	switch(am) {
 		case "AM":
@@ -208,7 +205,7 @@ function placeEvents(elem, event) {
 			break;
 	}
 
-	//adjust time by AM/PM
+	// adjust time by AM/PM
 	if(time < 10) {
 		time = "0" + time;
 	}
@@ -220,16 +217,15 @@ function getEventHeight(dur) {
 	return (dur/60) * 37.5;
 }
 
-function changeWeekNumbers() {
+function changeWeekNumbers(weekArray) {
 	for (var i = 0; i < 7; i++) {
 		var imgID = "day" + (i+1);
-		document.getElementById(imgID).src="/img/num/" + week[i].day + ".png";
+		document.getElementById(imgID).src="/img/num/" + weekArray[i].day + ".png";
 	}
 }
 
 $(document).ready(function(e) {
 	updateDisplayedEvents();
-	changeWeekNumbers();
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {
