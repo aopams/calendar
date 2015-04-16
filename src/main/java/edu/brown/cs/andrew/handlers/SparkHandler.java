@@ -224,7 +224,6 @@ public class SparkHandler {
       ServerCalls sc = new ServerCalls();
       HashMap<String, String> map = sc.authorize(code);
       map.get("access_token");
-
       return new ModelAndView(variables, "main.ftl");
     }
   }

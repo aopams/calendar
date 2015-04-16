@@ -226,6 +226,11 @@ function changeWeekNumbers(weekArray) {
 
 $(document).ready(function(e) {
 	updateDisplayedEvents();
+	
+	$("#x-button").click(function(e) {
+		console.log("here");
+		dialog.close();
+		$('#terms').dialog('close');
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {
