@@ -1,5 +1,13 @@
 var eventMap = {};
-var week = [];
+var week = [
+		    {"month":"Jan", "day":"1", "year":"2015"}, 
+		    {"month":"Jan", "day":"2", "year":"2015"}, 
+		    {"month":"Jan", "day":"3", "year":"2015"}, 
+		    {"month":"Jan", "day":"4", "year":"2015"}, 
+		    {"month":"Jan", "day":"5", "year":"2015"},
+		    {"month":"Jan", "day":"6", "year":"2015"},
+		    {"month":"Jan", "day":"7", "year":"2015"}
+		];
 
 /* opens dialog window for events that creators have control over editing */
 function openDialog(key) {
@@ -128,15 +136,8 @@ function updateDisplayedEvents() {
 
 		var responseObject = JSON.parse(responseJSON);
 		var list = responseObject.events;
-		week = [
-		    {"month":"Jan", "day":"1", "year":"2015"}, 
-		    {"month":"Jan", "day":"2", "year":"2015"}, 
-		    {"month":"Jan", "day":"3", "year":"2015"}, 
-		    {"month":"Jan", "day":"4", "year":"2015"}, 
-		    {"month":"Jan", "day":"5", "year":"2015"},
-		    {"month":"Jan", "day":"6", "year":"2015"},
-		    {"month":"Jan", "day":"7", "year":"2015"}
-		];
+		//update week array
+		
 		//clear current map of events
 		eventMap = {};
 		var paras = document.getElementsByClassName('event');
@@ -219,8 +220,17 @@ function getEventHeight(dur) {
 	return (dur/60) * 37.5;
 }
 
+function changeWeekNumbers() {
+	for (var i = 0; i < 7; i++) {
+		var imgID = "day" + (i+1);
+		console.log(week[i].day);
+		document.getElementById(imgID).src="/img/num/" + week[i].day + ".png";
+	}
+}
+
 $(document).ready(function(e) {
 	updateDisplayedEvents();
+	changeWeekNumbers();
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {
