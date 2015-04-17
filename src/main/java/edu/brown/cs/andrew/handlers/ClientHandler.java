@@ -32,13 +32,6 @@ public class ClientHandler {
       dummyMap.put(0, this);
       HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
       initThread.run();
-<<<<<<< HEAD
-=======
-      
-    } catch (ClassNotFoundException | SQLException e) {
-      e.printStackTrace();
-    }
->>>>>>> 8526ed75278c62cf0f4fb1d79944feaf7f96b0e8
   }
   
   public synchronized ConcurrentHashMap<String, String> getFriends() {
