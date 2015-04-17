@@ -1,4 +1,5 @@
 var friends = [];
+var pendingFriends = [];
 $(document).ready(function(e) {
 	$('#calWrap').show(0);
 	$('#contacts').hide(0);
@@ -26,27 +27,46 @@ $(document).ready(function(e) {
 	var postParameters = {url : url};
 	
 	$.post('/getfriends', postParameters, function(responseJSON) {
-		console.log("in response");
 		responseObject = JSON.parse(responseJSON);
-		friends = responseObject.friends;
+		temp = responseObject.friends;
+		for (i = 0; i < temp.length; i++) {
+			if (temp[i][1] == "pending") {
+				pendingFriends.push(temp[i][0]);
+			} else {
+				friends.push(temp[i][0]);
+			}
+		};
+		
 		createFriends();
 	});
-	
-	/*
-friends = ["William Truong", "Andrew Osgood", "Rohan Chandra", "Dylan Gattey", "Patrick Zhang", "Felege Gebru"];
-	
-*/
-	createFriends();
-	
 });
 
 function createFriends() {
 	/* populate each with an image and the name from friends list */
+	if (pendingFriends.length > 0) {
+		var pending = document.createElement('div');
+		pending.id = 'pending';
+		pending.appendChild(document.createTextNode("Pending"));
+		var grid = document.getElementById('contactsGrid');
+		grid.appendChild(pending);
+		var scrollRow = document.createElement('div');
+		scrollRow.id = 'scrollRow';
+		grid.appendChild(scrollRow);
+		for (i = 0; i < pendingFriends.length; i++) {
+			var friend = document.createElement('div');
+				friend.className = 'friend';
+				friend.id = i;
+				var name = document.createTextNode(pendingFriends[i]);
+				var img = document.createElement('img');
+				img.src = '/img/placeholder.jpg';
+				friend.appendChild(img);
+				friend.appendChild(name);
+				scrollRow.appendChild(friend);
+		}
+	}
 	var count = 0;
 	var len = friends.length;
-	console.log(len);
 	var rows = Math.floor(len/5) + 1;
-	console.log(rows);
 	var grid = document.getElementById('contactsGrid');
 	if (len != 0 ) {
 		for (i = 0; i < rows; i++) {
@@ -58,7 +78,7 @@ function createFriends() {
 				var friend = document.createElement('div');
 				friend.className = 'friend';
 				friend.id = count;
-				var name = document.createTextNode(friends[count][0]);
+				var name = document.createTextNode(friends[count]);
 				var img = document.createElement('img');
 				img.src = '/img/placeholder.jpg';
 				friend.appendChild(img);

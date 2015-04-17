@@ -228,6 +228,27 @@ body {
 	padding-top: 10px;
 	padding-bottom: 5px;
 }
+
+.friend #status {
+	font-style: italic;
+	font-size: x-small;
+}
+
+#pending{
+	width:10%;
+	height:20%;
+	border-bottom: 1px solid;
+	text-align: center;
+	float:left;
+}
+
+#scrollRow {
+	width:90%;
+	height: 20%;
+	border-bottom: 1px solid;
+	overflow-x: scroll;
+}
+
 /*dialog inner styling */
 #duration {
 	width: 70px;
