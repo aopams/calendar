@@ -316,7 +316,7 @@ public class SparkHandler {
       System.out.println(events);
       System.out.println("RECHED HERE");
       
-      Date currentWeekStart = currentWeeks.get(120456778);
+      Date currentWeekStart = new Date();
       List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
       ConcurrentHashMap<Integer, Event> testEvents;
       testEvents = clients.get(120456778).getEventsByWeek(currentWeekStart);
