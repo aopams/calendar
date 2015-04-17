@@ -127,18 +127,18 @@ function updateDisplayedEvents() {
 	})
 }
 
-function leftWeek() {
+function leftArrow() {
 	var daydetails = weekInfo[0].month + " " + weekInfo[0].day + " " + weekInfo[0].year;
 	var postParameters = {string: window.location.pathname, date: daydetails};
-	$.post("/leftweek", postParameters, function(responseJSON){
+	$.post("/leftarrow", postParameters, function(responseJSON){
 		parseData(responseJSON);
 	})
 }
 
-function rightWeek() {
+function rightArrow() {
 	var daydetails = weekInfo[6].month + " " + weekInfo[6].day + " " + weekInfo[6].year;
 	var postParameters = {string: window.location.pathname, date: daydetails };
-	$.post("/rightweek", postParameters, function(responseJSON){
+	$.post("/rightarrow", postParameters, function(responseJSON){
 		parseData(responseJSON);
 	})
 }
@@ -147,6 +147,7 @@ function parseData(responseJSON) {
 	var responseObject = JSON.parse(responseJSON);
 		var list = responseObject.events;
 		var weekList = responseObject.week;
+		console.log(weekList);
 		//clear week array
 		var weekArray = [];
 
@@ -277,5 +278,13 @@ $(document).ready(function(e) {
 	
 	$(document).on('click','#datepicker', function(e) {
 	    datePicker();
+	});
+	
+	$(document).on('click','#leftarrow', function(e) {
+	    leftArrow();
+	});
+	
+	$(document).on('click','#rightarrow', function(e) {
+	    rightArrow();
 	});
 });
