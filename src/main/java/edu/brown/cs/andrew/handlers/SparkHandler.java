@@ -120,7 +120,13 @@ public class SparkHandler {
       ct.run();
       clients.put(clientID, cli);
       System.out.println("I'm done sluts");
-      return null;
+      int status = 0;
+      String message = "accepted";
+      Map<String, Object> variables = new ImmutableMap.Builder()
+      .put("status", status)
+      .put("message", message).build();
+      System.out.println(GSON.toJson(variables));
+      return GSON.toJson(variables);
     }
     
   }
@@ -298,7 +304,20 @@ public class SparkHandler {
       System.out.println(code);
       ServerCalls sc = new ServerCalls();
       HashMap<String, String> map = sc.authorize(code);
-      map.get("access_token");
+      String accessToken = map.get("access_token");
+      System.out.println(accessToken);
+      String user = "9999";
+      ClientHandler client = new ClientHandler(database, user);
+      HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
+      HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList, accessToken);
+      List<Event> events = sc.getAllEvents(eventsList);
+      for (Event event : events) {
+         client.addEvent(event);
+      }
+      clients.put(120456778, client);
+      System.out.println(events);
+      System.out.println("RECHED HERE");
+
       return new ModelAndView(variables, "main.ftl");
     }
   }
@@ -323,8 +342,7 @@ public class SparkHandler {
       Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
           "message", "");
       ServerCalls sc = new ServerCalls();
-      String url = sc.loginClicked();
-      sc.openURLInBrowser(url);
+      sc.openURLInBrowser("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com");
       return new ModelAndView(variables, "main.ftl");
     }
   }
