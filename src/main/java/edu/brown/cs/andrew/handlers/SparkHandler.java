@@ -389,7 +389,7 @@ public class SparkHandler {
       Date currentWeekStart = new Date();
       List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
       ConcurrentHashMap<Integer, Event> testEvents;
-      testEvents = clients.get(120456778).getEventsByWeek(currentWeekStart);
+      testEvents = client.getEventsByWeek(currentWeekStart);
       List<String> toFrontEnd = new ArrayList<String>();
       for (Entry<Integer, Event> e : testEvents.entrySet()) {
         System.out.println("here");
