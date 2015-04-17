@@ -107,7 +107,7 @@ function newEventDialog(date, time) {
 		    '<div class="input-group-addon">@</div>' +
 		    '<input type="text" class="form-control" id="group" placeholder="Groups"/>' +
 		'</div>' +
-	 '<img id="check-button" src="\\img/check.png"/>' +
+	 '<img id="new-event-button" src="\\img/check.png"/>' +
 	'</form>'
 	$(form).dialog({modal: true});
 }
@@ -318,15 +318,16 @@ function newEvent() {
 	};
 	$.post("/newevent", postParameters, function(responseJSON){
 		
-		parseData(responseJSON);
+		updateDisplayedEvents();
+		var $dialog = $(this).parents('.ui-dialog-content');
+/*
 		
 		if(responseJSON.status == 1) {
-			updateDisplayedEvents();
-			var $dialog = $(this).parents('.ui-dialog-content');
 			$dialog.dialog('destroy');
 		} else {
 			alert('ranking: ' + responseJSON.message);
 		}
+*/
 		
 	})
 }
@@ -395,7 +396,7 @@ $(document).ready(function(e) {
 	    rightArrow();
 	});
 	
-	$(document).on('click','#check-button', function(e) {
+	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
 	});
 });
