@@ -312,7 +312,6 @@ public class SparkHandler {
       for (Event event : events) {
          client.addEvent(event);
       }
-      clients.put(120456778, client);
       System.out.println(events);
       System.out.println("RECHED HERE");
       
@@ -328,7 +327,7 @@ public class SparkHandler {
         Event curr = e.getValue();
         toFrontEnd.add(GSON.toJson(curr));
       }
-
+      clients.put(120456778, client);
       Map<String, Object> variables = new ImmutableMap.Builder()
       .put("events", toFrontEnd)
       .put("week", currentWeek).build();
