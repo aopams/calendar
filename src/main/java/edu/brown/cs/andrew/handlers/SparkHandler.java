@@ -188,9 +188,10 @@ public class SparkHandler {
       // list of events that this user has
       try {
         String dateString = qm.value("date");
+        System.out.println(dateString);
         if (dateString != null && !dateString.equals("")) {
           Date reference =
-            new SimpleDateFormat("dd/MM/YYYY").parse(dateString);
+            new SimpleDateFormat("MM dd YYYY").parse(dateString);
           if (reference.equals(currentWeekStart)) {
             c.set(Calendar.WEEK_OF_YEAR, -1);
           } else {
