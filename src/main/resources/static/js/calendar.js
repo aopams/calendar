@@ -320,7 +320,14 @@ function newEvent() {
 		
 		parseData(responseJSON);
 		
-		updateDisplayedEvents();
+		if(responseJSON.status == 1) {
+			updateDisplayedEvents();
+			var $dialog = $(this).parents('.ui-dialog-content');
+			$dialog.dialog('destroy');
+		} else {
+			alert('ranking: ' + responseJSON.message);
+		}
+		
 	})
 }
 
