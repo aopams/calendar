@@ -14,44 +14,44 @@ public class ServerCalls {
   private final String clientID = "223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com";
   private final String clientSecret = "6rmO_xu590Oe89yGFL-kX-l8";
   private final String redirectURI = "http://localhost:1234";
-  
-  
+
   public void openURLInBrowser(String url) {
     String os = System.getProperty("os.name").toLowerCase();
     Runtime rt = Runtime.getRuntime();
-   
-    try{
-   
-        if (os.indexOf( "win" ) >= 0) {
-   
-            // this doesn't support showing urls in the form of "page.html#nameLink" 
-            rt.exec( "rundll32 url.dll,FileProtocolHandler " + url);
-   
-        } else if (os.indexOf( "mac" ) >= 0) {
-   
-            rt.exec( "open " + url);
-   
-              } else if (os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0) {
-   
-            // Do a best guess on unix until we get a platform independent way
-            // Build a list of browsers to try, in this order.
-            String[] browsers = {"epiphany", "firefox", "mozilla", "konqueror",
-                             "netscape","opera","links","lynx"};
-   
-            // Build a command string which looks like "browser1 "url" || browser2 "url" ||..."
-            StringBuffer cmd = new StringBuffer();
-            for (int i=0; i<browsers.length; i++)
-                cmd.append( (i==0  ? "" : " || " ) + browsers[i] +" \"" + url + "\" ");
-   
-            rt.exec(new String[] { "sh", "-c", cmd.toString() });
-   
-             } else {
-                  return;
-             }
-         }catch (Exception e){
+
+    try {
+
+      if (os.indexOf("win") >= 0) {
+
+        // this doesn't support showing urls in the form of "page.html#nameLink"
+        rt.exec("rundll32 url.dll,FileProtocolHandler " + url);
+
+      } else if (os.indexOf("mac") >= 0) {
+
+        rt.exec("open " + url);
+
+      } else if (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0) {
+
+        // Do a best guess on unix until we get a platform independent way
+        // Build a list of browsers to try, in this order.
+        String[] browsers = { "epiphany", "firefox", "mozilla", "konqueror",
+            "netscape", "opera", "links", "lynx" };
+
+        // Build a command string which looks like
+        // "browser1 "url" || browser2 "url" ||..."
+        StringBuffer cmd = new StringBuffer();
+        for (int i = 0; i < browsers.length; i++)
+          cmd.append((i == 0 ? "" : " || ") + browsers[i] + " \"" + url + "\" ");
+
+        rt.exec(new String[] { "sh", "-c", cmd.toString() });
+
+      } else {
         return;
-         }
-        return; 
+      }
+    } catch (Exception e) {
+      return;
+    }
+    return;
   }
 
   public String loginClicked() {
@@ -163,22 +163,35 @@ public class ServerCalls {
   public void getCalendarList(String accessToken) {
 
     try {
-      String website = "https://www.googleapis.com/auth/calendar/v3/users/me/calendarList";
+      String website = "https://www.googleapis.com/calendar/v3/users/me/calendarList/";
+      // String website =
+      // "https://www.googleapis.com/calendar/v3/calendars/rohan_chandra@brown.edu";
+
       URL url = new URL(website);
 
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
       conn.setRequestMethod("GET");
+      // conn.setRequestProperty("resources", "");
       conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-      // conn.setRequestProperty("Content-Type",
-      // "application/x-www-form-urlencoded");
+      // conn.setRequestProperty("X-JavaScript-User-Agent",
+      // "Google APIs Explorer");
+      // conn.setRequestProperty("Content-Type", "x-www-form-urlencoded");
+      // conn.setRequestProperty("scope",
+      // "https://www.googleapis.com/calendar");
+      // conn.setRequestProperty("Host", "www.googleapis.com");
+      // conn.setRequestProperty("If-Match", "*");
+      // conn.setRequestProperty("pageToken", null);
+      // conn.setRequestProperty("cache-control",
+      // "private, max-age=0, must-revalidate, no-transform");
+      // conn.setRequestProperty("content-encoding", "gzip");
+      // conn.setRequestProperty("content-length", "758");
+      // conn.setRequestProperty("content-type",
+      // "application/json; charset=UTF-8");
 
-      conn.setUseCaches(false);
-      conn.setDoInput(true);
-      conn.setDoOutput(true);
-      DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-      wr.flush();
-      wr.close();
+      // conn.setUseCaches(false);
+      // conn.setDoInput(true);
+      // conn.setDoOutput(true);
 
       int responseCode = conn.getResponseCode();
       System.out.println("\nSending 'GET' request to URL : " + url);
@@ -242,5 +255,4 @@ public class ServerCalls {
     }
     return toReturn;
   }
-
 }
