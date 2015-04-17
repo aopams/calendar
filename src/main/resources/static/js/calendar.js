@@ -128,14 +128,16 @@ function updateDisplayedEvents() {
 }
 
 function leftWeek() {
-	var postParameters = {string: window.location.pathname, date: weekInfo[0]};
+	var day-details = weekInfo[0].month + " " + weekInfo[0].day + " " + weekInfo[0].year;
+	var postParameters = {string: window.location.pathname, date: day-details};
 	$.post("/leftweek", postParameters, function(responseJSON){
 		parseData(responseJSON);
 	})
 }
 
-function leftWeek() {
-	var postParameters = {string: window.location.pathname, date: weekInfo[0]};
+function rightWeek() {
+	var day-details = weekInfo[6].month + " " + weekInfo[6].day + " " + weekInfo[6].year;
+	var postParameters = {string: window.location.pathname, date: day-details };
 	$.post("/rightweek", postParameters, function(responseJSON){
 		parseData(responseJSON);
 	})
