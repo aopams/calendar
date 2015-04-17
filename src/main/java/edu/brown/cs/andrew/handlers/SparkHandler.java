@@ -297,8 +297,6 @@ public class SparkHandler {
   private static class CodeHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
-      Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
-          "message", "");
       String code = req.queryString().substring(
           req.queryString().indexOf('=') + 1);
       System.out.println(code);
@@ -317,7 +315,24 @@ public class SparkHandler {
       clients.put(120456778, client);
       System.out.println(events);
       System.out.println("RECHED HERE");
+      
+      Date currentWeekStart = currentWeeks.get(120456778);
+      List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
+      ConcurrentHashMap<Integer, Event> testEvents;
+      testEvents = clients.get(120456778).getEventsByWeek(currentWeekStart);
+      System.out.println(testEvents.size());
+      System.out.println("got events");
+      List<String> toFrontEnd = new ArrayList<String>();
+      for (Entry<Integer, Event> e : testEvents.entrySet()) {
+        System.out.println("here");
+        Event curr = e.getValue();
+        toFrontEnd.add(GSON.toJson(curr));
+      }
 
+      Map<String, Object> variables = new ImmutableMap.Builder()
+      .put("events", toFrontEnd)
+      .put("week", currentWeek).build();
+      System.out.println(GSON.toJson(variables));
       return new ModelAndView(variables, "main.ftl");
     }
   }
