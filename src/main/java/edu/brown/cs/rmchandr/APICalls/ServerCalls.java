@@ -386,9 +386,10 @@ public class ServerCalls {
       numbersToDay.put(7, "Saturday");
 
       String dayOfWeek = numbersToDay.get(dayWeek);
+      String creator = null;
 
       Event toPut = new Event(date, title, dayOfWeek, attendees, group,
-          duration, description);
+          duration, description, creator);
       toReturn.add(toPut);
     }
 
