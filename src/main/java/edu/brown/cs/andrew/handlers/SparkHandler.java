@@ -313,6 +313,7 @@ public class SparkHandler {
       for (Event event : events) {
          client.addEvent(event);
       }
+      clients.put(120456778, client);
       System.out.println(events);
       System.out.println("RECHED HERE");
 
@@ -340,8 +341,7 @@ public class SparkHandler {
       Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
           "message", "");
       ServerCalls sc = new ServerCalls();
-      String url = sc.loginClicked();
-      sc.openURLInBrowser(url);
+      sc.openURLInBrowser("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com");
       return new ModelAndView(variables, "main.ftl");
     }
   }
