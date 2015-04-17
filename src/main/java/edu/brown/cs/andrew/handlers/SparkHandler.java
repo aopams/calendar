@@ -76,6 +76,7 @@ public class SparkHandler {
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
     Spark.get("/randnum", new RandNumHandler());
+    Spark.post("/getfriends", new FriendsHandler());
   }
 
   private static class LoginHandler implements TemplateViewRoute {
@@ -219,6 +220,25 @@ public class SparkHandler {
     }
   }
 
+  private static class FriendsHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url"));
+      System.out.println(id);
+      Map<String, String> tempMap = clients.get(id).getFriends();
+      List<String[]> myFriends = new ArrayList<String[]>();
+      for (String key : tempMap.keySet()) {
+        String status = tempMap.get(key);
+        String[] toAdd = {key, status};
+        myFriends.add(toAdd);
+      }
+      Map<String, List<String[]>> variables = new ImmutableMap.Builder()
+      .put("friends", myFriends).build();
+      return GSON.toJson(variables);
+    }
+  }
+  
   private static class CodeHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
@@ -226,7 +246,6 @@ public class SparkHandler {
           "message", "");
       String code = req.queryString().substring(
           req.queryString().indexOf('=') + 1);
-      System.out.println(code);
       ServerCalls sc = new ServerCalls();
       HashMap<String, String> map = sc.authorize(code);
       map.get("access_token");

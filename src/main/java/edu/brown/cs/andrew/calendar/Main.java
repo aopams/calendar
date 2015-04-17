@@ -57,7 +57,6 @@ public class Main {
       myDBHandler.addFriendRequest("Harsha", "Harsha2");
       myDBHandler.addFriendRequest("Harsha2", "Harsha");
       myDBHandler.acceptFriendRequest("Harsha2", "Harsha");
-      myDBHandler.removeFriend("Harsha", "Harsha2");
       myDBHandler.addGroup("Harsha Squad");
       myDBHandler.addUserToGroup("Harsha", 1);
       myDBHandler.addUserToGroup("Harsha2", 1);

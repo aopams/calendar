@@ -53,24 +53,9 @@
 			
 			
 			<div id="contactsGrid">
-				<div class="contacts-row" id="1">
 
-				</div>
-				<div class="contacts-row" id="2">
-
-				</div>
-				<div class="contacts-row" id="3">
-
-				</div>
-				<div class="contacts-row" id="4">
-
-				</div>
-				<div class="contacts-row" id="5">
-
-				</div>
 			</div>
 		</div>
-<<<<<<< HEAD
 	</div>
 	
 	<div id="calWrap">

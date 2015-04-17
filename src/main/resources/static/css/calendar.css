@@ -216,10 +216,18 @@ body {
 .friend {
 	width: 20%;
 	height: 100%;
-	border:1px solid;
 	display:block;
 	float:left;
-
+	text-align: center;
+}
+.friend img {
+	width: 50px;
+	height: 50px;
+	margin:auto;
+	display:block;
+	padding-top: 10px;
+	padding-bottom: 5px;
+}
 /*dialog inner styling */
 #duration {
 	width: 70px;
