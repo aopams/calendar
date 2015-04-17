@@ -88,7 +88,7 @@ public class SparkHandler {
     Spark.post("/getevents", new BTFEventHandler());
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
-    Spark.post("/eventupdate", new CreateEventHandler());
+    Spark.post("/newevent", new CreateEventHandler());
   }
   private static class CreateEventHandler implements Route {
 
@@ -123,6 +123,7 @@ public class SparkHandler {
           group, duration, description, creator);
       CalendarThread ct = new CalendarThread(cli, "ae", e, null);
       ct.run();
+      System.out.println("I'm done sluts");
       return null;
     }
     
