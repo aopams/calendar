@@ -11,7 +11,7 @@ function openDialog(key) {
 	var time = date[3].substring(0, T.length - 3) + " " + am;
 	var dur = value.duration;
 	form =
-	'<form class="form-inline">' +
+	'<form class="form-inline" id ="newEventForm">' +
 	'<img id="x-button" src="/img/x.png"/>' +
 	'<div class="form-group">' +
 	    '<div class="input-group">' +
@@ -29,11 +29,11 @@ function openDialog(key) {
 	    	'<textarea type="text" class="form-control" id="descrip">'+ value.description + '</textarea>' +
 	    '</div>' +
 	    '<div class="input-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="title" placeholder="People" value="' 	 				+value.attendees +'"/>' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'"/>' +
 		'</div>' +
 	  	'<div class="input-group">' +
 		    '<div class="input-group-addon">@</div>' +
-		    '<input type="text" class="form-control" id="title" placeholder="Groups" value="'+ value.group +'"/>' +
+		    '<input type="text" class="form-control" id="group" placeholder="Groups" value="'+ value.group +'"/>' +
 		'</div>' +
 	 '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
 	'</form>'
@@ -68,11 +68,11 @@ function openGoogleEvent(key) {
 	    	'<textarea type="text" class="form-control" id="descrip" readonly>'+ value.description + '</textarea>' +
 	    '</div>' +
 	    '<div class="input-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="title" placeholder="People" value="' 	 				+value.attendees +'" readonly/>' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'" readonly/>' +
 		'</div>' +
 	  	'<div class="input-group">' +
 		    '<div class="input-group-addon">@</div>' +
-		    '<input type="text" class="form-control" id="title" placeholder="Groups" value="'+ value.group +'" readonly/>' +
+		    '<input type="text" class="form-control" id="group" placeholder="Groups" value="'+ value.group +'" readonly/>' +
 		'</div>' +
 	 '<img id="google-button" src="\\img/google.png"/>' +
 	'</form>'
@@ -83,7 +83,7 @@ function openGoogleEvent(key) {
 /* opens dialog window for events that creators have control over editing */
 function newEventDialog(date, time) {
 	form =	
-	'<form class="form-inline">' +
+	'<form class="input-form-inline">' +
 	'<img id="x-button" src="\\img/x.png"/>' +
 	'<div class="form-group">' +
 	    '<div class="input-group">' +
@@ -101,11 +101,11 @@ function newEventDialog(date, time) {
 	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description..."></textarea>' +
 	    '</div>' +
 	    '<div class="input-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="title" placeholder="People"/>' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees"placeholder="People"/>' +
 		'</div>' +
 	  	'<div class="input-group">' +
 		    '<div class="input-group-addon">@</div>' +
-		    '<input type="text" class="form-control" id="title" placeholder="Groups"/>' +
+		    '<input type="text" class="form-control" id="group" placeholder="Groups"/>' +
 		'</div>' +
 	 '<img id="check-button" src="\\img/check.png"/>' +
 	'</form>'
@@ -302,6 +302,44 @@ function changeWeekNumbers(weekArray) {
 	}
 }
 
+function newEvent() {
+	var title = document.getElementById('title').value;
+	var date = document.getElementById('datepicker').value;
+	var time = document.getElementById('dialog-time').value;
+	var dur = document.getElementById('duration').value;
+	var descrip = document.getElementById('descrip').value;
+	var atten = document.getElementById('attendees').value;
+	var group = document.getElementById('group').value;
+	var correctTime = getDBTime(date, time);
+	console.log(correctTime);
+	var postParameters = {string: window.location.pathname, title: title, date: date,
+		time: time, duration: dur, description: descrip, attendees: atten,
+		group: group
+	};
+	$.post("/newevent", postParameters, function(responseJSON){
+		
+		parseData(responseJSON);
+	})
+}
+
+function getDBTime(date, time) {
+	date = date.replace(",", "");
+	console.log(date);
+	arr = date.split(" ");
+	var hours = Number(time.match(/^(\d+)/)[1]);
+	var minutes = Number(time.match(/:(\d+)/)[1]);
+	var AMPM = time.match(/\s(.*)$/)[1];
+	if(AMPM == "PM" && hours<12) hours = hours+12;
+	if(AMPM == "AM" && hours==12) hours = hours-12;
+	var sHours = hours.toString();
+	var sMinutes = minutes.toString();
+	if(hours<10) sHours = "0" + sHours;
+	if(minutes<10) sMinutes = "0" + sMinutes;
+	console.log(sHours + ":" + sMinutes);
+	return arr[1] + "-" + arr[0] + "-" +
+		arr[2] + " " + sHours + ":" + sMinutes;
+}
+
 $(document).ready(function(e) {
 	updateDisplayedEvents();
 	
@@ -333,7 +371,7 @@ $(document).ready(function(e) {
 
 	$(document).on('click','#x-button', function(e) {
 	    var $dialog = $(this).parents('.ui-dialog-content');
-	    $dialog.dialog('close');
+	    $dialog.dialog('destroy');
 	});
 	
 	$(document).on('click','#datepicker', function(e) {
@@ -346,5 +384,9 @@ $(document).ready(function(e) {
 	
 	$(document).on('click','#rightarrow', function(e) {
 	    rightArrow();
+	});
+	
+	$(document).on('click','#check-button', function(e) {
+	    newEvent();
 	});
 });
