@@ -243,6 +243,7 @@ public class ServerCalls {
   public HashMap<String, String> getAllEventsMap(
       HashMap<String, String> calendarList, String accessToken) {
     try {
+      System.out.println(calendarList);
       String itemString = calendarList.get("items");
       itemString = itemString.substring(itemString.indexOf("id") + 5);
       System.out.println(itemString);

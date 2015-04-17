@@ -4,12 +4,14 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import edu.brown.cs.andrew.clientThreads.HeartBeatThread;
+import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 
 public class ClientHandler {
   private String user;
@@ -33,6 +35,7 @@ public class ClientHandler {
       dummyMap.put(0, this);
       HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
       initThread.run();
+      
     } catch (ClassNotFoundException | SQLException e) {
       e.printStackTrace();
     }
@@ -113,4 +116,12 @@ public class ClientHandler {
   public void removeGroup(String group) {
     groups.remove(group);
   }
+  
+ public void setAccessToken(String accessToken) {
+   this.accessToken = accessToken;
+ }
+ 
+ public String getAccessToken() {
+   return accessToken;
+ }
 }

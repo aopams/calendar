@@ -319,6 +319,8 @@ function newEvent() {
 	$.post("/newevent", postParameters, function(responseJSON){
 		
 		parseData(responseJSON);
+		
+		updateDisplayedEvents();
 	})
 }
 
