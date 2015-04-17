@@ -120,6 +120,15 @@ function getTime(time) {
 	}
 }
 
+function dateTitle() {
+	var toReturn = getWrittenDate(0) + " - " getWrittenDate(6);
+	document.getElementById("date-title").innerHTML = toReturn;
+}
+
+function getWrittenDate(index) {
+	return weekInfo[0].month + " " + weekInfo[0].day + " " + weekInfo[0].year;
+}
+
 function updateDisplayedEvents() {
 	var postParameters = {string: window.location.pathname};
 	$.post("/getevents", postParameters, function(responseJSON){
@@ -128,7 +137,7 @@ function updateDisplayedEvents() {
 }
 
 function leftArrow() {
-	var daydetails = weekInfo[0].month + " " + weekInfo[0].day + " " + weekInfo[0].year;
+	var daydetails = weekInfo[0].day  + "-" + weekInfo[0].month + "-" + weekInfo[0].year;
 	var postParameters = {string: window.location.pathname, date: daydetails};
 	$.post("/leftarrow", postParameters, function(responseJSON){
 		parseData(responseJSON);
@@ -136,7 +145,7 @@ function leftArrow() {
 }
 
 function rightArrow() {
-	var daydetails = weekInfo[6].month + " " + weekInfo[6].day + " " + weekInfo[6].year;
+	var daydetails = weekInfo[6].day  + "-" + weekInfo[6].month + "-" + weekInfo[6].year;
 	var postParameters = {string: window.location.pathname, date: daydetails };
 	$.post("/rightarrow", postParameters, function(responseJSON){
 		parseData(responseJSON);

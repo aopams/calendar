@@ -74,7 +74,7 @@
 			</div>
 			<div class="col-md-4">
 				<div class="date">
-					January 1 - 7, 2015
+					<p id = "date-title"> </p>
 				</div>
 			</div>
 			<div class="col-md-4">
