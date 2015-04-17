@@ -117,7 +117,7 @@ public class SparkHandler {
       Event e = new Event(date, title, dayOfWeek, attendees,
           group, duration, description, creator);
       CalendarThread ct = new CalendarThread(cli, "ae", e, null);
-      ct.run();
+      //ct.run();
       System.out.println("I'm done sluts");
       return null;
     }

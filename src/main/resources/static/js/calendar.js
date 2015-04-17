@@ -319,6 +319,15 @@ function newEvent() {
 	$.post("/newevent", postParameters, function(responseJSON){
 		
 		parseData(responseJSON);
+		
+		if(responseJSON.status == 1) {
+			updateDisplayedEvents();
+			var $dialog = $(this).parents('.ui-dialog-content');
+			$dialog.dialog('destroy');
+		} else {
+			alert('ranking: ' + responseJSON.message);
+		}
+		
 	})
 }
 
