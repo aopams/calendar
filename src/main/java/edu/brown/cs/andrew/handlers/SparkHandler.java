@@ -147,22 +147,30 @@ public class SparkHandler {
     return dH;
   }
   
-  private static List<DateHandler> getCurrentWeek() {
-    Date date = new Date();
+  private static List<DateHandler> getCurrentWeek(Date d) {
     Calendar c = Calendar.getInstance();
-    c.setTime(date);
-    int week = c.get(Calendar.WEEK_OF_YEAR);
-    c.set(Calendar.WEEK_OF_YEAR, week);
-    c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
+    c.setTime(d);
     List<DateHandler> currentWeek = new ArrayList<DateHandler>();
     currentWeek.add(parseDate(c.getTime()));
     for(int i = 0; i < 6; i++) {
       c.add(Calendar.DATE, 1);
-      System.out.println(c.getTime());
+     //System.out.println(c.getTime());
       currentWeek.add(parseDate(c.getTime()));
     }
     return currentWeek;
   }
+  
+  private static Date setTimeToMidnight(Date date) {
+    Calendar calendar = Calendar.getInstance();
+
+    calendar.setTime( date );
+    calendar.set(Calendar.HOUR_OF_DAY, 0);
+    calendar.set(Calendar.MINUTE, 0);
+    calendar.set(Calendar.SECOND, 0);
+    calendar.set(Calendar.MILLISECOND, 0);
+
+    return calendar.getTime();
+}
   /**
    * Back end to front end; for a given user, grabs all of that user's events so
    * that they can be displayed on the calendar page when the user logs in.
@@ -188,20 +196,25 @@ public class SparkHandler {
       if (currentWeekStart == null) {
         currentWeeks.put(clientID, c.getTime());
         currentWeekStart = c.getTime();
+      } else {
+        c.setTime(currentWeekStart);
       }
       // list of events that this user has
       try {
         String dateString = qm.value("date");
-        System.out.println(dateString);
+        System.out.println(currentWeekStart);
         if (dateString != null && !dateString.equals("")) {
           Date reference =
-            new SimpleDateFormat("MM dd YYYY").parse(dateString);
-          if (reference.equals(currentWeekStart)) {
-            c.set(Calendar.WEEK_OF_YEAR, -1);
+            new SimpleDateFormat("dd-MMM-yyyy hh:mm").parse(dateString + " 00:00");
+          System.out.println(reference);
+          if (setTimeToMidnight(reference).equals(setTimeToMidnight(currentWeekStart))) {
+            c.add(Calendar.DATE, -7);
           } else {
-            c.set(Calendar.DATE, 1);
+            c.add(Calendar.DATE, 7);
           }
           currentWeekStart = c.getTime();
+          System.out.println("new week " + currentWeekStart);
+          currentWeeks.put(clientID, c.getTime());
         }
       } catch (ParseException e1) {
         // TODO Auto-generated catch block
@@ -209,9 +222,8 @@ public class SparkHandler {
       }
       System.out.println("got week");
       Gson gson = new Gson();
-      List<DateHandler> currentWeek = getCurrentWeek();
+      List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
 
-      System.out.println(clientID);
       ConcurrentHashMap<Integer, Event> testEvents;
       testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
       System.out.println("got events");
