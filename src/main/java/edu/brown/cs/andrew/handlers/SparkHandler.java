@@ -389,23 +389,26 @@ public class SparkHandler {
       for (Event event : events) {
          client.addEvent(event);
       }
-      clients.put(120456778, client);
       System.out.println(events);
       System.out.println("RECHED HERE");
       
+      clients.put(120456778, client);
       Date currentWeekStart = new Date();
       List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
       ConcurrentHashMap<Integer, Event> testEvents;
-      testEvents = clients.get(120456778).getEventsByWeek(currentWeekStart);
-      System.out.println(testEvents.size());
-      System.out.println("got events");
+      testEvents = client.getEventsByWeek(currentWeekStart);
+      try {
+        System.out.println(events.get(0).getDate());
+      } catch (ParseException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
       List<String> toFrontEnd = new ArrayList<String>();
       for (Entry<Integer, Event> e : testEvents.entrySet()) {
         System.out.println("here");
         Event curr = e.getValue();
         toFrontEnd.add(GSON.toJson(curr));
       }
-
       Map<String, Object> variables = new ImmutableMap.Builder()
       .put("events", toFrontEnd)
       .put("week", currentWeek).build();
