@@ -312,7 +312,7 @@ function newEvent() {
 	var group = document.getElementById('group').value;
 	var correctTime = getDBTime(date, time);
 	console.log(correctTime);
-	var postParameters = {string: window.location.pathname, title: title, date: date,
+	var postParameters = {string: window.location.pathname, title: title, date: correctTime,
 		time: time, duration: dur, description: descrip, attendees: atten,
 		group: group
 	};
