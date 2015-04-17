@@ -38,12 +38,12 @@
 		<div id="contactsWindow">
 			<div id="addFriendBar">
 <!-- 			CHANGE THIS FROM FORM TO A SUBMIT BUTTON -->
-				<form class="form-inline">
+				<div class="form-inline">
 					<div class="form-group">
 						<input type="text" class="form-control" id="addFriend" placeholder="@username">
 					</div>
 					<button type="submit" class="btn btn-default" id="sendInvite">Send invitation</button>
-				</form>
+				</div>
 			</div>
 			
 			
@@ -59,8 +59,7 @@
 				<!-- nothing here -->
 			</div>
 			<div class="col-md-4">
-				<div class="date">
-					<p id = "date-title"> </p>
+				<div class="date" id = "date-title">
 				</div>
 			</div>
 			<div class="col-md-4">

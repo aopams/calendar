@@ -1,5 +1,6 @@
 var friends = [];
 var pendingFriends = [];
+var url = "";
 $(document).ready(function(e) {
 	$('#calWrap').show(0);
 	$('#contacts').hide(0);
@@ -22,7 +23,7 @@ $(document).ready(function(e) {
 	
 	/* grabbing id for client */
 	
-	var url = window.location.href;
+	url = window.location.href;
 	url = url.substr(url.lastIndexOf('/') + 1);
 	var postParameters = {url : url};
 	
@@ -36,9 +37,22 @@ $(document).ready(function(e) {
 				friends.push(temp[i][0]);
 			}
 		};
-		
 		createFriends();
 	});
+	
+	$("#sendInvite").bind('click', function(e) {
+		var friendToAdd = $("#addFriend").val();
+		friendToAdd = JSON.stringify(friendToAdd);
+		var postParameters = {url : url, friendToAdd : friendToAdd};
+		
+		$.post('/sendfriend', postParameters, function(responseJSON) {
+			console.log("response received");
+			responseObject = JSON.parse(responseJSON);
+			message = responseObject.message;
+			alert(message);
+		});
+	});
+	
 });
 
 function createFriends() {
@@ -56,11 +70,25 @@ function createFriends() {
 			var friend = document.createElement('div');
 				friend.className = 'friend';
 				friend.id = i;
+				friend.setAttribute('username', pendingFriends[i]);
+				var text = document.createElement('div');
+				text.id = 'text';
 				var name = document.createTextNode(pendingFriends[i]);
+				text.appendChild(name);
 				var img = document.createElement('img');
+				var refuse = document.createElement('img');
+				var accept = document.createElement('img');
+				refuse.id = 'refuse';
+				accept.id = 'accept';
 				img.src = '/img/placeholder.jpg';
+				refuse.src = '/img/x.png';
+				refuse.onclick=function() {refuseFriend(this);};
+				accept.src = '/img/check.png';
+				accept.onclick=function() {acceptFriend(this);};
 				friend.appendChild(img);
-				friend.appendChild(name);
+				friend.appendChild(text);
+				friend.appendChild(refuse);
+				friend.appendChild(accept);
 				scrollRow.appendChild(friend);
 		}
 	}
@@ -92,16 +120,21 @@ function createFriends() {
 		}
 	}
 };
-/*
 
-var len = friends.length
-var rows = len/5;
-var con = 0;
-for (var i = 0; i < rows; i++) {
-	//create row div
-	for (var j = 0; j < 5; j++) {
-		append friend con to div;
-		con++;
-	}
+function acceptFriend(elem) {
+	var parent = elem.parentNode;
+	var toAdd = parent.getAttribute('username');
+	toAdd = JSON.stringify(toAdd);
+	var postParameters = {url : url, toAdd : toAdd};
+	
+	$.post('/acceptfriend', postParameters, function(responseJSON) {
+		responseObject = JSON.parse(responseJSON);
+		message = responseObject.message;
+		alert(message);
+	});
+	
+};
+
+function refuseFriend(elem) {
+	console.log("refused");
 }
-*/

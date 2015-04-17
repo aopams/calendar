@@ -78,6 +78,8 @@ public class SparkHandler {
     Spark.post("/getfriends", new FriendsHandler());
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
+    Spark.post("/sendfriend", new SendFriendReqHandler());
+    Spark.post("/acceptfriend", new AcceptFriendReqHandler());
   }
 
   private static class LoginHandler implements TemplateViewRoute {
@@ -259,6 +261,55 @@ public class SparkHandler {
       return GSON.toJson(variables);
     }
   }
+  
+  private static class SendFriendReqHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url"));
+      String user1 = clients.get(id).user;
+      String user2 = qm.value("friendToAdd").replaceAll("^\"|\"$", "");;
+      String message = "";
+      try {
+        myDBHandler.addFriendRequest(user1, user2);
+        message = "Friend request sent!";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      } catch (SQLException e) {
+        message = "ERROR: Invalid username entered, or you've already sent a request, or you're already friends.";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      }
+    }
+  }
+  
+  private static class AcceptFriendReqHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url"));
+      String user1 = clients.get(id).user;
+      String user2 = qm.value("toAdd").replaceAll("^\"|\"$", "");;
+      String message = "";
+      System.out.println(user1);
+      System.out.println(user2);
+      try {
+        myDBHandler.acceptFriendRequest(user1, user2);
+        message = "Friend request accepted!";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      } catch (SQLException e) {
+        message = "ERROR: Bug in database, please try again.";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      }
+    }
+  }
+  
   private static class CodeHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
