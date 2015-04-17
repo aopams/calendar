@@ -14,7 +14,7 @@ import edu.brown.cs.andrew.clientThreads.HeartBeatThread;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 
 public class ClientHandler {
-  private String user;
+  String user;
   private String accesToken;
   private ConcurrentHashMap<String, String> friends;
   private ConcurrentHashMap<Integer, String> groups;

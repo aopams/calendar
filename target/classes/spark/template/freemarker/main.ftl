@@ -38,31 +38,17 @@
 		<div id="contactsWindow">
 			<div id="addFriendBar">
 <!-- 			CHANGE THIS FROM FORM TO A SUBMIT BUTTON -->
-				<form class="form-inline">
+				<div class="form-inline">
 					<div class="form-group">
 						<input type="text" class="form-control" id="addFriend" placeholder="@username">
 					</div>
 					<button type="submit" class="btn btn-default" id="sendInvite">Send invitation</button>
-				</form>
+				</div>
 			</div>
 			
 			
 			<div id="contactsGrid">
-				<div class="contacts-row" id="1">
 
-				</div>
-				<div class="contacts-row" id="2">
-
-				</div>
-				<div class="contacts-row" id="3">
-
-				</div>
-				<div class="contacts-row" id="4">
-
-				</div>
-				<div class="contacts-row" id="5">
-
-				</div>
 			</div>
 		</div>
 	</div>

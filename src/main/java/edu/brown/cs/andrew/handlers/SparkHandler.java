@@ -80,8 +80,11 @@ public class SparkHandler {
     Spark.get("/login", new LoginHandler(), freeMarker);
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
+    Spark.post("/getfriends", new FriendsHandler());
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
+    Spark.post("/sendfriend", new SendFriendReqHandler());
+    Spark.post("/acceptfriend", new AcceptFriendReqHandler());
     Spark.post("/newevent", new CreateEventHandler());
     Spark.post("/register", new RegisterHandler(), freeMarker);
   }
@@ -294,12 +297,79 @@ public class SparkHandler {
   }
  }
   
+  private static class FriendsHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url"));
+      System.out.println(id);
+      Map<String, String> tempMap = clients.get(id).getFriends();
+      List<String[]> myFriends = new ArrayList<String[]>();
+      for (String key : tempMap.keySet()) {
+        String status = tempMap.get(key);
+        String[] toAdd = {key, status};
+        myFriends.add(toAdd);
+      }
+      Map<String, List<String[]>> variables = new ImmutableMap.Builder()
+      .put("friends", myFriends).build();
+      return GSON.toJson(variables);
+    }
+  }
+  
+  private static class SendFriendReqHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url"));
+      String user1 = clients.get(id).user;
+      String user2 = qm.value("friendToAdd").replaceAll("^\"|\"$", "");;
+      String message = "";
+      try {
+        DatabaseHandler myDBHandler = new DatabaseHandler(database);
+        myDBHandler.addFriendRequest(user1, user2);
+        message = "Friend request sent!";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      } catch (SQLException | ClassNotFoundException e) {
+        message = "ERROR: Invalid username entered, or you've already sent a request, or you're already friends.";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      }
+    }
+  }
+  
+  private static class AcceptFriendReqHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url"));
+      String user1 = clients.get(id).user;
+      String user2 = qm.value("toAdd").replaceAll("^\"|\"$", "");;
+      String message = "";
+      System.out.println(user1);
+      System.out.println(user2);
+      try {
+        DatabaseHandler myDBHandler = new DatabaseHandler(database);
+        message = "Friend request accepted!";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      } catch (SQLException | ClassNotFoundException e) {
+        message = "ERROR: Bug in database, please try again.";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      }
+    }
+  }
+  
   private static class CodeHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
       String code = req.queryString().substring(
           req.queryString().indexOf('=') + 1);
-      System.out.println(code);
       ServerCalls sc = new ServerCalls();
       HashMap<String, String> map = sc.authorize(code);
       String accessToken = map.get("access_token");
