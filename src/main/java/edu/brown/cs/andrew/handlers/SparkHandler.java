@@ -77,7 +77,7 @@ public class SparkHandler {
     Spark.post("/getevents", new BTFEventHandler());
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
-    Spark.post("/register", route);
+    Spark.post("/register", new RegisterHandler());
   }
 
   private static class LoginHandler implements TemplateViewRoute {
@@ -272,9 +272,12 @@ public class SparkHandler {
   
   private static class RegisterHandler implements TemplateViewRoute {
     public ModelAndView handle(Request req, Response res) {
+      Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
+          "message", "");
       ServerCalls sc = new ServerCalls();
       String url = sc.loginClicked();
       sc.openURLInBrowser(url);
+      return new ModelAndView(variables, "main.ftl");
     }
   }
 }
