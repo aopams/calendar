@@ -316,10 +316,11 @@ function newEvent() {
 		time: time, duration: dur, description: descrip, attendees: atten,
 		group: group
 	};
+
 	$.post("/newevent", postParameters, function(responseJSON){
+
 		
-		updateDisplayedEvents();
-		var $dialog = $(this).parents('.ui-dialog-content');
+		
 /*
 		
 		if(responseJSON.status == 1) {
@@ -398,5 +399,8 @@ $(document).ready(function(e) {
 	
 	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
+	    var $dialog = $(this).parents('.ui-dialog-content');
+	    $dialog.dialog('destroy');
+	    updateDisplayedEvents();
 	});
 });

@@ -120,7 +120,13 @@ public class SparkHandler {
       ct.run();
       clients.put(clientID, cli);
       System.out.println("I'm done sluts");
-      return null;
+      int status = 0;
+      String message = "accepted";
+      Map<String, Object> variables = new ImmutableMap.Builder()
+      .put("status", status)
+      .put("message", message).build();
+      System.out.println(GSON.toJson(variables));
+      return GSON.toJson(variables);
     }
     
   }
