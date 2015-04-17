@@ -14,7 +14,6 @@ import edu.brown.cs.andrew.clientThreads.HeartBeatThread;
 public class ClientHandler {
   private String user;
   private String accesToken;
-  private DatabaseHandler myDBHandler;
   private ConcurrentHashMap<String, String> friends;
   private ConcurrentHashMap<Integer, String> groups;
   private ConcurrentHashMap<Integer, Event> events;
@@ -25,17 +24,12 @@ public class ClientHandler {
 
 
   public ClientHandler(String db, String user) {
-    try {
-      myDBHandler = new DatabaseHandler(db);
       this.user = user;
       updateList = new CopyOnWriteArrayList<String>();
       ConcurrentHashMap<Integer, ClientHandler> dummyMap = new ConcurrentHashMap<Integer, ClientHandler>();
       dummyMap.put(0, this);
       HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
       initThread.run();
-    } catch (ClassNotFoundException | SQLException e) {
-      e.printStackTrace();
-    }
   }
   
   public synchronized ConcurrentHashMap<String, String> getFriends() {
@@ -47,9 +41,7 @@ public class ClientHandler {
   public synchronized ConcurrentHashMap<Integer, Event> getEvents() {
     return events;
   }
-  public synchronized DatabaseHandler getDB() {
-    return myDBHandler;
-  }
+
   
   public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date start) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();

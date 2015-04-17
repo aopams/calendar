@@ -45,7 +45,7 @@ public class Main {
     System.out.println(System.currentTimeMillis() / 1000);
     try {
       myDBHandler = new DatabaseHandler("calendar.sqlite3");
-      myDBHandler.createTablesForCalendar();
+     /** myDBHandler.createTablesForCalendar();
       myDBHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy",
           "hyeddana@cs.brown.edu");
       myDBHandler.deleteUser("Harsha");
@@ -100,11 +100,10 @@ public class Main {
       System.out.println(myDBHandler.findGroup("Harsha Squad"));
       myDBHandler.addEvent(e);
       myDBHandler.addEvent(e2);
-      myDBHandler.addEvent(e3);
-      myJSONParser = new JSONParser();
-      myJSONParser.eventToJson(e);
+      myDBHandler.addEvent(e3); **/
+      myDBHandler.closeConnection();
       System.out.println(System.currentTimeMillis() / 1000);
-    } catch (ClassNotFoundException | SQLException | ParseException e) {
+    } catch (ClassNotFoundException | SQLException e) {
       e.printStackTrace();
     } finally {
       run(args);

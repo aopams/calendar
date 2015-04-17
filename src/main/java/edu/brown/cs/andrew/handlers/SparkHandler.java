@@ -38,7 +38,6 @@ public class SparkHandler {
   private static ConcurrentHashMap<Integer, Date> currentWeeks = new ConcurrentHashMap<Integer, Date>();
   private static String database;
   private static final int RESSTAT = 500;
-  private static DatabaseHandler myDBHandler;
   private static Gson GSON = new Gson();
   private static int randomHolder = (int)(Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
@@ -46,8 +45,6 @@ public class SparkHandler {
     = new ConcurrentHashMap<Integer, String>();
   
   public SparkHandler(String db) {
-    try {
-      myDBHandler = new DatabaseHandler(db);
       database = db;
       clients = new ConcurrentHashMap<Integer, ClientHandler>();
       numbersToDay.put(1, "Sunday");
@@ -57,9 +54,6 @@ public class SparkHandler {
       numbersToDay.put(5, "Thursday");
       numbersToDay.put(6, "Friday");
       numbersToDay.put(7, "Saturday");
-    } catch (ClassNotFoundException | SQLException e) {
-      System.out.println("Error connecting to the Database: " + db);
-    }
   }
   private static FreeMarkerEngine createEngine() {
     Configuration config = new Configuration();
@@ -157,8 +151,10 @@ public class SparkHandler {
       int id =Integer.parseInt(req.params(":id"));
       boolean found = false;
       try {
+        DatabaseHandler myDBHandler = new DatabaseHandler(database);
         found = myDBHandler.findUser(user, pass);
-      } catch (SQLException e) {
+        myDBHandler.closeConnection();
+      } catch (SQLException | ClassNotFoundException e) {
         String form = getRandomForm();
         String newMessage = "An Error Occurred while logging in, please try again.";
         Map<String, Object> variables = ImmutableMap.of("title",

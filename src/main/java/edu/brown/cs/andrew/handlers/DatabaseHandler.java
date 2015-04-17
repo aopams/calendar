@@ -98,6 +98,7 @@ public class DatabaseHandler {
     if (rs.next()) {
       toReturn = rs.getString(1);
     }
+    rs.close();
     return toReturn;
   }
   public boolean findUser(String user_name, String user_password) throws SQLException {
@@ -106,7 +107,9 @@ public class DatabaseHandler {
     theStat.setString(1, user_name);
     theStat.setString(2, user_password);
     ResultSet rs = theStat.executeQuery();
-    return rs.next();
+    boolean toReturn = rs.next();
+    rs.close();
+    return toReturn;
   }
   public void insertUser(String user_name, String password,
       String name, String email) throws SQLException {
@@ -174,6 +177,7 @@ public class DatabaseHandler {
     while (rs.next()) {
       toReturn.put(rs.getString(1), rs.getString(2));
     }
+    rs.close();
     String query2 = "Select user_name2, status from Friends where user_name1 = ?";
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     theStat2.setString(1, user_name);
@@ -181,6 +185,7 @@ public class DatabaseHandler {
     while (rs2.next()) {
       toReturn.put(rs2.getString(1), rs2.getString(2));
     }
+    rs2.close();
     return toReturn;
   }
   public int findGroup(String group_name) throws SQLException {
@@ -303,11 +308,13 @@ public class DatabaseHandler {
         stat2.addBatch();
       }
       stat2.executeQuery();
+      stat2.close();
     }
     String query = "Delete From Events where event_id = ?";
     PreparedStatement stat = conn.prepareStatement(query);
     stat.setInt(1, eventID);
     stat.executeUpdate(); 
+    stat.close();
    
   }
   public List<String> getUsersFromGroup(int group_id) throws SQLException {
@@ -355,6 +362,7 @@ public class DatabaseHandler {
     while (rs.next()) {
       toReturn.add(rs.getString(1));
     }
+    rs.close();
     return toReturn;
   }
   public List<Event> getEventsFromGroup(String group_name) throws SQLException {
