@@ -326,13 +326,19 @@ public class SparkHandler {
       String message = "";
       try {
         DatabaseHandler myDBHandler = new DatabaseHandler(database);
-        myDBHandler.addFriendRequest(user1, user2);
-        message = "Friend request sent!";
+        //check if friendship exists first
+        if (myDBHandler.friendshipExists(user1, user2) == false) {
+          System.out.println("why");
+          myDBHandler.addFriendRequest(user1, user2);
+          message = "Friend request sent!";
+        } else {
+          message = "Invalid username, already friends, or request still pending.";
+        }
         Map<String, String> variables = new ImmutableMap.Builder()
         .put("message", message).build();
         return GSON.toJson(variables);
       } catch (SQLException | ClassNotFoundException e) {
-        message = "ERROR: Invalid username entered, or you've already sent a request, or you're already friends.";
+        message = "ERROR: Invalid username entered.";
         Map<String, String> variables = new ImmutableMap.Builder()
         .put("message", message).build();
         return GSON.toJson(variables);
@@ -352,6 +358,7 @@ public class SparkHandler {
       System.out.println(user2);
       try {
         DatabaseHandler myDBHandler = new DatabaseHandler(database);
+        myDBHandler.acceptFriendRequest(user1, user2);
         message = "Friend request accepted!";
         Map<String, String> variables = new ImmutableMap.Builder()
         .put("message", message).build();
