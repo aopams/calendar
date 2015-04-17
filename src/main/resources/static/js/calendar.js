@@ -41,6 +41,45 @@ function openDialog(key) {
 	$(form).dialog({modal: true});
 }
 
+function openGoogleEvent(key) {
+	value = eventMap[key.id];
+	var date = value.date.split(" ");
+	var day = date[0] + " " + date[1] + " " + date[2];
+	var T = date[3];
+	var am = date[4];
+	var time = date[3].substring(0, T.length - 3) + " " + am;
+	var dur = value.duration;
+	form =
+	'<form class="form-inline">' +
+	'<img id="x-button" src="/img/x.png"/>' +
+	'<div class="form-group">' +
+	    '<div class="input-group">' +
+		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '" readonly>' +
+	    '</div>' +
+	    '<div class="input-group">' +
+		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true" readonly></span></div>' +
+		    '<input type="text" value="' + day + '" readonly />' +
+	    '</div>' +
+	    '<div class="input-group">' +
+	    	'At <input id="dialog-time" type="text" class="time" value="' +  time + '" readonly="true"/>' +
+			' for <input id="duration" value="' + dur + '" readonly/> minutes ' +
+	    '</div>' +
+	    '<div class="input-group">' +
+	    	'<textarea type="text" class="form-control" id="descrip" readonly>'+ value.description + '</textarea>' +
+	    '</div>' +
+	    '<div class="input-group">' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="title" placeholder="People" value="' 	 				+value.attendees +'" readonly/>' +
+		'</div>' +
+	  	'<div class="input-group">' +
+		    '<div class="input-group-addon">@</div>' +
+		    '<input type="text" class="form-control" id="title" placeholder="Groups" value="'+ value.group +'" readonly/>' +
+		'</div>' +
+	 '<img id="google-button" src="\\img/google.png"/>' +
+	'</form>'
+	$(form).dialog({modal: true});
+}
+
+
 /* opens dialog window for events that creators have control over editing */
 function newEventDialog(date, time) {
 	form =	
@@ -126,7 +165,7 @@ function dateTitle() {
 }
 
 function getWrittenDate(index) {
-	return weekInfo[0].month + " " + weekInfo[0].day + " " + weekInfo[0].year;
+	return weekInfo[index].month + " " + weekInfo[index].day + ", " + weekInfo[index].year;
 }
 
 function updateDisplayedEvents() {
@@ -185,7 +224,11 @@ function parseData(responseJSON) {
 		for(key in eventMap) {
 			value = eventMap[key];
 			var newElem = document.createElement("div");
-			newElem.className = "event";
+			if (key < 0) {
+				newElem.className = "google-event";
+			} else {
+				newElem.className = "event";
+			}
 			newElem.setAttribute("id", key);
 			newElem.setAttribute("style", "height:"+getEventHeight(value.duration)+"px");
 			var p = document.createTextNode(value.title);
@@ -194,6 +237,8 @@ function parseData(responseJSON) {
 			newElem.appendChild(p);
 			placeEvents(newElem, value);
 		}
+		//change the date title on the top of the calendar
+		dateTitle();
 }
 
 
@@ -278,6 +323,12 @@ $(document).ready(function(e) {
 	$(document).on('click','.event', function(e) {
 		e.stopPropagation();
 		openDialog(e.target);
+	});
+	
+	$(document).on('click','.google-event', function(e) {
+		console.log('here');
+		e.stopPropagation();
+	    openGoogleEvent(e.target);
 	});
 
 	$(document).on('click','#x-button', function(e) {

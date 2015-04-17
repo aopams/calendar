@@ -59,8 +59,7 @@
 				<!-- nothing here -->
 			</div>
 			<div class="col-md-4">
-				<div class="date">
-					<p id = "date-title"> </p>
+				<div class="date" id = "date-title">
 				</div>
 			</div>
 			<div class="col-md-4">
