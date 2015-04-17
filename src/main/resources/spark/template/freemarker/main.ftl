@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Calendar</title>
-<script src="/js/jquery-2.1.1.js"></script>
+<script src="\js/jquery-2.1.1.js"></script>
 <script src="\js/calendar.js"></script>
 <script src="\js/contacts.js"></script>
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
@@ -11,14 +11,9 @@
 <script type="text/javascript" src="\jquery.timepicker.js"></script>
 <script type="text/javascript" src="\lib/site.js"></script>
 <script type="text/javascript" src="\lib/bootstrap-datepicker.js"></script>
-<link rel="stylesheet" type="text/css" href="jquery.timepicker.css" />
-<link rel="stylesheet" type="text/css" href="lib/bootstrap-datepicker.css" />
-<link rel="stylesheet" type="text/css" href="lib/site.css" />
-<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="css/bootstrap.css.map">
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="css/calendar.css">
+<link rel="stylesheet" type="text/css" href="\css/calendar.css">
 <link rel="stylesheet" type="text/css" href="\jquery.timepicker.css" />
 <link rel="stylesheet" type="text/css" href="\lib/bootstrap-datepicker.css" />
 <link rel="stylesheet" type="text/css" href="\lib/site.css" />
@@ -70,7 +65,6 @@
 				</div>
 			</div>
 		</div>
-<<<<<<< HEAD
 	</div>
 	
 	<div id="calWrap">
@@ -117,7 +111,7 @@
 			</div>
 			<div id="cal-days" class="calendar-days">
 				<div class="cal-col">
-					<img class="numeric-date" src="/img/one.png">
+					<img class="numeric-date"id="day1"  src="">
 					<div id="100" class="eventSlot"></div>
 					<div id="101" class="eventSlot"> </div>
 					<div id="102" class="eventSlot"> </div>
@@ -143,7 +137,7 @@
 					<div id="122" class="eventSlot"> </div>
 					<div id="123" class="eventSlot"> </div>
 				</div>
-				<div class="cal-col"><img class="numeric-date"  src="/img/two.png">
+				<div class="cal-col"><img class="numeric-date" id="day2"  src="">
 					<div id="200" class="eventSlot"></div>
 					<div id="201" class="eventSlot"> </div>
 					<div id="202" class="eventSlot"> </div>
@@ -169,7 +163,7 @@
 					<div id="222" class="eventSlot"> </div>
 					<div id="223" class="eventSlot"> </div>
 				</div>
-				<div class="cal-col"><img class="numeric-date"  src="/img/three.png">
+				<div class="cal-col"><img class="numeric-date" id="day3"  src="">
 					<div id="300" class="eventSlot"></div>
 					<div id="301" class="eventSlot"> </div>
 					<div id="302" class="eventSlot"> </div>
@@ -195,7 +189,7 @@
 					<div id="322" class="eventSlot"> </div>
 					<div id="323" class="eventSlot"> </div>
 				</div>
-				<div class="cal-col"><img class="numeric-date"  src="/img/four.png">
+				<div class="cal-col"><img id="day4" class="numeric-date"  src="">
 					<div id="400" class="eventSlot"></div>
 					<div id="401" class="eventSlot"> </div>
 					<div id="402" class="eventSlot"> </div>
@@ -221,7 +215,7 @@
 					<div id="422" class="eventSlot"> </div>
 					<div id="423" class="eventSlot"> </div>
 				</div>
-		    	<div class="cal-col"><img class="numeric-date"  src="/img/five.png">
+		    	<div class="cal-col"><img class="numeric-date" id="day5"  src="">
 					<div id="500" class="eventSlot"></div>
 					<div id="501" class="eventSlot"> </div>
 					<div id="502" class="eventSlot"> </div>
@@ -247,7 +241,7 @@
 					<div id="522" class="eventSlot"> </div>
 					<div id="523" class="eventSlot"> </div>
 		    	</div>
-		    	<div class="cal-col"><img class="numeric-date"  src="/img/six.png">
+		    	<div class="cal-col"><img class="numeric-date" id="day6"  src="">
 		    		<div id="600" class="eventSlot"></div>
 					<div id="601" class="eventSlot"> </div>
 					<div id="602" class="eventSlot"> </div>
@@ -273,7 +267,7 @@
 					<div id="622" class="eventSlot"> </div>
 					<div id="623" class="eventSlot"> </div>
 		    	</div>
-		    	<div class="cal-col border-none"><img  class="numeric-date"  src="/img/seven.png">
+		    	<div class="cal-col border-none"><img  class="numeric-date" id="day7"  src="">
 		    		<div id="700" class="eventSlot"></div>
 					<div id="701" class="eventSlot"> </div>
 					<div id="702" class="eventSlot"> </div>
