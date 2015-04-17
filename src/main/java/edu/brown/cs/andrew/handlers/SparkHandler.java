@@ -65,7 +65,7 @@ public class SparkHandler {
 
   public void runSparkServer() {
     Spark.externalStaticFileLocation("src/main/resources/static");
-    Spark.setPort(1234);
+    Spark.setPort(4567);
     Spark.exception(Exception.class, new ExceptionPrinter());
     FreeMarkerEngine freeMarker = createEngine();
     // Setup Spark Routes
@@ -276,7 +276,8 @@ public class SparkHandler {
           "message", "");
       ServerCalls sc = new ServerCalls();
       String url = sc.loginClicked();
-      sc.openURLInBrowser(url);
+      
+      sc.openURLInBrowser("https://accounts.google.com/o/oauth2/auth?scope=email%20profile&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com");
       return new ModelAndView(variables, "main.ftl");
     }
   }
