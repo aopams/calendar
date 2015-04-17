@@ -269,12 +269,13 @@ public class SparkHandler {
       System.out.println("got week");
       Gson gson = new Gson();
       List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
-
       ConcurrentHashMap<Integer, Event> testEvents;
       testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
+      System.out.println(testEvents.size());
       System.out.println("got events");
       List<String> toFrontEnd = new ArrayList<String>();
       for (Entry<Integer, Event> e : testEvents.entrySet()) {
+        System.out.println("here");
         Event curr = e.getValue();
         toFrontEnd.add(gson.toJson(curr));
       }

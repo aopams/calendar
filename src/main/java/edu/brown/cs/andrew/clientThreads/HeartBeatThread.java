@@ -33,7 +33,8 @@ public class HeartBeatThread implements Runnable{
           client.setFriends(myDBHandler.getFriendsFromUser(user));
           client.setGroups(myDBHandler.getGroupsNameFromUser(user));  
           client.setEvents(myDBHandler.getAllEventsFromUser(user));
-          client.setMaxGroupId(myDBHandler.getMaxrGroupID(user));
+          client.setMaxGroupId(myDBHandler.getMaxGroupID());
+          client.setMaxEventId(myDBHandler.getMaxEventID());
           myDBHandler.closeConnection();
         } catch (SQLException | ParseException | ClassNotFoundException e2) {
           e2.printStackTrace();

@@ -23,6 +23,7 @@ public class ClientHandler {
   String accessToken;
   private List<String> updateList;
   private int maxGroupId;
+  private int maxEventId;
 
 
   public ClientHandler(String db, String user) {
@@ -47,6 +48,7 @@ public class ClientHandler {
   
   public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date start) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
+    System.out.println(events.size());
     for (Entry<Integer, Event> e : events.entrySet()) {
       try {
         Date eventDate = e.getValue().getDate();
@@ -77,6 +79,9 @@ public class ClientHandler {
   public synchronized void setMaxGroupId(int maxID) {
     this.maxGroupId = maxID;
   }
+  public synchronized void setMaxEventId(int maxID) {
+    this.maxEventId = maxID;
+  }
   
   public synchronized String getClient() {
     return user;
@@ -95,7 +100,9 @@ public class ClientHandler {
     friends.put(user_name, "pending");
   }
   public void addEvent(Event e) {
-    events.put(e.getId(), e);
+    maxEventId++;
+    e.setID(maxEventId);
+    events.put(maxEventId, e);
   }
   public void removeEvent(Event e) {
     events.remove(e.getId());
