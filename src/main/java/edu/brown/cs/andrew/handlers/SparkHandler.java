@@ -385,19 +385,17 @@ public class SparkHandler {
       System.out.println(events);
       System.out.println("RECHED HERE");
       
+      clients.put(120456778, client);
       Date currentWeekStart = new Date();
       List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
       ConcurrentHashMap<Integer, Event> testEvents;
       testEvents = clients.get(120456778).getEventsByWeek(currentWeekStart);
-      System.out.println(testEvents.size());
-      System.out.println("got events");
       List<String> toFrontEnd = new ArrayList<String>();
       for (Entry<Integer, Event> e : testEvents.entrySet()) {
         System.out.println("here");
         Event curr = e.getValue();
         toFrontEnd.add(GSON.toJson(curr));
       }
-      clients.put(120456778, client);
       Map<String, Object> variables = new ImmutableMap.Builder()
       .put("events", toFrontEnd)
       .put("week", currentWeek).build();
