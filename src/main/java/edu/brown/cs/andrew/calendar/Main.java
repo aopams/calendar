@@ -55,8 +55,20 @@ public class Main {
       myDBHandler.insertUser("Harsha2", "meow", "Harsha Yeddanapudy",
           "hyeddana@cs.brown.edu");
       myDBHandler.insertUser("Rohan", "6969", "Rohan Chandra", "rohan_chandra@brown.edu");
+      myDBHandler.insertUser("Dylan", "dg", "Dylan Gattey", "dylan_gattey@brown.edu");
+      myDBHandler.insertUser("Will", "Nagasaki", "William Truong", "william_turong@brown.edu");
+      myDBHandler.insertUser("Andrew", "dino", "Andrew Osgood", "andrew_osgood@brown.edu");
+      myDBHandler.insertUser("Will2", "Nagasaki", "William Truong", "william_turong@brown.edu");
+      myDBHandler.insertUser("Will3", "Nagasaki", "William Truong", "william_turong@brown.edu");
+      myDBHandler.insertUser("Will4", "Nagasaki", "William Truong", "william_turong@brown.edu");
       myDBHandler.addFriendRequest("Rohan", "Harsha2");
       myDBHandler.addFriendRequest("Rohan", "Harsha");
+      myDBHandler.addFriendRequest("Rohan", "Will");
+      myDBHandler.addFriendRequest("Rohan", "Dylan");
+      myDBHandler.addFriendRequest("Rohan", "Andrew");
+      myDBHandler.addFriendRequest("Rohan", "Will2");
+      myDBHandler.addFriendRequest("Rohan", "Will3");
+      myDBHandler.addFriendRequest("Rohan", "will4");
       myDBHandler.acceptFriendRequest("Rohan", "Harsha2");
       myDBHandler.addFriendRequest("Harsha", "Harsha2");
       myDBHandler.acceptFriendRequest("Harsha2", "Harsha");
