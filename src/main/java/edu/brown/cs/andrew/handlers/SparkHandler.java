@@ -89,7 +89,7 @@ public class SparkHandler {
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
     Spark.post("/newevent", new CreateEventHandler());
-    Spark.post("/register", new RegisterHandler());
+    Spark.post("/register", new RegisterHandler(), freeMarker);
   }
   private static class CreateEventHandler implements Route {
 
