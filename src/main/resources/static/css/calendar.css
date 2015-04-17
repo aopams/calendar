@@ -120,6 +120,13 @@ body {
 
 .google-event {
 	background-color: rgba(62, 115, 240, 0.57);
+	display: block;
+	float: right;
+	border: 1px solid;
+	font-family: Helvetica;
+	min-height: 20px;
+	width: 132px;
+    cursor: pointer;
 }
 
 .footer {
@@ -130,11 +137,11 @@ body {
     display: none;
 }
 
-#x-button, #check-button, #delete-button {
+#x-button, #check-button, #delete-button, #google-button {
 	height: 30px;
 }
 
-#x-button, #check-button {
+#x-button, #check-button, #google-button {
 	float: right;
 }
 
