@@ -34,7 +34,7 @@ import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
 
 public class SparkHandler {
-  private static Date currentWeekStart;
+  private static ConcurrentHashMap<Integer, Date> currentWeeks = new ConcurrentHashMap<Integer, Date>();
   private static String database;
   private static final int RESSTAT = 500;
   private static DatabaseHandler myDBHandler;
@@ -75,8 +75,9 @@ public class SparkHandler {
     Spark.get("/login", new LoginHandler(), freeMarker);
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
-    Spark.get("/randnum", new RandNumHandler());
     Spark.post("/getfriends", new FriendsHandler());
+    Spark.post("/leftarrow", new BTFEventHandler());
+    Spark.post("/rightarrow", new BTFEventHandler());
   }
 
   private static class LoginHandler implements TemplateViewRoute {
@@ -172,28 +173,48 @@ public class SparkHandler {
   private static class BTFEventHandler implements Route {
 
     public Object handle(final Request req, final Response res) {
+      System.out.println("getting events");
       Date date = new Date();
       Calendar c = Calendar.getInstance();
       c.setTime(date);
+      QueryParamsMap qm = req.queryMap();
       int week = c.get(Calendar.WEEK_OF_YEAR);
+      int clientID = Integer.parseInt(qm.value("string").substring(10));
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
-      currentWeekStart = c.getTime();
-      QueryParamsMap qm = req.queryMap();
+      System.out.println("checking hashmap");
+      Date currentWeekStart = currentWeeks.get(clientID);
+      System.out.println("got current date");
+      if (currentWeekStart == null) {
+        currentWeeks.put(clientID, c.getTime());
+        currentWeekStart = c.getTime();
+      }
       // list of events that this user has
+      try {
+        String dateString = qm.value("date");
+        System.out.println(dateString);
+        if (dateString != null && !dateString.equals("")) {
+          Date reference =
+            new SimpleDateFormat("MM dd YYYY").parse(dateString);
+          if (reference.equals(currentWeekStart)) {
+            c.set(Calendar.WEEK_OF_YEAR, -1);
+          } else {
+            c.set(Calendar.DATE, 1);
+          }
+          currentWeekStart = c.getTime();
+        }
+      } catch (ParseException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+      System.out.println("got week");
       Gson gson = new Gson();
       List<DateHandler> currentWeek = getCurrentWeek();
-      //List<String> week = new ArrayList<String>();
-      //for (int i = 0; i < 7; i++) {
-        //DateHandler curr = currentWeek.get(i);
-        //System.out.println(gson.toJson(curr));
-        //week.add(currentWeek.get(i));
-      //}
-      int clientID = Integer.parseInt(qm.value("string").substring(10));
 
       System.out.println(clientID);
       ConcurrentHashMap<Integer, Event> testEvents;
       testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
+      System.out.println("got events");
       List<String> toFrontEnd = new ArrayList<String>();
       for (Entry<Integer, Event> e : testEvents.entrySet()) {
         Event curr = e.getValue();
@@ -208,18 +229,6 @@ public class SparkHandler {
   }
  }
   
-  private static class RandNumHandler implements Route {
-    @Override
-    public Object handle(Request arg0, Response arg1) {
-      while (clients.containsKey(randomHolder)) {
-        randomHolder = (int)(Math.random() * 1000000);
-      }
-      Map<String, String> variables = new ImmutableMap.Builder()
-      .put("num", randomHolder).build();
-      return GSON.toJson(variables);
-    }
-  }
-
   private static class FriendsHandler implements Route {
     @Override
     public Object handle(Request arg0, Response arg1) {
@@ -238,7 +247,6 @@ public class SparkHandler {
       return GSON.toJson(variables);
     }
   }
-  
   private static class CodeHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {

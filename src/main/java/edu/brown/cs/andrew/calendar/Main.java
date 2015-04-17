@@ -54,8 +54,11 @@ public class Main {
           "hyeddana@cs.brown.edu");
       myDBHandler.insertUser("Harsha2", "meow", "Harsha Yeddanapudy",
           "hyeddana@cs.brown.edu");
+      myDBHandler.insertUser("Rohan", "6969", "Rohan Chandra", "rohan_chandra@brown.edu");
+      myDBHandler.addFriendRequest("Rohan", "Harsha2");
+      myDBHandler.addFriendRequest("Rohan", "Harsha");
+      myDBHandler.acceptFriendRequest("Rohan", "Harsha2");
       myDBHandler.addFriendRequest("Harsha", "Harsha2");
-      myDBHandler.addFriendRequest("Harsha2", "Harsha");
       myDBHandler.acceptFriendRequest("Harsha2", "Harsha");
       myDBHandler.addGroup("Harsha Squad");
       myDBHandler.addUserToGroup("Harsha", 1);
@@ -67,16 +70,21 @@ public class Main {
       hSquad.add("Harsha2");
       List<String> hGroup = new ArrayList<String>();
       hGroup.add("Harsha");
+      hGroup.add("Rohan");
       System.out.println(myDate.toString());
       Event e = new Event(myDate, "Party Time!!!!", "Friday", hSquad,
           "Harsha Squad", 180,
           "Harsha Squad going Ham to Trap Queen for 3 hours",
           "Harsha");
       Date myDate2 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("16/4/2015 13:00");
+      Date myDate3 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("21/4/2015 18:00");
       System.out.println(myDate2);
       Event e2 = new Event(myDate2, "Ninja Time!", "Monday", hGroup, "", 30,
           "Harsha going stealth-mode",
           "Harsha2");
+      Event e3 = new Event(myDate3, "Ninja Time! Pt. 2", "Tuesday", hGroup, "", 60,
+          "Harsha and Rohan going stealth-mode",
+          "Rohan");
       System.out.println(myDBHandler.findGroup("Harsha Squad"));
       myDBHandler.addEvent(e);
       myDBHandler.addEvent(e2);

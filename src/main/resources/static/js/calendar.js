@@ -1,4 +1,5 @@
 var eventMap = {};
+var weekInfo = [];
 
 /* opens dialog window for events that creators have control over editing */
 function openDialog(key) {
@@ -18,7 +19,7 @@ function openDialog(key) {
 	    '</div>' +
 	    '<div class="input-group">' +
 		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' +
-		    '<input type="text" id="datepicker" onclick="datePicker()" value="' + day + '"/>' +
+		    '<input type="text" id="datepicker" value="' + day + '"/>' +
 	    '</div>' +
 	    '<div class="input-group">' +
 	    	'At <input id="dialog-time" type="text" class="time" onclick="timePicker()" value="' +  time + '" />' +
@@ -51,7 +52,7 @@ function newEventDialog(date, time) {
 	    '</div>' +
 	    '<div class="input-group">' +
 		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' +
-		    '<input type="text" id="datepicker" onclick="datePicker()" value="' + date + '"/>' +
+		    '<input type="text" id="datepicker" value="' + date + '"/>' +
 	    '</div>' +
 	    '<div class="input-group">' +
 	    	'At <input id="dialog-time" type="text" class="time" onclick="timePicker()" value="' +  time + '" />' +
@@ -98,7 +99,7 @@ function createEvent(eventSlot) {
 
 function getDay(day) {
 	var int = parseInt(day) - 1;
-	return weekArray[int].month + " " + weekArray[int].day + ", " + weekArray[int].year;
+	return weekInfo[int].month + " " + weekInfo[int].day + ", " + weekInfo[int].year;
 }
 
 function getTime(time) {
@@ -122,7 +123,28 @@ function getTime(time) {
 function updateDisplayedEvents() {
 	var postParameters = {string: window.location.pathname};
 	$.post("/getevents", postParameters, function(responseJSON){
-		var responseObject = JSON.parse(responseJSON);
+		parseData(responseJSON);
+	})
+}
+
+function leftWeek() {
+	var daydetails = weekInfo[0].month + " " + weekInfo[0].day + " " + weekInfo[0].year;
+	var postParameters = {string: window.location.pathname, date: daydetails};
+	$.post("/leftweek", postParameters, function(responseJSON){
+		parseData(responseJSON);
+	})
+}
+
+function rightWeek() {
+	var daydetails = weekInfo[6].month + " " + weekInfo[6].day + " " + weekInfo[6].year;
+	var postParameters = {string: window.location.pathname, date: daydetails };
+	$.post("/rightweek", postParameters, function(responseJSON){
+		parseData(responseJSON);
+	})
+}
+
+function parseData(responseJSON) {
+	var responseObject = JSON.parse(responseJSON);
 		var list = responseObject.events;
 		var weekList = responseObject.week;
 		//clear week array
@@ -133,6 +155,7 @@ function updateDisplayedEvents() {
 		}
 		// update week numbers
 		changeWeekNumbers(weekArray);
+		weekInfo = weekArray;
 
 		//clear current map of events
 		eventMap = {};
@@ -161,8 +184,8 @@ function updateDisplayedEvents() {
 			newElem.appendChild(p);
 			placeEvents(newElem, value);
 		}
-	})
 }
+
 
 function placeEvents(elem, event) {
 	var day = event.dayOfWeek;
@@ -220,7 +243,7 @@ function getEventHeight(dur) {
 function changeWeekNumbers(weekArray) {
 	for (var i = 0; i < 7; i++) {
 		var imgID = "day" + (i+1);
-		document.getElementById(imgID).src="/img/num/" + weekArray[i].day + ".png";
+		document.getElementById(imgID).src="\\img/num/" + weekArray[i].day + ".png";
 	}
 }
 
@@ -231,6 +254,7 @@ $(document).ready(function(e) {
 		console.log("here");
 		dialog.close();
 		$('#terms').dialog('close');
+	});
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {
@@ -251,4 +275,7 @@ $(document).ready(function(e) {
 	    $dialog.dialog('close');
 	});
 	
+	$(document).on('click','#datepicker', function(e) {
+	    datePicker();
+	});
 });
