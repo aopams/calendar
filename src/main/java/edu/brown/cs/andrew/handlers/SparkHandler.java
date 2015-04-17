@@ -34,7 +34,7 @@ import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
 
 public class SparkHandler {
-  private static ConcurrentHashMap<Integer, Date> currentWeeks;
+  private static ConcurrentHashMap<Integer, Date> currentWeeks = new ConcurrentHashMap<Integer, Date>();
   private static String database;
   private static final int RESSTAT = 500;
   private static DatabaseHandler myDBHandler;
@@ -172,6 +172,7 @@ public class SparkHandler {
   private static class BTFEventHandler implements Route {
 
     public Object handle(final Request req, final Response res) {
+      System.out.println("getting events");
       Date date = new Date();
       Calendar c = Calendar.getInstance();
       c.setTime(date);
@@ -180,7 +181,9 @@ public class SparkHandler {
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
+      System.out.println("checking hashmap");
       Date currentWeekStart = currentWeeks.get(clientID);
+      System.out.println("got current date");
       if (currentWeekStart == null) {
         currentWeeks.put(clientID, c.getTime());
         currentWeekStart = c.getTime();
@@ -203,12 +206,14 @@ public class SparkHandler {
         // TODO Auto-generated catch block
         e1.printStackTrace();
       }
+      System.out.println("got week");
       Gson gson = new Gson();
       List<DateHandler> currentWeek = getCurrentWeek();
 
       System.out.println(clientID);
       ConcurrentHashMap<Integer, Event> testEvents;
       testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
+      System.out.println("got events");
       List<String> toFrontEnd = new ArrayList<String>();
       for (Entry<Integer, Event> e : testEvents.entrySet()) {
         Event curr = e.getValue();
