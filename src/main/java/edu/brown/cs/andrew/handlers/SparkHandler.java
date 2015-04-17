@@ -30,6 +30,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
+import edu.brown.cs.andrew.clientThreads.CalendarThread;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
 
@@ -41,11 +42,21 @@ public class SparkHandler {
   private static Gson GSON = new Gson();
   private static int randomHolder = (int)(Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
+  private static ConcurrentHashMap<Integer, String> numbersToDay
+    = new ConcurrentHashMap<Integer, String>();
+  
   public SparkHandler(String db) {
     try {
       myDBHandler = new DatabaseHandler(db);
       database = db;
       clients = new ConcurrentHashMap<Integer, ClientHandler>();
+      numbersToDay.put(1, "Sunday");
+      numbersToDay.put(2, "Monday");
+      numbersToDay.put(3, "Tuesday");
+      numbersToDay.put(4, "Wednesday");
+      numbersToDay.put(5, "Thursday");
+      numbersToDay.put(6, "Friday");
+      numbersToDay.put(7, "Saturday");
     } catch (ClassNotFoundException | SQLException e) {
       System.out.println("Error connecting to the Database: " + db);
     }
@@ -77,8 +88,45 @@ public class SparkHandler {
     Spark.post("/getevents", new BTFEventHandler());
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
+    Spark.post("/eventupdate", new CreateEventHandler());
   }
+  private static class CreateEventHandler implements Route {
 
+    @Override
+    public Object handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      int clientID = Integer.parseInt(qm.value("string").substring(10));
+      ClientHandler cli = clients.get(clientID);
+      String title = qm.value("title");
+      Date date = null;
+      try {
+        date = new SimpleDateFormat("dd-MMM-yyy hh:00").parse(qm.value("date"));
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+      String description = qm.value("description");
+      String creator = cli.getClient();
+      String group = qm.value("group");
+      int duration = Integer.parseInt(qm.value("duration"));
+      String users = qm.value("attendees");
+      List<String> attendees = new ArrayList<String>(); 
+      attendees.add(cli.getClient());
+      while (users.contains(",")) {
+        attendees.add(users.substring(0, users.indexOf(",")));
+        users = users.substring(users.indexOf(",") + 1);
+      }
+      Calendar c = Calendar.getInstance();
+      c.setTime(date);
+      int dayWeek = c.get(Calendar.DAY_OF_WEEK);
+      String dayOfWeek = numbersToDay.get(dayWeek);
+      Event e = new Event(date, title, dayOfWeek, attendees,
+          group, duration, description, creator);
+      CalendarThread ct = new CalendarThread(cli, "ae", e, null);
+      ct.run();
+      return null;
+    }
+    
+  }
   private static class LoginHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {

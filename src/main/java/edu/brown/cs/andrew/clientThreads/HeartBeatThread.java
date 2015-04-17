@@ -2,6 +2,8 @@ package edu.brown.cs.andrew.clientThreads;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -9,6 +11,7 @@ import org.eclipse.jetty.server.Server;
 
 import edu.brown.cs.andrew.handlers.ClientHandler;
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
+import edu.brown.cs.andrew.handlers.Event;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 public class HeartBeatThread implements Runnable{
   private ConcurrentHashMap<Integer, ClientHandler> clients;
@@ -32,12 +35,12 @@ public class HeartBeatThread implements Runnable{
           client.setEvents(myDBHandler.getAllEventsFromUser(user));
           client.setMaxGroupId(myDBHandler.getMaxrGroupID(user));
           ServerCalls sc = new ServerCalls();
-          HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
-          HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList, accessToken);
-          ArrayList<Event> events = sc.getAllEvents(eventsList);
-          for (Event event : events) {
-            client.addEvent(event);
-          }
+          //HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
+          //HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList, accessToken);
+          //List<Event> events = sc.getAllEvents(eventsList);
+          //for (Event event : events) {
+          //  client.addEvent(event);
+         // }
           myDBHandler.closeConnection();
         } catch (SQLException | ParseException | ClassNotFoundException e2) {
           e2.printStackTrace();

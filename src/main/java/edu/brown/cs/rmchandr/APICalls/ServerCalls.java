@@ -388,7 +388,7 @@ public class ServerCalls {
       String dayOfWeek = numbersToDay.get(dayWeek);
 
       Event toPut = new Event(date, title, dayOfWeek, attendees, group,
-          duration, description);
+          duration, description, "google");
       toReturn.add(toPut);
     }
 
