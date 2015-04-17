@@ -78,8 +78,8 @@
 				</div>
 			</div>
 			<div class="col-md-4">
-				<img class="arrow" src="\img/rightarrow.png">
-				<img class="arrow" src="\img/leftarrow.png">
+				<img class="arrow" src="\img/rightarrow.png" id="rightarrow">
+				<img class="arrow" src="\img/leftarrow.png" id="leftarrow">
 			</div>
 		</div>
 		<div id="calendar" class="row calendar btn-outline">
