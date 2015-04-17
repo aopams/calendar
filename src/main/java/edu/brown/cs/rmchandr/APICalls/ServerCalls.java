@@ -7,7 +7,22 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import edu.brown.cs.andrew.handlers.Event;
 
 public class ServerCalls {
 
@@ -160,7 +175,7 @@ public class ServerCalls {
 
   }
 
-  public void getCalendarList(String accessToken) {
+  public HashMap<String, String> getCalendarList(String accessToken) {
 
     try {
       String website = "https://www.googleapis.com/calendar/v3/users/me/calendarList/";
@@ -172,26 +187,7 @@ public class ServerCalls {
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
       conn.setRequestMethod("GET");
-      // conn.setRequestProperty("resources", "");
       conn.setRequestProperty("Authorization", "Bearer " + accessToken);
-      // conn.setRequestProperty("X-JavaScript-User-Agent",
-      // "Google APIs Explorer");
-      // conn.setRequestProperty("Content-Type", "x-www-form-urlencoded");
-      // conn.setRequestProperty("scope",
-      // "https://www.googleapis.com/calendar");
-      // conn.setRequestProperty("Host", "www.googleapis.com");
-      // conn.setRequestProperty("If-Match", "*");
-      // conn.setRequestProperty("pageToken", null);
-      // conn.setRequestProperty("cache-control",
-      // "private, max-age=0, must-revalidate, no-transform");
-      // conn.setRequestProperty("content-encoding", "gzip");
-      // conn.setRequestProperty("content-length", "758");
-      // conn.setRequestProperty("content-type",
-      // "application/json; charset=UTF-8");
-
-      // conn.setUseCaches(false);
-      // conn.setDoInput(true);
-      // conn.setDoOutput(true);
 
       int responseCode = conn.getResponseCode();
       System.out.println("\nSending 'GET' request to URL : " + url);
@@ -211,14 +207,192 @@ public class ServerCalls {
       }
       in.close();
 
-      // print result
-      System.out.println(response.toString());
+      // InputStream in = conn.getInputStream();
+      // String encoding = conn.getContentEncoding();
+      // encoding = encoding == null ? "UTF-8" : encoding;
+      // String response = IOUtils.toString(in);
+      // System.out.println(response);
+
+      // HashMap<String, String> map = new Gson().fromJson(response.toString(),
+      // new TypeToken<HashMap<String, String>>() {
+      // }.getType());
+
+      HashMap<String, String> map = new HashMap<String, String>();
+      JsonParser parser = new JsonParser();
+      JsonObject jObject = parser.parse(response.toString()).getAsJsonObject();
+      Iterator<Entry<String, JsonElement>> it = jObject.entrySet().iterator();
+
+      while (it.hasNext()) {
+        Entry<String, JsonElement> entry = it.next();
+        String key = entry.getKey();
+        String value = entry.getValue().toString();
+        map.put(key, value);
+
+      }
+
+      return map;
 
     } catch (Exception e) {
       System.out.println("ERROR:");
       e.printStackTrace();
+      return null;
 
     }
+  }
+
+  public HashMap<String, String> getAllEventsMap(
+      HashMap<String, String> calendarList, String accessToken) {
+    try {
+      String itemString = calendarList.get("items");
+      itemString = itemString.substring(itemString.indexOf("id") + 5);
+      System.out.println(itemString);
+      String calendarID = itemString.substring(0, itemString.indexOf('\"'));
+      System.out.println(calendarID);
+
+      String website = "https://www.googleapis.com/calendar/v3/calendars/"
+          + calendarID + "/events";
+
+      URL url = new URL(website);
+
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+      conn.setRequestMethod("GET");
+      conn.setRequestProperty("Authorization", "Bearer " + accessToken);
+
+      int responseCode = conn.getResponseCode();
+      System.out.println("\nSending 'GET' request to URL : " + url);
+      System.out.println("Response Code : " + responseCode);
+
+      BufferedReader in;
+      if (responseCode == 200) {
+        in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      } else {
+        in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+      }
+      String inputLine;
+      StringBuffer response = new StringBuffer();
+
+      while ((inputLine = in.readLine()) != null) {
+        response.append(inputLine);
+      }
+      in.close();
+      // System.out.println(response.toString());
+
+      HashMap<String, String> map = new HashMap<String, String>();
+      JsonParser parser = new JsonParser();
+      JsonObject jObject = parser.parse(response.toString()).getAsJsonObject();
+      Iterator<Entry<String, JsonElement>> it = jObject.entrySet().iterator();
+
+      while (it.hasNext()) {
+        Entry<String, JsonElement> entry = it.next();
+        String key = entry.getKey();
+        String value = entry.getValue().toString();
+        map.put(key, value);
+      }
+      return map;
+
+    } catch (Exception e) {
+      System.out.println("ERROR:");
+      e.printStackTrace();
+      return null;
+    }
+
+  }
+
+  @SuppressWarnings("deprecation")
+  public ArrayList<Event> getAllEvents(HashMap<String, String> eventsList) {
+    ArrayList<Event> toReturn = new ArrayList<Event>();
+    String itemString = eventsList.get("items");
+    String[] events = itemString.split("kind");
+    for (int i = 1; i < events.length; i++) {
+
+      int id = -1;
+
+      int titleLoc = events[i].indexOf("summary");
+
+      String title = events[i].substring(titleLoc + 9,
+          events[i].substring(titleLoc).indexOf(',') + titleLoc).replaceAll(
+          "\"", "");
+      String group = null;
+      List<String> attendees = null;
+      int descriptionLoc = events[i].indexOf("description");
+
+      String description;
+      if (descriptionLoc != -1) {
+        description = events[i].substring(descriptionLoc + 14,
+            events[i].substring(descriptionLoc).indexOf(',') + descriptionLoc)
+            .replaceAll("\"", "");
+      } else {
+        description = "";
+      }
+
+      Date date = null;
+      int duration = 0;
+      int startLoc = events[i].indexOf("start");
+      int endLoc = events[i].indexOf("\"end\":");
+      String start;
+      if (events[i].contains("dateTime")) {
+        start = events[i]
+            .substring(startLoc + 20,
+                events[i].substring(startLoc).indexOf(',') + startLoc)
+            .replaceAll("\"", "").replaceAll("}", "").replaceAll("T", " ");
+        String end = events[i]
+            .substring(endLoc + 18,
+                events[i].substring(endLoc).indexOf(',') + endLoc)
+            .replaceAll("\"", "").replaceAll("}", "").replaceAll("T", " ");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss");
+        try {
+          date = simpleDateFormat.parse(start);
+          Date endDate = simpleDateFormat.parse(end);
+          duration = endDate.getMinutes() - date.getMinutes();
+          // System.out.println("date : " + simpleDateFormat.format(endDate));
+        } catch (ParseException ex) {
+          System.out.println("Exception " + ex);
+        }
+      } else {
+        start = events[i]
+            .substring(startLoc + 16,
+                events[i].substring(startLoc).indexOf(',') + startLoc)
+            .replaceAll("\"", "").replaceAll("}", "");
+        String end = events[i]
+            .substring(endLoc + 14,
+                events[i].substring(endLoc).indexOf(',') + endLoc)
+            .replaceAll("\"", "").replaceAll("}", "");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+          date = simpleDateFormat.parse(start);
+          Date endDate = simpleDateFormat.parse(end);
+          duration = endDate.getMinutes() - date.getMinutes();
+          System.out.println("date : " + simpleDateFormat.format(endDate));
+        } catch (ParseException ex) {
+          System.out.println("Exception " + ex);
+        }
+      }
+
+      // System.out.println(start);
+      // System.out.println(end);
+
+      Calendar c = Calendar.getInstance();
+      c.setTime(date);
+      int dayWeek = c.get(Calendar.DAY_OF_WEEK);
+      ConcurrentHashMap<Integer, String> numbersToDay = new ConcurrentHashMap<Integer, String>();
+      numbersToDay.put(1, "Sunday");
+      numbersToDay.put(2, "Monday");
+      numbersToDay.put(3, "Tuesday");
+      numbersToDay.put(4, "Wednesday");
+      numbersToDay.put(5, "Thursday");
+      numbersToDay.put(6, "Friday");
+      numbersToDay.put(7, "Saturday");
+
+      String dayOfWeek = numbersToDay.get(dayWeek);
+
+      Event toPut = new Event(date, title, dayOfWeek, attendees, group,
+          duration, description);
+      toReturn.add(toPut);
+    }
+
+    return toReturn;
   }
 
   public String urlEncodedString(HashMap<String, String> params) {

@@ -5,8 +5,11 @@ import java.text.ParseException;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.eclipse.jetty.server.Server;
+
 import edu.brown.cs.andrew.handlers.ClientHandler;
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
+import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 public class HeartBeatThread implements Runnable{
   private ConcurrentHashMap<Integer, ClientHandler> clients;
   String typeHeartBeat;
@@ -28,6 +31,13 @@ public class HeartBeatThread implements Runnable{
           client.setGroups(myDBHandler.getGroupsNameFromUser(user));  
           client.setEvents(myDBHandler.getAllEventsFromUser(user));
           client.setMaxGroupId(myDBHandler.getMaxrGroupID(user));
+          ServerCalls sc = new ServerCalls();
+          HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
+          HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList, accessToken);
+          ArrayList<Event> events = sc.getAllEvents(eventsList);
+          for (Event event : events) {
+            client.addEvent(event);
+          }
           myDBHandler.closeConnection();
         } catch (SQLException | ParseException | ClassNotFoundException e2) {
           e2.printStackTrace();
