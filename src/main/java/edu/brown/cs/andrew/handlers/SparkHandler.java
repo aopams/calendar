@@ -89,6 +89,7 @@ public class SparkHandler {
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
     Spark.post("/newevent", new CreateEventHandler());
+    //Spark.post("/register", route);
   }
   private static class CreateEventHandler implements Route {
 
@@ -315,6 +316,15 @@ public class SparkHandler {
         pw.println("</pre>");
       }
       res.body(stacktrace.toString());
+    }
+  }
+  
+  private static class RegisterHandler implements TemplateViewRoute {
+    public ModelAndView handle(Request req, Response res) {
+      ServerCalls sc = new ServerCalls();
+      String url = sc.loginClicked();
+      sc.openURLInBrowser(url);
+      return null;
     }
   }
 }

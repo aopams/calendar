@@ -32,7 +32,7 @@
     <!register page>
     <div class="registerpage">
     <h1>Register</h1><br>
-	  <form>
+	  <form method = "POST" action="/register">
 	    <input type="text" name="user" placeholder="Username">
 	    <input type="password" name="pass" placeholder="Password">
 	    <input type="password" name="pass" placeholder="Confirm password">
