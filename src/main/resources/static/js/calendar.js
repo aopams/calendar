@@ -128,16 +128,16 @@ function updateDisplayedEvents() {
 }
 
 function leftWeek() {
-	var day-details = weekInfo[0].month + " " + weekInfo[0].day + " " + weekInfo[0].year;
-	var postParameters = {string: window.location.pathname, date: day-details};
+	var daydetails = weekInfo[0].month + " " + weekInfo[0].day + " " + weekInfo[0].year;
+	var postParameters = {string: window.location.pathname, date: daydetails};
 	$.post("/leftweek", postParameters, function(responseJSON){
 		parseData(responseJSON);
 	})
 }
 
 function rightWeek() {
-	var day-details = weekInfo[6].month + " " + weekInfo[6].day + " " + weekInfo[6].year;
-	var postParameters = {string: window.location.pathname, date: day-details };
+	var daydetails = weekInfo[6].month + " " + weekInfo[6].day + " " + weekInfo[6].year;
+	var postParameters = {string: window.location.pathname, date: daydetails };
 	$.post("/rightweek", postParameters, function(responseJSON){
 		parseData(responseJSON);
 	})
@@ -243,7 +243,7 @@ function getEventHeight(dur) {
 function changeWeekNumbers(weekArray) {
 	for (var i = 0; i < 7; i++) {
 		var imgID = "day" + (i+1);
-		document.getElementById(imgID).src="/img/num/" + weekArray[i].day + ".png";
+		document.getElementById(imgID).src="\\img/num/" + weekArray[i].day + ".png";
 	}
 }
 
