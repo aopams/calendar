@@ -98,6 +98,7 @@ public class DatabaseHandler {
     if (rs.next()) {
       toReturn = rs.getString(1);
     }
+    rs.close();
     return toReturn;
   }
   public boolean findUser(String user_name, String user_password) throws SQLException {
@@ -106,7 +107,9 @@ public class DatabaseHandler {
     theStat.setString(1, user_name);
     theStat.setString(2, user_password);
     ResultSet rs = theStat.executeQuery();
-    return rs.next();
+    boolean toReturn = rs.next();
+    rs.close();
+    return toReturn;
   }
   public void insertUser(String user_name, String password,
       String name, String email) throws SQLException {
@@ -174,6 +177,7 @@ public class DatabaseHandler {
     while (rs.next()) {
       toReturn.put(rs.getString(1), rs.getString(2));
     }
+    rs.close();
     String query2 = "Select user_name2, status from Friends where user_name1 = ?";
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     theStat2.setString(1, user_name);
@@ -181,6 +185,7 @@ public class DatabaseHandler {
     while (rs2.next()) {
       toReturn.put(rs2.getString(1), rs2.getString(2));
     }
+    rs2.close();
     return toReturn;
   }
   public int findGroup(String group_name) throws SQLException {
@@ -240,13 +245,11 @@ public class DatabaseHandler {
   public void addEvent(Event e) throws SQLException, ParseException {
     String group_name = e.getGroup();
     List<String> users = e.getAttendees();
-    StringBuilder query = new StringBuilder();
     String eventQuery = "";
     eventQuery = "Insert into Events(date, title, day_of_week, description, duration)"
       + "Values( ?, ?, ?, ?, ?)";
     PreparedStatement theStat = conn.prepareStatement(eventQuery);
     DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-    Date setDate = new Date(e.getDate().getTime());
     theStat.setString(1, df.format(e.getDate()));
     theStat.setString(2, e.getTitle());
     theStat.setString(3, e.getDayOfWeek());
@@ -303,11 +306,13 @@ public class DatabaseHandler {
         stat2.addBatch();
       }
       stat2.executeQuery();
+      stat2.close();
     }
     String query = "Delete From Events where event_id = ?";
     PreparedStatement stat = conn.prepareStatement(query);
     stat.setInt(1, eventID);
     stat.executeUpdate(); 
+    stat.close();
    
   }
   public List<String> getUsersFromGroup(int group_id) throws SQLException {
@@ -355,6 +360,7 @@ public class DatabaseHandler {
     while (rs.next()) {
       toReturn.add(rs.getString(1));
     }
+    rs.close();
     return toReturn;
   }
   public List<Event> getEventsFromGroup(String group_name) throws SQLException {
@@ -414,6 +420,7 @@ public class DatabaseHandler {
         rs2.getString("title"), rs2.getString("day_of_week"),
         users, "", rs2.getInt("duration"), rs2.getString("description"),
         rs2.getString("creator"));
+      toAdd.setID(rs2.getInt("event_id"));
       userEvents.add(toAdd);
     }
     return userEvents;
@@ -422,6 +429,7 @@ public class DatabaseHandler {
   public ConcurrentHashMap<Integer, Event> getAllEventsFromUser(String user_name) throws SQLException, ParseException {
     List<Event> eventList = new CopyOnWriteArrayList<Event>();
     eventList.addAll(getPersonnalEventsFromUser(user_name));
+    System.out.println(eventList.size());
     List<Integer> groups = getGroupsIDFromUser(user_name);
     for (int i = 0; i < groups.size(); i++) {
       eventList.addAll(getEventsFromGroup(groups.get(i)));
@@ -429,15 +437,26 @@ public class DatabaseHandler {
     ConcurrentHashMap<Integer, Event> actualReturn = new ConcurrentHashMap<Integer, Event>();
     for (int i = 0; i < eventList.size(); i++) {
       Event curr = eventList.get(i);
+      System.out.println(curr.getId());
       actualReturn.put(curr.getId(), curr);
     }
+    System.out.println(actualReturn.size());
     return actualReturn;
   }
-  public int getMaxrGroupID(String user_name) throws SQLException {
+  public int getMaxGroupID() throws SQLException {
     int toReturn = -1;
-    String query = "Select MAX(group_id) from User_Group where user_name = ?";
+    String query = "Select MAX(group_id) from User_Group";
     PreparedStatement theStat = conn.prepareStatement(query);
-    theStat.setString(1, user_name);
+    ResultSet rs = theStat.executeQuery();
+    if (rs.next()) {
+      toReturn = rs.getInt(1);
+    }
+    return toReturn;
+  }
+  public int getMaxEventID() throws SQLException {
+    int toReturn = -1;
+    String query = "Select MAX(event_id) from User_Event";
+    PreparedStatement theStat = conn.prepareStatement(query);
     ResultSet rs = theStat.executeQuery();
     if (rs.next()) {
       toReturn = rs.getInt(1);

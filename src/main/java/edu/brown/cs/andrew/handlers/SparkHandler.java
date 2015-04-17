@@ -30,6 +30,7 @@ import spark.template.freemarker.FreeMarkerEngine;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
+import edu.brown.cs.andrew.clientThreads.CalendarThread;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
 
@@ -37,18 +38,22 @@ public class SparkHandler {
   private static ConcurrentHashMap<Integer, Date> currentWeeks = new ConcurrentHashMap<Integer, Date>();
   private static String database;
   private static final int RESSTAT = 500;
-  private static DatabaseHandler myDBHandler;
   private static Gson GSON = new Gson();
   private static int randomHolder = (int)(Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
+  private static ConcurrentHashMap<Integer, String> numbersToDay
+    = new ConcurrentHashMap<Integer, String>();
+  
   public SparkHandler(String db) {
-    try {
-      myDBHandler = new DatabaseHandler(db);
       database = db;
       clients = new ConcurrentHashMap<Integer, ClientHandler>();
-    } catch (ClassNotFoundException | SQLException e) {
-      System.out.println("Error connecting to the Database: " + db);
-    }
+      numbersToDay.put(1, "Sunday");
+      numbersToDay.put(2, "Monday");
+      numbersToDay.put(3, "Tuesday");
+      numbersToDay.put(4, "Wednesday");
+      numbersToDay.put(5, "Thursday");
+      numbersToDay.put(6, "Friday");
+      numbersToDay.put(7, "Saturday");
   }
   private static FreeMarkerEngine createEngine() {
     Configuration config = new Configuration();
@@ -80,8 +85,54 @@ public class SparkHandler {
     Spark.post("/rightarrow", new BTFEventHandler());
     Spark.post("/sendfriend", new SendFriendReqHandler());
     Spark.post("/acceptfriend", new AcceptFriendReqHandler());
+    Spark.post("/newevent", new CreateEventHandler());
+    Spark.post("/register", new RegisterHandler(), freeMarker);
   }
+  private static class CreateEventHandler implements Route {
 
+    @Override
+    public Object handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      int clientID = Integer.parseInt(qm.value("string").substring(10));
+      ClientHandler cli = clients.get(clientID);
+      String title = qm.value("title");
+      Date date = null;
+      try {
+        date = new SimpleDateFormat("dd-MMM-yyy hh:00").parse(qm.value("date"));
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+      String description = qm.value("description");
+      String creator = cli.getClient();
+      String group = qm.value("group");
+      int duration = Integer.parseInt(qm.value("duration"));
+      String users = qm.value("attendees");
+      List<String> attendees = new ArrayList<String>(); 
+      attendees.add(cli.getClient());
+      while (users.contains(",")) {
+        attendees.add(users.substring(0, users.indexOf(",")));
+        users = users.substring(users.indexOf(",") + 1);
+      }
+      Calendar c = Calendar.getInstance();
+      c.setTime(date);
+      int dayWeek = c.get(Calendar.DAY_OF_WEEK);
+      String dayOfWeek = numbersToDay.get(dayWeek);
+      Event e = new Event(date, title, dayOfWeek, attendees,
+          group, duration, description, creator);
+      CalendarThread ct = new CalendarThread(cli, "ae", e, null);
+      ct.run();
+      clients.put(clientID, cli);
+      System.out.println("I'm done sluts");
+      int status = 0;
+      String message = "accepted";
+      Map<String, Object> variables = new ImmutableMap.Builder()
+      .put("status", status)
+      .put("message", message).build();
+      System.out.println(GSON.toJson(variables));
+      return GSON.toJson(variables);
+    }
+    
+  }
   private static class LoginHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
@@ -110,8 +161,10 @@ public class SparkHandler {
       int id =Integer.parseInt(req.params(":id"));
       boolean found = false;
       try {
+        DatabaseHandler myDBHandler = new DatabaseHandler(database);
         found = myDBHandler.findUser(user, pass);
-      } catch (SQLException e) {
+        myDBHandler.closeConnection();
+      } catch (SQLException | ClassNotFoundException e) {
         String form = getRandomForm();
         String newMessage = "An Error Occurred while logging in, please try again.";
         Map<String, Object> variables = ImmutableMap.of("title",
@@ -225,12 +278,13 @@ public class SparkHandler {
       System.out.println("got week");
       Gson gson = new Gson();
       List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
-
       ConcurrentHashMap<Integer, Event> testEvents;
       testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
+      System.out.println(testEvents.size());
       System.out.println("got events");
       List<String> toFrontEnd = new ArrayList<String>();
       for (Entry<Integer, Event> e : testEvents.entrySet()) {
+        System.out.println("here");
         Event curr = e.getValue();
         toFrontEnd.add(gson.toJson(curr));
       }
@@ -271,12 +325,13 @@ public class SparkHandler {
       String user2 = qm.value("friendToAdd").replaceAll("^\"|\"$", "");;
       String message = "";
       try {
+        DatabaseHandler myDBHandler = new DatabaseHandler(database);
         myDBHandler.addFriendRequest(user1, user2);
         message = "Friend request sent!";
         Map<String, String> variables = new ImmutableMap.Builder()
         .put("message", message).build();
         return GSON.toJson(variables);
-      } catch (SQLException e) {
+      } catch (SQLException | ClassNotFoundException e) {
         message = "ERROR: Invalid username entered, or you've already sent a request, or you're already friends.";
         Map<String, String> variables = new ImmutableMap.Builder()
         .put("message", message).build();
@@ -296,12 +351,12 @@ public class SparkHandler {
       System.out.println(user1);
       System.out.println(user2);
       try {
-        myDBHandler.acceptFriendRequest(user1, user2);
+        DatabaseHandler myDBHandler = new DatabaseHandler(database);
         message = "Friend request accepted!";
         Map<String, String> variables = new ImmutableMap.Builder()
         .put("message", message).build();
         return GSON.toJson(variables);
-      } catch (SQLException e) {
+      } catch (SQLException | ClassNotFoundException e) {
         message = "ERROR: Bug in database, please try again.";
         Map<String, String> variables = new ImmutableMap.Builder()
         .put("message", message).build();
@@ -313,13 +368,41 @@ public class SparkHandler {
   private static class CodeHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
-      Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
-          "message", "");
       String code = req.queryString().substring(
           req.queryString().indexOf('=') + 1);
       ServerCalls sc = new ServerCalls();
       HashMap<String, String> map = sc.authorize(code);
-      map.get("access_token");
+      String accessToken = map.get("access_token");
+      System.out.println(accessToken);
+      String user = "9999";
+      ClientHandler client = new ClientHandler(database, user);
+      HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
+      HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList, accessToken);
+      List<Event> events = sc.getAllEvents(eventsList);
+      for (Event event : events) {
+         client.addEvent(event);
+      }
+      clients.put(120456778, client);
+      System.out.println(events);
+      System.out.println("RECHED HERE");
+      
+      Date currentWeekStart = currentWeeks.get(120456778);
+      List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
+      ConcurrentHashMap<Integer, Event> testEvents;
+      testEvents = clients.get(120456778).getEventsByWeek(currentWeekStart);
+      System.out.println(testEvents.size());
+      System.out.println("got events");
+      List<String> toFrontEnd = new ArrayList<String>();
+      for (Entry<Integer, Event> e : testEvents.entrySet()) {
+        System.out.println("here");
+        Event curr = e.getValue();
+        toFrontEnd.add(GSON.toJson(curr));
+      }
+
+      Map<String, Object> variables = new ImmutableMap.Builder()
+      .put("events", toFrontEnd)
+      .put("week", currentWeek).build();
+      System.out.println(GSON.toJson(variables));
       return new ModelAndView(variables, "main.ftl");
     }
   }
@@ -335,6 +418,17 @@ public class SparkHandler {
         pw.println("</pre>");
       }
       res.body(stacktrace.toString());
+    }
+  }
+  
+  private static class RegisterHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
+          "message", "");
+      ServerCalls sc = new ServerCalls();
+      sc.openURLInBrowser("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com");
+      return new ModelAndView(variables, "main.ftl");
     }
   }
 }

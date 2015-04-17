@@ -137,11 +137,11 @@ body {
     display: none;
 }
 
-#x-button, #check-button, #delete-button, #google-button {
+#x-button, #check-button, #delete-button, #google-button, #new-event-button {
 	height: 30px;
 }
 
-#x-button, #check-button, #google-button {
+#x-button, #check-button, #google-button, #new-event-button {
 	float: right;
 }
 

@@ -4,16 +4,18 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import edu.brown.cs.andrew.clientThreads.HeartBeatThread;
+import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 
 public class ClientHandler {
   String user;
-  private DatabaseHandler myDBHandler;
+  private String accesToken;
   private ConcurrentHashMap<String, String> friends;
   private ConcurrentHashMap<Integer, String> groups;
   private ConcurrentHashMap<Integer, Event> events;
@@ -21,20 +23,16 @@ public class ClientHandler {
   String accessToken;
   private List<String> updateList;
   private int maxGroupId;
+  private int maxEventId;
 
 
   public ClientHandler(String db, String user) {
-    try {
-      myDBHandler = new DatabaseHandler(db);
       this.user = user;
       updateList = new CopyOnWriteArrayList<String>();
       ConcurrentHashMap<Integer, ClientHandler> dummyMap = new ConcurrentHashMap<Integer, ClientHandler>();
       dummyMap.put(0, this);
       HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
       initThread.run();
-    } catch (ClassNotFoundException | SQLException e) {
-      e.printStackTrace();
-    }
   }
   
   public synchronized ConcurrentHashMap<String, String> getFriends() {
@@ -46,12 +44,11 @@ public class ClientHandler {
   public synchronized ConcurrentHashMap<Integer, Event> getEvents() {
     return events;
   }
-  public synchronized DatabaseHandler getDB() {
-    return myDBHandler;
-  }
+
   
   public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date start) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
+    System.out.println(events.size());
     for (Entry<Integer, Event> e : events.entrySet()) {
       try {
         Date eventDate = e.getValue().getDate();
@@ -82,6 +79,9 @@ public class ClientHandler {
   public synchronized void setMaxGroupId(int maxID) {
     this.maxGroupId = maxID;
   }
+  public synchronized void setMaxEventId(int maxID) {
+    this.maxEventId = maxID;
+  }
   
   public synchronized String getClient() {
     return user;
@@ -100,7 +100,9 @@ public class ClientHandler {
     friends.put(user_name, "pending");
   }
   public void addEvent(Event e) {
-    events.put(e.getId(), e);
+    maxEventId++;
+    e.setID(maxEventId);
+    events.put(maxEventId, e);
   }
   public void removeEvent(Event e) {
     events.remove(e.getId());
@@ -112,4 +114,12 @@ public class ClientHandler {
   public void removeGroup(String group) {
     groups.remove(group);
   }
+  
+ public void setAccessToken(String accessToken) {
+   this.accessToken = accessToken;
+ }
+ 
+ public String getAccessToken() {
+   return accessToken;
+ }
 }
