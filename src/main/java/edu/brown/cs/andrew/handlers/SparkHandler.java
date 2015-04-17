@@ -77,7 +77,7 @@ public class SparkHandler {
     Spark.post("/getevents", new BTFEventHandler());
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
-    Spark.post("/register", new RegisterHandler());
+    Spark.post("/register", new RegisterHandler(), freeMarker);
   }
 
   private static class LoginHandler implements TemplateViewRoute {
