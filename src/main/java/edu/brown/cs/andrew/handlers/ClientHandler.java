@@ -12,7 +12,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import edu.brown.cs.andrew.clientThreads.HeartBeatThread;
 
 public class ClientHandler {
-  String user;
+  private String user;
+  private String accesToken;
   private DatabaseHandler myDBHandler;
   private ConcurrentHashMap<String, String> friends;
   private ConcurrentHashMap<Integer, String> groups;

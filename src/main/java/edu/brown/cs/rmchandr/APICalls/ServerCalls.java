@@ -389,7 +389,7 @@ public class ServerCalls {
       String creator = null;
 
       Event toPut = new Event(date, title, dayOfWeek, attendees, group,
-          duration, description, creator);
+          duration, description, "google");
       toReturn.add(toPut);
     }
 

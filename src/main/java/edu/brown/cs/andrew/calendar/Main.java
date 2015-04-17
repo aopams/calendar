@@ -68,7 +68,7 @@ public class Main {
       myDBHandler.addFriendRequest("Rohan", "Andrew");
       myDBHandler.addFriendRequest("Rohan", "Will2");
       myDBHandler.addFriendRequest("Rohan", "Will3");
-      myDBHandler.addFriendRequest("Rohan", "will4");
+      myDBHandler.addFriendRequest("Rohan", "Will4");
       myDBHandler.acceptFriendRequest("Rohan", "Harsha2");
       myDBHandler.addFriendRequest("Harsha", "Harsha2");
       myDBHandler.acceptFriendRequest("Harsha2", "Harsha");
