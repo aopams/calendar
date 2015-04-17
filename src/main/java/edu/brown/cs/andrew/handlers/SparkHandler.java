@@ -297,7 +297,19 @@ public class SparkHandler {
       System.out.println(code);
       ServerCalls sc = new ServerCalls();
       HashMap<String, String> map = sc.authorize(code);
-      map.get("access_token");
+      String accessToken = map.get("access_token");
+      System.out.println(accessToken);
+      String user = "9999";
+      ClientHandler client = new ClientHandler(database, user);
+      HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
+      HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList, accessToken);
+      List<Event> events = sc.getAllEvents(eventsList);
+      for (Event event : events) {
+         client.addEvent(event);
+      }
+      System.out.println(events);
+      System.out.println("RECHED HERE");
+
       return new ModelAndView(variables, "main.ftl");
     }
   }
