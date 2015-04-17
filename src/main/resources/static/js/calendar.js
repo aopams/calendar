@@ -121,7 +121,7 @@ function getTime(time) {
 }
 
 function dateTitle() {
-	var toReturn = getWrittenDate(0) + " - " getWrittenDate(6);
+	var toReturn = getWrittenDate(0) + " - " + getWrittenDate(6);
 	document.getElementById("date-title").innerHTML = toReturn;
 }
 
