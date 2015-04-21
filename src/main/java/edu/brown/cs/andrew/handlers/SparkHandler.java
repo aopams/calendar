@@ -382,7 +382,12 @@ public class SparkHandler {
       for (Event event : events) {
          client.addEvent(event);
       }
-      System.out.println(events);
+      try {
+        System.out.println(events.get(0).getDate());
+      } catch (ParseException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
       System.out.println("RECHED HERE");
       
       clients.put(120456778, client);
