@@ -88,10 +88,10 @@ public class SparkHandler {
     Spark.post("/getfriends", new FriendsHandler());
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
-    Spark.post("/sendfriend", new SendFriendReqHandler());
-    Spark.post("/acceptfriend", new AcceptFriendReqHandler());
     Spark.post("/newevent", new CreateEventHandler());
     Spark.post("/register", new RegisterHandler(), freeMarker);
+    
+    Spark.post("/editfriends", new ModifyFriendsHandler());
   }
   
   
@@ -302,13 +302,18 @@ public class SparkHandler {
       System.out.println(GSON.toJson(variables));
       return GSON.toJson(variables);
   }
- }
-  
+ } 
+  /**
+   * FriendsHandler grabs all the friends for a given user.
+   * Used to load up contacts page and refresh friends list.
+   * @author wtruong02151
+   *
+   */
   private static class FriendsHandler implements Route {
     @Override
     public Object handle(Request arg0, Response arg1) {
       QueryParamsMap qm = arg0.queryMap();
-      int id = Integer.parseInt(qm.value("url"));
+      int id = Integer.parseInt(qm.value("url").replace("#", ""));
       System.out.println(id);
       Map<String, String> tempMap = clients.get(id).getFriends();
       List<String[]> myFriends = new ArrayList<String[]>();
@@ -322,8 +327,85 @@ public class SparkHandler {
       return GSON.toJson(variables);
     }
   }
-  
-  
+  /**
+   * ModifyFriendsHandler takes in a particular command and
+   * modifies a user's friend's list acoording to the command.
+   * @author wtruong02151
+   *
+   */
+  private static class ModifyFriendsHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      ContactsThread ct;
+      Map<String, String> variables;
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url").replace("#", ""));
+      String user1 = clients.get(id).user;
+      String user2 = qm.value("user").replaceAll("^\"|\"$", "");;
+      String command = qm.value("command").replace("\"", "");
+      String message = "";
+      System.out.println(user1);
+      System.out.println(user2);
+      System.out.println(command);
+      switch(command) {
+        case "accept":
+          try {
+            System.out.println("in accept");
+            ct = new ContactsThread(clients.get(id),
+                user2, null, null, Commands.ACCEPT_FRIEND);
+            pool.submit(ct);
+            ct.call();
+            message = "Friends request accepted!";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          } catch (SQLException e) {
+            message = "ERROR: Bug in SQL.";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          }
+        case "remove":
+          try {
+            System.out.println("in remove");
+            ct = new ContactsThread(clients.get(id),
+                user2, null, null, Commands.REMOVE_FRIEND);
+            pool.submit(ct);
+            ct.call();
+            message = "Friend removed!";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          } catch (SQLException e1) {
+            message = "ERROR: Bug in SQL.";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          }
+        case "add":
+          try {
+            System.out.println("in add");
+            ct = new ContactsThread(clients.get(id),
+                user2, null, null, Commands.ADD_FRIEND);
+            pool.submit(ct);
+            ct.call();
+            message = "Friend added!";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          } catch (SQLException e2) {
+            message = "ERROR: Bug in SQL.";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          }
+      }
+      message = "ERROR: Bug has occured, try again.";
+      variables = new ImmutableMap.Builder()
+      .put("message", message).build();
+      return GSON.toJson(variables);
+    }
+  }
   
   private static class SendFriendReqHandler implements Route {
     @Override
