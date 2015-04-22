@@ -126,7 +126,7 @@ public class SparkHandler {
       String dayOfWeek = numbersToDay.get(dayWeek);
       Event e = new Event(date, title, dayOfWeek, attendees,
           group, duration, description, creator);
-      CalendarThread ct = new CalendarThread(cli, Commands.ACCEPT_FRIEND, e, null);
+      CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null);
       pool.submit(ct);
       clients.put(clientID, cli);
       System.out.println("I'm done sluts");
@@ -143,9 +143,16 @@ public class SparkHandler {
   private static class LoginHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      Boolean l = Boolean.parseBoolean(qm.value("logout"));
+      if (l) {
+        int id = Integer.parseInt(qm.value("url"));
+        clients.remove(id);
+      }
       while (clients.containsKey(randomHolder)) {
         randomHolder = (int)(Math.random() * 1000000);
       }
+      
       String form =   "<form method = \"POST\" action=\"/calendar/" + randomHolder +"\">";
       Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
           "message", "", "form", form);
