@@ -292,16 +292,22 @@ function placeEventDiv(id, elem, event) {
 	var size = $("#" + id + " > div").size() + 1;
 
 	if (size == 1) {
-		elem.appendChild(document.createTextNode(event.title));
+		var len = event.title.length;
+		var hgt = elem.style.height;
+		hgt = hgt.substring(0, hgt.length - 2);
+		var lines = hgt/18.75;
+		if ((lines * 15) > len) {
+			elem.appendChild(document.createTextNode(event.title));
+		} else {
+			elem.appendChild(document.createTextNode('...'));
+		}
+		document.getElementById(id).appendChild(elem);
 	} else {
 		elem.appendChild(document.createTextNode('...'));
-	}
-
-	document.getElementById(id).appendChild(elem);
-	$( "#" + id ).children().css( "width", (1/size * 100) + "%");
-	if (size > 1) {
+		document.getElementById(id).appendChild(elem);
 		$("#" + id).children().each(function () {
 		    this.innerHTML = '...';
+		    this.style.width = (1/size * 100) + "%";
 		});
 	}
 }
