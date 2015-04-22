@@ -93,6 +93,8 @@ public class SparkHandler {
     Spark.post("/newevent", new CreateEventHandler());
     Spark.post("/register", new RegisterHandler(), freeMarker);
   }
+  
+  
   private static class CreateEventHandler implements Route {
 
     @Override
