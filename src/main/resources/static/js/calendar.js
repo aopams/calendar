@@ -37,8 +37,8 @@ function openDialog(key) {
 		'</div>' +
 	 '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
 	'</form>'
-	//$('<div>' + value.title + '<p>'+ value.description + '</p>' + '</div>').dialog({modal: true});
-	$(form).dialog({modal: true});
+	form = $(form).resizable({disabled: true});
+	$(form).dialog({ modal: true}).resizable("disable");
 }
 
 function openGoogleEvent(key) {
@@ -76,7 +76,7 @@ function openGoogleEvent(key) {
 		'</div>' +
 	 '<img id="google-button" src="\\img/google.png"/>' +
 	'</form>'
-	$(form).dialog({modal: true});
+	$(form).dialog({modal: true, resizeable: false});
 }
 
 
@@ -109,7 +109,7 @@ function newEventDialog(date, time) {
 		'</div>' +
 	 '<img id="new-event-button" src="\\img/check.png"/>' +
 	'</form>'
-	$(form).dialog({modal: true});
+	$(form).dialog({modal: true, resizeable: false});
 }
 
 function datePicker() {
