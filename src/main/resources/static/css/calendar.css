@@ -222,7 +222,7 @@ body {
 }
 
 .friend {
-	width: 190px;
+	width: 20%;
 	height: 100%;
 	display:block;
 	float:left;
@@ -233,8 +233,10 @@ body {
 	height: 50px;
 	margin:auto;
 	display:block;
+/*
 	padding-top: 10px;
 	padding-bottom: 5px;
+*/
 }
 
 .friend #status {
