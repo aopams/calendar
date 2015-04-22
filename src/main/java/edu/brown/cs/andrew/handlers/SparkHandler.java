@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import spark.ExceptionHandler;
 import spark.ModelAndView;
@@ -31,6 +33,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
 import edu.brown.cs.andrew.clientThreads.CalendarThread;
+import edu.brown.cs.andrew.clientThreads.ContactsThread;
+import edu.brown.cs.andrew.handlers.DateHandler;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
 
@@ -38,6 +42,7 @@ public class SparkHandler {
   private static ConcurrentHashMap<Integer, Date> currentWeeks = new ConcurrentHashMap<Integer, Date>();
   private static String database;
   private static final int RESSTAT = 500;
+  private static final ExecutorService pool = Executors.newFixedThreadPool(8);
   private static Gson GSON = new Gson();
   private static int randomHolder = (int)(Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
@@ -119,8 +124,8 @@ public class SparkHandler {
       String dayOfWeek = numbersToDay.get(dayWeek);
       Event e = new Event(date, title, dayOfWeek, attendees,
           group, duration, description, creator);
-      CalendarThread ct = new CalendarThread(cli, "ae", e, null);
-      ct.run();
+      CalendarThread ct = new CalendarThread(cli, Commands.ACCEPT_FRIEND, e, null);
+      pool.submit(ct);
       clients.put(clientID, cli);
       System.out.println("I'm done sluts");
       int status = 0;
@@ -330,7 +335,6 @@ public class SparkHandler {
         DatabaseHandler myDBHandler = new DatabaseHandler(database);
         //check if friendship exists first
         if (myDBHandler.friendshipExists(user1, user2) == false) {
-          System.out.println("why");
           myDBHandler.addFriendRequest(user1, user2);
           message = "Friend request sent!";
         } else {
@@ -352,25 +356,21 @@ public class SparkHandler {
     @Override
     public Object handle(Request arg0, Response arg1) {
       QueryParamsMap qm = arg0.queryMap();
-      int id = Integer.parseInt(qm.value("url"));
+      int id = Integer.parseInt(qm.value("url").replace("#", ""));
       String user1 = clients.get(id).user;
       String user2 = qm.value("toAdd").replaceAll("^\"|\"$", "");;
       String message = "";
       System.out.println(user1);
       System.out.println(user2);
-      try {
-        DatabaseHandler myDBHandler = new DatabaseHandler(database);
-        myDBHandler.acceptFriendRequest(user1, user2);
-        message = "Friend request accepted!";
-        Map<String, String> variables = new ImmutableMap.Builder()
-        .put("message", message).build();
-        return GSON.toJson(variables);
-      } catch (SQLException | ClassNotFoundException e) {
-        message = "ERROR: Bug in database, please try again.";
-        Map<String, String> variables = new ImmutableMap.Builder()
-        .put("message", message).build();
-        return GSON.toJson(variables);
-      }
+      //DatabaseHandler myDBHandler = new DatabaseHandler(database);
+      //myDBHandler.acceptFriendRequest(user1, user2);
+      ContactsThread ct = new ContactsThread(clients.get(id),
+        user2, null, null, Commands.ACCEPT_FRIEND);
+      pool.submit(ct);
+      message = "Friend request accepted!";
+      Map<String, String> variables = new ImmutableMap.Builder()
+      .put("message", message).build();
+      return GSON.toJson(variables);
     }
   }
   

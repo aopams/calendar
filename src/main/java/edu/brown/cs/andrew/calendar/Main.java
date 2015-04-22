@@ -1,43 +1,17 @@
 package edu.brown.cs.andrew.calendar;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import spark.ExceptionHandler;
-import spark.ModelAndView;
-import spark.QueryParamsMap;
-import spark.Request;
-import spark.Response;
-import spark.Route;
-import spark.Spark;
-import spark.TemplateViewRoute;
-import spark.template.freemarker.FreeMarkerEngine;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
-import edu.brown.cs.andrew.handlers.Event;
-import edu.brown.cs.andrew.handlers.JSONParser;
 import edu.brown.cs.andrew.handlers.SparkHandler;
-import edu.brown.cs.rmchandr.APICalls.ServerCalls;
-import freemarker.template.Configuration;
+;
 
 public class Main {
 
   private static DatabaseHandler myDBHandler;
-  private static JSONParser myJSONParser;
   private static SparkHandler server = new SparkHandler("calendar.sqlite3");
   
   public static void main(String[] args) {

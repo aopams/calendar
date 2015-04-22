@@ -2,19 +2,22 @@ package edu.brown.cs.andrew.clientThreads;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.Callable;
+
 import edu.brown.cs.andrew.handlers.ClientHandler;
+import edu.brown.cs.andrew.handlers.Commands;
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
 
-public class ContactsThread implements Runnable {
+public class ContactsThread implements Callable<String> {
   
   private ClientHandler client1;
   private DatabaseHandler myDBHandler;
   private String user2;
   private String groupName;
   private List<String> groupMembers;
-  private String command;
+  private Commands command;
 
-  public ContactsThread(ClientHandler client1, String client2, String groupName, List<String> memberNames, String command) {
+  public ContactsThread(ClientHandler client1, String client2, String groupName, List<String> memberNames, Commands command) {
     this.client1 = client1;
     this.user2 = client2;
     this.groupName = groupName;
@@ -26,43 +29,39 @@ public class ContactsThread implements Runnable {
       e.printStackTrace();
     }
   }
-  
-  
+ 
+
+
   @Override
-  public void run() {
+  public String call() throws SQLException {
     String user1 = client1.getClient();
-    try {
       int groupId = myDBHandler.findGroup(groupName);
       switch (command) {
-        case "rf":
+        case REMOVE_FRIEND:
           client1.removeFriend(user2);
           myDBHandler.removeFriend(user1, user2);
           break;
-        case "mfr" :
+        case ADD_FRIEND :
           client1.requestFriend(user2);
           myDBHandler.addFriendRequest(user1, user2);
           break;
-        case "afr" : 
+        case ACCEPT_FRIEND : 
           client1.acceptFriend(user2);
           myDBHandler.acceptFriendRequest(user1, user2);
           break;
-        case "ag" :
+        case ADD_GROUP :
           myDBHandler.addGroup(groupName);
           for (int i = 0; i < groupMembers.size(); i++) {
             myDBHandler.addUserToGroup(groupMembers.get(i), groupId);
           }
           break;
-        case "rufg" :
+        case REMOVE_GROUP :
           client1.removeGroup(groupName);
           myDBHandler.removeUserFromGroup(user1, groupId);
           break;
+      default:
+        break;
       }
-      myDBHandler.closeConnection();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-    
+      return null;
   }
-  
-  
 }

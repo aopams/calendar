@@ -2,20 +2,22 @@ package edu.brown.cs.andrew.clientThreads;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.concurrent.Callable;
 
 import edu.brown.cs.andrew.handlers.ClientHandler;
+import edu.brown.cs.andrew.handlers.Commands;
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
 import edu.brown.cs.andrew.handlers.Event;
 
-public class CalendarThread implements Runnable{
+public class CalendarThread implements Callable<String>{
   
   private ClientHandler client1; 
-  private String command;
+  private Commands command;
   private DatabaseHandler myDBHandler;
   private Event myEvent;
   private Event deleteEvent;
   
-  public CalendarThread(ClientHandler client1, String command, Event e, Event d) {
+  public CalendarThread(ClientHandler client1, Commands command, Event e, Event d) {
     this.client1 = client1;
     this.command = command;
     myEvent = e;
@@ -27,28 +29,30 @@ public class CalendarThread implements Runnable{
     }
   }
   
+ 
+
   @Override
-  public void run() {
-    try {
+  public String call() throws SQLException, ParseException {
+    // TODO Auto-generated method stub
     switch (command) {
-      case "ae" :
-        client1.addEvent(myEvent);
-        myDBHandler.addEvent(myEvent);
-        break;
-      case "de" :
-        client1.removeEvent(deleteEvent);
-        myDBHandler.removeEvent(deleteEvent);
-        break;
-      case "ee" :
-        client1.removeEvent(deleteEvent);
-        myDBHandler.removeEvent(deleteEvent);
-        client1.addEvent(myEvent);
-        myDBHandler.addEvent(myEvent);
-      }
-    } catch (SQLException | ParseException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    case ADD_EVENT :
+      client1.addEvent(myEvent);
+      myDBHandler.addEvent(myEvent);
+      break;
+    case DELETE_EVENT :
+      client1.removeEvent(deleteEvent);
+      myDBHandler.removeEvent(deleteEvent);
+      break;
+    case EDIT_EVENT :
+      client1.removeEvent(deleteEvent);
+      myDBHandler.removeEvent(deleteEvent);
+      client1.addEvent(myEvent);
+      myDBHandler.addEvent(myEvent);
+      break;
+    default :
+      return null;
     }
+    return null;
   }
 
 }

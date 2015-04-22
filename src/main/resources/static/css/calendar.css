@@ -150,9 +150,10 @@ body {
 }
 
 /* dialog styling */
-.ui-dialog, .ui-dialog-title, .ui-state-default, .ui-widget-content, .ui-state-default {
+.ui-dialog, .ui-dialog-title, .ui-state-default, .ui-widget-content, .ui-state-default, .ui-resizable {
 	display: none;
 	border: none;
+	resize: none;
 }
 
 .ui-draggable .ui-dialog-titlebar {
@@ -299,4 +300,12 @@ body {
 #descrip {
 	resize: none;
 	width: 260px;
+}
+
+#title {
+	width: 250px;
+	margin: auto;
+	box-shadow: none;
+	border: none;
+	border-bottom: 1px black solid;
 }
