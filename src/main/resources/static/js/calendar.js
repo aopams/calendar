@@ -37,7 +37,7 @@ function openDialog(key) {
 		'</div>' +
 	 '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
 	'</form>'
-	form = $(form).resizable({disabled: true});
+	//form = $(form).resizable({disabled: true});
 	$(form).dialog({ modal: true}).resizable("disable");
 }
 
@@ -287,8 +287,15 @@ function placeEvents(elem, event) {
 	if(time < 10) {
 		time = "0" + time;
 	}
+	
+	var slot_id = dayInt + "" + time;
+	placeEventDiv(slot_id, elem);
+}
 
-	document.getElementById(dayInt + "" + time).appendChild(elem);
+function placeEventDiv(id, elem) {
+	var size = $("#" + id + " > div").size() + 1;
+	document.getElementById(id).appendChild(elem);
+	$( "#" + id ).children().css( "width", (1/size * 100) + "%");
 }
 
 function getEventHeight(dur) {
