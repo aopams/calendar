@@ -231,10 +231,6 @@ function parseData(responseJSON) {
 			}
 			newElem.setAttribute("id", key);
 			newElem.setAttribute("style", "height:"+getEventHeight(value.duration)+"px");
-			var p = document.createTextNode(value.title);
-			console.log(value.title);
-			p.id = "description";
-			newElem.appendChild(p);
 			placeEvents(newElem, value);
 		}
 		//change the date title on the top of the calendar
@@ -289,13 +285,25 @@ function placeEvents(elem, event) {
 	}
 	
 	var slot_id = dayInt + "" + time;
-	placeEventDiv(slot_id, elem);
+	placeEventDiv(slot_id, elem, event);
 }
 
-function placeEventDiv(id, elem) {
+function placeEventDiv(id, elem, event) {
 	var size = $("#" + id + " > div").size() + 1;
+
+	if (size == 1) {
+		elem.appendChild(document.createTextNode(event.title));
+	} else {
+		elem.appendChild(document.createTextNode('...'));
+	}
+
 	document.getElementById(id).appendChild(elem);
 	$( "#" + id ).children().css( "width", (1/size * 100) + "%");
+	if (size > 1) {
+		$("#" + id).children().each(function () {
+		    this.innerHTML = '...';
+		});
+	}
 }
 
 function getEventHeight(dur) {
