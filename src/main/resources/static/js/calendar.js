@@ -17,26 +17,31 @@ function openDialog(key) {
 	    '<div class="input-group">' +
 		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '">' +
 	    '</div>' +
-	    '<div class="input-group">' +
-		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' +
-		    '<input type="text" id="datepicker" value="' + day + '"/>' +
+	    '<div class="input-group margin-group">' +
+		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' + 
+		    '<input type="text" class="form-control" id="datepicker" placeholder="date" value="' + day + '">' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'At <input id="dialog-time" type="text" class="time" onclick="timePicker()" value="' +  time + '" />' +
-			' for <input id="duration" type="text" value="' + dur + '"/> minutes ' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="formatted">At </div>' +
+	    		'<input id="dialog-time" type="text" class="form-control" onclick="timePicker()" value="' + time + '" >' +
+			'<div class="formatted">   for </div>' +
+				'<input id="duration" type="text" class="form-control" value="' + dur + '"><div class="formatted"> min </div>' +
 	    '</div>' +
-	    '<div class="input-group">' +
+	    '<div class="input-group margin-group">' +
 	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description...">'+ value.description + '</textarea>' +
 	    '</div>' +
-	    '<div class="input-group">' +
+	    '<div class="input-group margin-group">' +
 	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'"/>' +
 		'</div>' +
-	  	'<div class="input-group">' +
+	  	'<div class="input-group margin-group">' +
 		    '<div class="input-group-addon">@</div>' +
 		    '<input type="text" class="form-control" id="group" placeholder="Groups" value="'+ value.group +'"/>' +
 		'</div>' +
-	 '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
-	'</form>'
+		'<div class="margin-group-xl">' +
+			'<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
+		'</div>' +
+	'</div>' +
+	'</form>';
 	$(form).dialog({ modal: true, resizable: false});
 }
 

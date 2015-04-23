@@ -138,7 +138,7 @@ body {
 }
 
 #x-button, #check-button, #delete-button, #google-button, #new-event-button {
-	height: 30px;
+	height: 24px;
 }
 
 #x-button, #check-button, #google-button, #new-event-button {
@@ -147,6 +147,22 @@ body {
 
 #delete-button {
 	float: left;
+}
+
+.formatted {
+	display: inline-block;
+	width: 20px;
+	float: left;
+	margin: 0 5px 0 5px;
+	padding-top: 4px;
+}
+
+.margin-group {
+	margin-top: 5px;
+}
+
+.margin-group-xl {
+	margin-top: 14px;
 }
 
 /* dialog styling */
@@ -281,7 +297,7 @@ body {
 
 /*dialog inner styling */
 #duration {
-	width: 70px;
+	width: 55px;
 }
 
 #dialog-time {
