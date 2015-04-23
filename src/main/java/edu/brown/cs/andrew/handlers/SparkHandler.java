@@ -88,10 +88,10 @@ public class SparkHandler {
     Spark.post("/getfriends", new FriendsHandler());
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
-    Spark.post("/sendfriend", new SendFriendReqHandler());
-    Spark.post("/acceptfriend", new AcceptFriendReqHandler());
     Spark.post("/newevent", new CreateEventHandler());
     Spark.post("/register", new RegisterHandler(), freeMarker);
+    Spark.post("/logout", new LogoutHandler());
+    Spark.post("/editfriends", new ModifyFriendsHandler());
   }
   
   
@@ -126,10 +126,9 @@ public class SparkHandler {
       String dayOfWeek = numbersToDay.get(dayWeek);
       Event e = new Event(date, title, dayOfWeek, attendees,
           group, duration, description, creator);
-      CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null);
+      CalendarThread ct = new CalendarThread(cli, Commands.ACCEPT_FRIEND, e, null);
       pool.submit(ct);
       clients.put(clientID, cli);
-      System.out.println("I'm done sluts");
       int status = 0;
       String message = "accepted";
       Map<String, Object> variables = new ImmutableMap.Builder()
@@ -139,6 +138,22 @@ public class SparkHandler {
       return GSON.toJson(variables);
     }
     
+  }
+  private static class LogoutHandler implements Route {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      String idUnparsed = qm.value("url");
+      int id = Integer.parseInt(qm.value("url").substring(0, idUnparsed.length()-1));
+      clients.remove(id);
+      while (clients.containsKey(randomHolder)) {
+        randomHolder = (int)(Math.random() * 1000000);
+      }
+      String form =   "<form method = \"POST\" action=\"/calendar/" + randomHolder +"\">";
+      Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
+          "message", "", "form", form);
+      return new ModelAndView(variables, "login.ftl");
+    }
   }
   private static class LoginHandler implements TemplateViewRoute {
     @Override
@@ -205,12 +220,9 @@ public class SparkHandler {
     }
   }
   private static DateHandler parseDate(Date d) {
-    System.out.println("Parsing Date");
     String date = d.toString();
-    String month = date.substring(4, 7);
-    System.out.println(date.substring(8,10));
+    String month = date.substring(4, 7);;
     int day = Integer.parseInt(date.substring(8,10));
-    System.out.println(date.substring(date.length()-4, date.length()));
     int year = Integer.parseInt(date.substring(date.length()-4, date.length()));
     DateHandler dH = new DateHandler(month, day, year);
     return dH;
@@ -250,7 +262,6 @@ public class SparkHandler {
   private static class BTFEventHandler implements Route {
 
     public Object handle(final Request req, final Response res) {
-      System.out.println("getting events");
       Date date = new Date();
       Calendar c = Calendar.getInstance();
       c.setTime(date);
@@ -259,9 +270,7 @@ public class SparkHandler {
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
-      System.out.println("checking hashmap");
       Date currentWeekStart = currentWeeks.get(clientID);
-      System.out.println("got current date");
       if (currentWeekStart == null) {
         currentWeeks.put(clientID, c.getTime());
         currentWeekStart = c.getTime();
@@ -271,34 +280,28 @@ public class SparkHandler {
       // list of events that this user has
       try {
         String dateString = qm.value("date");
-        System.out.println(currentWeekStart);
         if (dateString != null && !dateString.equals("")) {
           Date reference =
             new SimpleDateFormat("dd-MMM-yyyy hh:mm").parse(dateString + " 00:00");
-          System.out.println(reference);
           if (setTimeToMidnight(reference).equals(setTimeToMidnight(currentWeekStart))) {
             c.add(Calendar.DATE, -7);
           } else {
             c.add(Calendar.DATE, 7);
           }
           currentWeekStart = c.getTime();
-          System.out.println("new week " + currentWeekStart);
           currentWeeks.put(clientID, c.getTime());
         }
       } catch (ParseException e1) {
         // TODO Auto-generated catch block
         e1.printStackTrace();
       }
-      System.out.println("got week");
       Gson gson = new Gson();
       List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
       ConcurrentHashMap<Integer, Event> testEvents;
       testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
       System.out.println(testEvents.size());
-      System.out.println("got events");
       List<String> toFrontEnd = new ArrayList<String>();
       for (Entry<Integer, Event> e : testEvents.entrySet()) {
-        System.out.println("here");
         Event curr = e.getValue();
         toFrontEnd.add(gson.toJson(curr));
       }
@@ -309,13 +312,18 @@ public class SparkHandler {
       System.out.println(GSON.toJson(variables));
       return GSON.toJson(variables);
   }
- }
-  
+ } 
+  /**
+   * FriendsHandler grabs all the friends for a given user.
+   * Used to load up contacts page and refresh friends list.
+   * @author wtruong02151
+   *
+   */
   private static class FriendsHandler implements Route {
     @Override
     public Object handle(Request arg0, Response arg1) {
       QueryParamsMap qm = arg0.queryMap();
-      int id = Integer.parseInt(qm.value("url"));
+      int id = Integer.parseInt(qm.value("url").replace("#", ""));
       System.out.println(id);
       Map<String, String> tempMap = clients.get(id).getFriends();
       List<String[]> myFriends = new ArrayList<String[]>();
@@ -329,8 +337,85 @@ public class SparkHandler {
       return GSON.toJson(variables);
     }
   }
-  
-  
+  /**
+   * ModifyFriendsHandler takes in a particular command and
+   * modifies a user's friend's list acoording to the command.
+   * @author wtruong02151
+   *
+   */
+  private static class ModifyFriendsHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      ContactsThread ct;
+      Map<String, String> variables;
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url").replace("#", ""));
+      String user1 = clients.get(id).user;
+      String user2 = qm.value("user").replaceAll("^\"|\"$", "");;
+      String command = qm.value("command").replace("\"", "");
+      String message = "";
+      System.out.println(user1);
+      System.out.println(user2);
+      System.out.println(command);
+      switch(command) {
+        case "accept":
+          try {
+            System.out.println("in accept");
+            ct = new ContactsThread(clients.get(id),
+                user2, null, null, Commands.ACCEPT_FRIEND);
+            pool.submit(ct);
+            ct.call();
+            message = "Friends request accepted!";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          } catch (SQLException e) {
+            message = "ERROR: Bug in SQL.";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          }
+        case "remove":
+          try {
+            System.out.println("in remove");
+            ct = new ContactsThread(clients.get(id),
+                user2, null, null, Commands.REMOVE_FRIEND);
+            pool.submit(ct);
+            ct.call();
+            message = "Friend removed!";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          } catch (SQLException e1) {
+            message = "ERROR: Bug in SQL.";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          }
+        case "add":
+          try {
+            System.out.println("in add");
+            ct = new ContactsThread(clients.get(id),
+                user2, null, null, Commands.ADD_FRIEND);
+            pool.submit(ct);
+            ct.call();
+            message = "Friend added!";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          } catch (SQLException e2) {
+            message = "ERROR: Bug in SQL.";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          }
+      }
+      message = "ERROR: Bug has occured, try again.";
+      variables = new ImmutableMap.Builder()
+      .put("message", message).build();
+      return GSON.toJson(variables);
+    }
+  }
   
   private static class SendFriendReqHandler implements Route {
     @Override
@@ -391,7 +476,6 @@ public class SparkHandler {
       ServerCalls sc = new ServerCalls();
       HashMap<String, String> map = sc.authorize(code);
       String accessToken = map.get("access_token");
-      System.out.println(accessToken);
       String user = "9999";
       ClientHandler client = new ClientHandler(database, user);
       HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
@@ -406,7 +490,6 @@ public class SparkHandler {
         // TODO Auto-generated catch block
         e1.printStackTrace();
       }
-      System.out.println("RECHED HERE");
       
       clients.put(120456778, client);
       Date currentWeekStart = new Date();
@@ -421,7 +504,6 @@ public class SparkHandler {
       }
       List<String> toFrontEnd = new ArrayList<String>();
       for (Entry<Integer, Event> e : testEvents.entrySet()) {
-        System.out.println("here");
         Event curr = e.getValue();
         toFrontEnd.add(GSON.toJson(curr));
       }
