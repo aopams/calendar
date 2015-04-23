@@ -49,7 +49,7 @@ body {
 .calendar {
 	width: 1000px;
 	margin: auto;		
-    line-height: 1.33;
+    line-height: 12px;
     border-radius: 0 0 6px 6px;
     border: solid 1px;
     overflow-y: scroll;
@@ -150,30 +150,21 @@ body {
 }
 
 /* dialog styling */
-.ui-dialog, .ui-dialog-title, .ui-state-default, .ui-widget-content, .ui-state-default, .ui-resizable {
-	display: none;
-	border: none;
-	resize: none;
-}
-
-.ui-draggable .ui-dialog-titlebar {
-	border: none;
-}
-
-.ui-dialog .ui-dialog-content {
-	padding: 2px 2px;
-}
-
-.ui-widget-header {
-	background: #00000;
-	height: 2px;
-}
 
 /* inner box of dialog */
 #ui-id-1 {
 	width: 300px;
+	height: 1px;
 }
 
+.form-inline, .form-group {
+	display: block !important;
+}
+
+.dialog-form {
+	width: 250px;
+	margin: auto;
+}
 
 /* contacts page stuff */
 
@@ -222,7 +213,7 @@ body {
 }
 
 .friend {
-	width: 190px;
+	width: 20%;
 	height: 100%;
 	display:block;
 	float:left;
@@ -233,8 +224,10 @@ body {
 	height: 50px;
 	margin:auto;
 	display:block;
+/*
 	padding-top: 10px;
 	padding-bottom: 5px;
+*/
 }
 
 .friend #status {
@@ -297,7 +290,7 @@ body {
 
 #descrip {
 	resize: none;
-	width: 260px;
+	width: 250px;
 }
 
 #title {

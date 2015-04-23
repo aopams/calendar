@@ -19,14 +19,14 @@ $(document).ready(function(e) {
 		$('#calendarbutton').removeClass("btn btn-default").addClass("btn btn-default btn-primary");
 	});
 	
-	/* friends will be a post request to the back end */
-	
 	/* grabbing id for client */
 	
 	url = window.location.href;
 	url = url.substr(url.lastIndexOf('/') + 1);
 	var postParameters = {url : url};
 	
+	//grabs friends from database and populates the appropriate arrays for friends
+	//to be created and displayed
 	$.post('/getfriends', postParameters, function(responseJSON) {
 		responseObject = JSON.parse(responseJSON);
 		temp = responseObject.friends;
@@ -40,23 +40,31 @@ $(document).ready(function(e) {
 		createFriends();
 	});
 	
+	//button to add friend at top of contacts page
 	$("#sendInvite").bind('click', function(e) {
-		var friendToAdd = $("#addFriend").val();
-		friendToAdd = JSON.stringify(friendToAdd);
-		var postParameters = {url : url, friendToAdd : friendToAdd};
-		
-		$.post('/sendfriend', postParameters, function(responseJSON) {
+		var user = $("#addFriend").val();
+		var command = "add";
+		user = JSON.stringify(user);
+		command = JSON.stringify(command);
+		var postParameters = {url : url, user : user, command : command};
+		$.post('/editfriends', postParameters, function(responseJSON) {
 			console.log("response received");
 			responseObject = JSON.parse(responseJSON);
 			message = responseObject.message;
 			alert(message);
 		});
 	});
-	
 });
 
+//function that loops through two arrays (pendingFriends and
+//friends) to populate proper divs and display them on the 
+//contacts page
 function createFriends() {
-	/* populate each with an image and the name from friends list */
+	
+	//figure out how to remove everything from existing divs!!!!!
+	//might have to modify id's and change themto classes
+	$('.friend').remove();
+	//loop through pending friends list to show on contacts page
 	if (pendingFriends.length > 0) {
 		var pending = document.createElement('div');
 		pending.id = 'pending';
@@ -70,6 +78,8 @@ function createFriends() {
 			var friend = document.createElement('div');
 				friend.className = 'friend';
 				friend.id = i;
+				//set this attribute to be grabbed later for accepting/refusing friend request
+				//**must know about users
 				friend.setAttribute('username', pendingFriends[i]);
 				var text = document.createElement('div');
 				text.id = 'text';
@@ -82,7 +92,7 @@ function createFriends() {
 				accept.id = 'accept';
 				img.src = '/img/placeholder.jpg';
 				refuse.src = '/img/x.png';
-				refuse.onclick=function() {refuseFriend(this);};
+				refuse.onclick=function() {removeFriend(this);};
 				accept.src = '/img/check.png';
 				accept.onclick=function() {acceptFriend(this);};
 				friend.appendChild(img);
@@ -92,6 +102,7 @@ function createFriends() {
 				scrollRow.appendChild(friend);
 		}
 	}
+	//loops through accepted friends list to show on contacts page
 	var count = 0;
 	var len = friends.length;
 	var rows = Math.floor(len/5) + 1;
@@ -106,11 +117,26 @@ function createFriends() {
 				var friend = document.createElement('div');
 				friend.className = 'friend';
 				friend.id = count;
-				var name = document.createTextNode(friends[count]);
+				friend.setAttribute('username', friends[count]);
+				var name = document.createElement('div');
+				name.id = 'name';
+				name.style.marginLeft='auto';
+				name.style.marginRight='auto';
+				name.style.display='block';
+				name.innerHTML = friends[count];
+				
+				
 				var img = document.createElement('img');
 				img.src = '/img/placeholder.jpg';
+				var refuse = document.createElement('img');
+				refuse.id = 'refuse';
+				refuse.src = '/img/x.png';
+				refuse.onclick=function() {removeFriend(this);};
+				refuse.style.marginRight='175px';
+				friend.appendChild(refuse);
 				friend.appendChild(img);
 				friend.appendChild(name);
+
 				row.appendChild(friend);
 				count++;
 				if (count == len) {
@@ -123,18 +149,56 @@ function createFriends() {
 
 function acceptFriend(elem) {
 	var parent = elem.parentNode;
-	var toAdd = parent.getAttribute('username');
-	toAdd = JSON.stringify(toAdd);
-	var postParameters = {url : url, toAdd : toAdd};
+	var user = parent.getAttribute('username');
+	var command = "accept";
+	console.log(user);
+	user = JSON.stringify(user);
+	command = JSON.stringify(command);
+	var postParameters = {url : url, user : user, command : command};
 	
-	$.post('/acceptfriend', postParameters, function(responseJSON) {
+	$.post('/editfriends', postParameters, function(responseJSON) {
+		responseObject = JSON.parse(responseJSON);
+		message = responseObject.message;
+		alert(message);
+	});
+	//send same post request as on document load to grab newly updated friend's list
+	postParameters = {url : url};
+	$.post('/getfriends', postParameters, function(responseJSON) {
+		//empty arrays
+		friends = [];
+		pendingFriends = [];
+		responseObject = JSON.parse(responseJSON);
+		temp = responseObject.friends;
+		for (i = 0; i < temp.length; i++) {
+			if (temp[i][1] == "pending") {
+				pendingFriends.push(temp[i][0]);
+			} else {
+				friends.push(temp[i][0]);
+			}
+		};
+		createFriends();
+	});
+};
+
+function removeFriend(elem) {
+	var parent = elem.parentNode;
+	var user = parent.getAttribute('username');
+	var command = "remove";
+	console.log(user);
+	console.log(command);
+	user = JSON.stringify(user);
+	command = JSON.stringify(command);
+	var postParameters = {
+		url : url,
+		user : user,
+		command : command
+	};
+	
+	$.post('/editfriends', postParameters, function(responseJSON) {
+		console.log("remove friends");
 		responseObject = JSON.parse(responseJSON);
 		message = responseObject.message;
 		alert(message);
 	});
 	
 };
-
-function refuseFriend(elem) {
-	console.log("refused");
-}

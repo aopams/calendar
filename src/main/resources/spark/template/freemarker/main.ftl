@@ -9,17 +9,12 @@
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script type="text/javascript" src="\jquery.timepicker.js"></script>
-<script type="text/javascript" src="\lib/site.js"></script>
 <script type="text/javascript" src="\lib/bootstrap-datepicker.js"></script>
 
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="\css/calendar.css">
-<link rel="stylesheet" type="text/css" href="\jquery.timepicker.css" />
-<link rel="stylesheet" type="text/css" href="\lib/bootstrap-datepicker.css" />
-<link rel="stylesheet" type="text/css" href="\lib/site.css" />
 <link rel="stylesheet" type="text/css" href="\css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="\css/bootstrap.css.map">
 <link rel="stylesheet" href="\//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="\lib/bootstrap-datepicker.css" />
 <link rel="stylesheet" type="text/css" href="\css/calendar.css">
 
 </head>

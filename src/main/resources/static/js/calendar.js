@@ -12,8 +12,8 @@ function openDialog(key) {
 	var dur = value.duration;
 	form =
 	'<form class="form-inline" id ="newEventForm">' +
-	'<img id="x-button" src="/img/x.png"/>' +
-	'<div class="form-group">' +
+	'<div class="form-group dialog-form">' +
+		'<img id="x-button" src="/img/x.png"/>' +
 	    '<div class="input-group">' +
 		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '">' +
 	    '</div>' +
@@ -26,7 +26,7 @@ function openDialog(key) {
 			' for <input id="duration" type="text" value="' + dur + '"/> minutes ' +
 	    '</div>' +
 	    '<div class="input-group">' +
-	    	'<textarea type="text" class="form-control" id="descrip">'+ value.description + '</textarea>' +
+	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description...">'+ value.description + '</textarea>' +
 	    '</div>' +
 	    '<div class="input-group">' +
 	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'"/>' +
@@ -37,8 +37,7 @@ function openDialog(key) {
 		'</div>' +
 	 '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
 	'</form>'
-	form = $(form).resizable({disabled: true});
-	$(form).dialog({ modal: true}).resizable("disable");
+	$(form).dialog({ modal: true, resizable: false});
 }
 
 function openGoogleEvent(key) {
@@ -231,10 +230,6 @@ function parseData(responseJSON) {
 			}
 			newElem.setAttribute("id", key);
 			newElem.setAttribute("style", "height:"+getEventHeight(value.duration)+"px");
-			var p = document.createTextNode(value.title);
-			console.log(value.title);
-			p.id = "description";
-			newElem.appendChild(p);
 			placeEvents(newElem, value);
 		}
 		//change the date title on the top of the calendar
@@ -287,8 +282,33 @@ function placeEvents(elem, event) {
 	if(time < 10) {
 		time = "0" + time;
 	}
+	
+	var slot_id = dayInt + "" + time;
+	placeEventDiv(slot_id, elem, event);
+}
 
-	document.getElementById(dayInt + "" + time).appendChild(elem);
+function placeEventDiv(id, elem, event) {
+	var size = $("#" + id + " > div").size() + 1;
+
+	if (size == 1) {
+		var len = event.title.length;
+		var hgt = elem.style.height;
+		hgt = hgt.substring(0, hgt.length - 2);
+		var lines = hgt/18.75;
+		if ((lines * 15) > len) {
+			elem.appendChild(document.createTextNode(event.title));
+		} else {
+			elem.appendChild(document.createTextNode('...'));
+		}
+		document.getElementById(id).appendChild(elem);
+	} else {
+		elem.appendChild(document.createTextNode('...'));
+		document.getElementById(id).appendChild(elem);
+		$("#" + id).children().each(function () {
+		    this.innerHTML = '...';
+		    this.style.width = (1/size * 100) + "%";
+		});
+	}
 }
 
 function getEventHeight(dur) {
@@ -352,6 +372,7 @@ function getDBTime(date, time) {
 }
 
 $(document).ready(function(e) {
+	 $(".ui-dialog-titlebar").hide()  
 	updateDisplayedEvents();
 	
 	$("#x-button").click(function(e) {

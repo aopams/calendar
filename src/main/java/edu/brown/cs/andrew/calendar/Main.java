@@ -1,11 +1,17 @@
 package edu.brown.cs.andrew.calendar;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
+import edu.brown.cs.andrew.handlers.Event;
+import edu.brown.cs.andrew.handlers.Ranker;
 import edu.brown.cs.andrew.handlers.SparkHandler;
 ;
 
@@ -75,9 +81,26 @@ public class Main {
       myDBHandler.addEvent(e);
       myDBHandler.addEvent(e2);
       myDBHandler.addEvent(e3); **/
+      List<String> hGroup1 = new ArrayList<String>();
+      hGroup1.add("Harsha");
+      Date myDate1 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("13/4/2015 13:00");
+      Event e1 = new Event(myDate1, "Ninja Time!", "Monday", hGroup1, "", 180,
+          "Harsha going stealth-mode",
+          "Harsha");
+      myDBHandler.addEvent(e1);
+      e1.setID(11);
       myDBHandler.closeConnection();
+      List<String> hGroup = new ArrayList<String>();
+      hGroup.add("Harsha");
+      System.out.println(hGroup.size());
+      Date myDate2 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("13/4/2015 12:00");
+      Event e2 = new Event(myDate2, "Ninja Time!", "Monday", hGroup, "", 180,
+          "Harsha going stealth-mode",
+          "Harsha");
+      Ranker myRanker = new Ranker(e2);
+     // System.out.println(myRanker.checkConflict(e2.getDate()));
       System.out.println(System.currentTimeMillis() / 1000);
-    } catch (ClassNotFoundException | SQLException e) {
+    } catch (ClassNotFoundException | SQLException | ParseException e) {
       e.printStackTrace();
     } finally {
       run(args);
