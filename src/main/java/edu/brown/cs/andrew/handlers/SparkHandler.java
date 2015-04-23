@@ -42,7 +42,7 @@ public class SparkHandler {
   private static ConcurrentHashMap<Integer, Date> currentWeeks = new ConcurrentHashMap<Integer, Date>();
   private static String database;
   private static final int RESSTAT = 500;
-  private static final ExecutorService pool = Executors.newFixedThreadPool(8);
+  protected static final ExecutorService pool = Executors.newFixedThreadPool(8);
   private static Gson GSON = new Gson();
   private static int randomHolder = (int)(Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
@@ -241,7 +241,7 @@ public class SparkHandler {
     return currentWeek;
   }
   
-  private static Date setTimeToMidnight(Date date) {
+  public static Date setTimeToMidnight(Date date) {
     Calendar calendar = Calendar.getInstance();
 
     calendar.setTime( date );
@@ -296,6 +296,7 @@ public class SparkHandler {
         e1.printStackTrace();
       }
       Gson gson = new Gson();
+      System.out.println(currentWeekStart);
       List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
       ConcurrentHashMap<Integer, Event> testEvents;
       testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
