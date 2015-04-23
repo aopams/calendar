@@ -42,24 +42,28 @@ $(document).ready(function(e) {
 	
 	//button to add friend at top of contacts page
 	$("#sendInvite").bind('click', function(e) {
-		var friendToAdd = $("#addFriend").val();
-		friendToAdd = JSON.stringify(friendToAdd);
-		var postParameters = {url : url, friendToAdd : friendToAdd};
-		
-		$.post('/sendfriend', postParameters, function(responseJSON) {
+		var user = $("#addFriend").val();
+		var command = "add";
+		user = JSON.stringify(user);
+		command = JSON.stringify(command);
+		var postParameters = {url : url, user : user, command : command};
+		$.post('/editfriends', postParameters, function(responseJSON) {
 			console.log("response received");
 			responseObject = JSON.parse(responseJSON);
 			message = responseObject.message;
 			alert(message);
 		});
 	});
-	
 });
 
 //function that loops through two arrays (pendingFriends and
 //friends) to populate proper divs and display them on the 
 //contacts page
 function createFriends() {
+	
+	//figure out how to remove everything from existing divs!!!!!
+	//might have to modify id's and change themto classes
+	$('.friend').remove();
 	//loop through pending friends list to show on contacts page
 	if (pendingFriends.length > 0) {
 		var pending = document.createElement('div');
@@ -88,7 +92,7 @@ function createFriends() {
 				accept.id = 'accept';
 				img.src = '/img/placeholder.jpg';
 				refuse.src = '/img/x.png';
-				refuse.onclick=function() {refuseFriend(this);};
+				refuse.onclick=function() {removeFriend(this);};
 				accept.src = '/img/check.png';
 				accept.onclick=function() {acceptFriend(this);};
 				friend.appendChild(img);
@@ -114,8 +118,6 @@ function createFriends() {
 				friend.className = 'friend';
 				friend.id = count;
 				friend.setAttribute('username', friends[count]);
-				
-/* 				var name = document.createTextNode(friends[count]); */
 				var name = document.createElement('div');
 				name.id = 'name';
 				name.style.marginLeft='auto';
@@ -147,21 +149,20 @@ function createFriends() {
 
 function acceptFriend(elem) {
 	var parent = elem.parentNode;
-	var toAdd = parent.getAttribute('username');
-	console.log(toAdd);
-	toAdd = JSON.stringify(toAdd);
-	var postParameters = {url : url, toAdd : toAdd};
+	var user = parent.getAttribute('username');
+	var command = "accept";
+	console.log(user);
+	user = JSON.stringify(user);
+	command = JSON.stringify(command);
+	var postParameters = {url : url, user : user, command : command};
 	
-	$.post('/acceptfriend', postParameters, function(responseJSON) {
+	$.post('/editfriends', postParameters, function(responseJSON) {
 		responseObject = JSON.parse(responseJSON);
 		message = responseObject.message;
 		alert(message);
 	});
-	
-	
-	
 	//send same post request as on document load to grab newly updated friend's list
-	var postParameters = {url : url};
+	postParameters = {url : url};
 	$.post('/getfriends', postParameters, function(responseJSON) {
 		//empty arrays
 		friends = [];
@@ -179,21 +180,25 @@ function acceptFriend(elem) {
 	});
 };
 
-function refuseFriend(elem) {
-	console.log("refused");
-}
-
 function removeFriend(elem) {
 	var parent = elem.parentNode;
-	var toRemove = parent.getAttribute('username');
-	console.log(toRemove);
-	toRemove = JSON.stringify(toRemove);
-	var postParameters = {url : url, toRemove : toRemove};
+	var user = parent.getAttribute('username');
+	var command = "remove";
+	console.log(user);
+	console.log(command);
+	user = JSON.stringify(user);
+	command = JSON.stringify(command);
+	var postParameters = {
+		url : url,
+		user : user,
+		command : command
+	};
 	
-	$.post('/removefriend', postParameters, function(responseJSON) {
-		responseObject = JSON.parse(reponseJSON);
+	$.post('/editfriends', postParameters, function(responseJSON) {
+		console.log("remove friends");
+		responseObject = JSON.parse(responseJSON);
 		message = responseObject.message;
 		alert(message);
-	})
+	});
 	
-}
+};
