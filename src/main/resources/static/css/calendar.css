@@ -150,30 +150,21 @@ body {
 }
 
 /* dialog styling */
-.ui-dialog, .ui-dialog-title, .ui-state-default, .ui-widget-content, .ui-state-default, .ui-resizable {
-	display: none;
-	border: none;
-	resize: none;
-}
-
-.ui-draggable .ui-dialog-titlebar {
-	border: none;
-}
-
-.ui-dialog .ui-dialog-content {
-	padding: 2px 2px;
-}
-
-.ui-widget-header {
-	background: #00000;
-	height: 2px;
-}
 
 /* inner box of dialog */
 #ui-id-1 {
 	width: 300px;
+	height: 1px;
 }
 
+.form-inline, .form-group {
+	display: block !important;
+}
+
+.dialog-form {
+	width: 250px;
+	margin: auto;
+}
 
 /* contacts page stuff */
 
@@ -299,7 +290,7 @@ body {
 
 #descrip {
 	resize: none;
-	width: 260px;
+	width: 250px;
 }
 
 #title {

@@ -12,8 +12,8 @@ function openDialog(key) {
 	var dur = value.duration;
 	form =
 	'<form class="form-inline" id ="newEventForm">' +
-	'<img id="x-button" src="/img/x.png"/>' +
-	'<div class="form-group">' +
+	'<div class="form-group dialog-form">' +
+		'<img id="x-button" src="/img/x.png"/>' +
 	    '<div class="input-group">' +
 		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '">' +
 	    '</div>' +
@@ -26,7 +26,7 @@ function openDialog(key) {
 			' for <input id="duration" type="text" value="' + dur + '"/> minutes ' +
 	    '</div>' +
 	    '<div class="input-group">' +
-	    	'<textarea type="text" class="form-control" id="descrip">'+ value.description + '</textarea>' +
+	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description...">'+ value.description + '</textarea>' +
 	    '</div>' +
 	    '<div class="input-group">' +
 	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'"/>' +
@@ -37,8 +37,7 @@ function openDialog(key) {
 		'</div>' +
 	 '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
 	'</form>'
-	//form = $(form).resizable({disabled: true});
-	$(form).dialog({ modal: true}).resizable("disable");
+	$(form).dialog({ modal: true, resizable: false});
 }
 
 function openGoogleEvent(key) {
@@ -373,6 +372,7 @@ function getDBTime(date, time) {
 }
 
 $(document).ready(function(e) {
+	 $(".ui-dialog-titlebar").hide()  
 	updateDisplayedEvents();
 	
 	$("#x-button").click(function(e) {
