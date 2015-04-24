@@ -108,7 +108,7 @@ body {
 	border-color: #D3D3D3;
 }
 
-.event {
+.event, .google-event {
 	display: block;
 	float: right;
 	border: 1px solid;
@@ -120,13 +120,6 @@ body {
 
 .google-event {
 	background-color: rgba(62, 115, 240, 0.57);
-	display: block;
-	float: right;
-	border: 1px solid;
-	font-family: Helvetica;
-	min-height: 20px;
-	width: 132px;
-    cursor: pointer;
 }
 
 .footer {
@@ -315,4 +308,9 @@ body {
 	box-shadow: none;
 	border: none;
 	border-bottom: 1px black solid;
+}
+
+.has-error {
+	border-color: #a94442;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
 }

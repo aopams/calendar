@@ -28,7 +28,7 @@ function openDialog(key, google) {
 	    '</div>' +
 	    '<div class="input-group margin-group">' +
 	    	'<div class="formatted">At </div>' +
-	    		'<input id="dialog-time" type="text" class="form-control" onclick="timePicker()" value="' + time + '"'+ ds +' >' +
+	    		'<input id="dialog-time" type="text" class="form-control" onclick="" value="' + time + '"'+ ds +' >' +
 			'<div class="formatted">   for </div>' +
 				'<input id="duration" type="text" class="form-control" value="' + dur + '"'+ ds +'><div class="formatted"> min </div>' +
 	    '</div>' +
@@ -100,10 +100,6 @@ function timePicker() {
 	$('#dialog-time').timepicker();
 }
 
-function isTime(time) {
-    return time.match(/(^([0-9]|[0-1][0-9]|[2][0-3]):([0-5][0-9])$)|(^([0-9]|[1][0-9]|[2][0-3])$)/);
-}
-
 function createEvent(eventSlot) {
 	var slot = eventSlot.id;
 	var day = getDay(slot.substring(0, 1));
@@ -143,6 +139,7 @@ function getWrittenDate(index) {
 	return weekInfo[index].month + " " + weekInfo[index].day + ", " + weekInfo[index].year;
 }
 
+/* updates all the events on the caledar at the given moment. */
 function updateDisplayedEvents() {
 	var postParameters = {string: window.location.pathname};
 	$.post("/getevents", postParameters, function(responseJSON){
@@ -210,6 +207,8 @@ function parseData(responseJSON) {
 		}
 		//change the date title on the top of the calendar
 		dateTitle();
+		/* sets z-indices of events so they overlay each other appropriately. */
+		zindexByDuration();
 }
 
 function placeEvents(elem, event) {
@@ -342,6 +341,46 @@ function getDBTime(date, time) {
 		arr[2] + " " + sHours + ":" + sMinutes;
 }
 
+function dateRegex(date) {
+	date = date.replace(",", "");
+	console.log(date);
+	arr = date.split(' ');
+	if (arr.length != 3) {
+		return false;
+	} else {
+		var month = false;
+		var mon = arr[0];
+		if( mon === "Jan" | mon == "Feb" | mon === "Mar" | mon == "Apr" |
+			mon === "May" | mon == "Jun" | mon === "Jul" | mon == "Aug" |
+			mon === "Sep" | mon == "Oct" | mon === "Nov" | mon == "Dec") {
+				month = true;
+		}
+		var day = false;
+		var d = arr[1];
+		if (d >= 1 && d <= 31) {
+			day = true;
+		}
+		var year = false;
+		var y = arr[2];
+		if (y >= 2015) {
+			y = true;
+		}
+	return month && day && year;
+	}
+}
+
+function zindexByDuration() {
+	//cycle through all events...
+	var z = 1;
+	for(key in eventMap) {
+		value = eventMap[key];
+		console.log(z + ' ll ' + document.getElementById(value.id).style.zIndex);
+		document.getElementById(value.id).style.zIndex = z;
+		console.log(z + ' ll ' + document.getElementById(value.id).style.zIndex);
+		z++;
+	}
+}
+
 $(document).ready(function(e) {
 	 $(".ui-dialog-titlebar").hide()  
 	updateDisplayedEvents();
@@ -381,10 +420,36 @@ $(document).ready(function(e) {
 	    datePicker();
 	});
 	
+	$(document).on('keyup','#datepicker', function(e) {
+		date = $('#datepicker').val();
+		console.log(date);
+		var res = dateRegex();
+		if (res) {
+			$('#datepicker').removeClass('has-error');
+		} else {
+			$('#datepicker').addClass('has-error');
+		}
+	});
+
+	$(document).on('click','#dialog-time', function(e) {		    
+		timePicker();
+	});
+	
+	$(document).on('keyup','#dialog-time', function(e) {
+		var time = $('#dialog-time').val().match(/^(0?[1-9]|1[012])(:[0-5]\d) [APap][mM]$/i);
+		if (time) {
+			$('#dialog-time').removeClass('has-error');
+			document.getElementById("new-event-button").style.visibility = "visible";
+		} else {
+			$('#dialog-time').addClass('has-error');
+			document.getElementById("new-event-button").style.visibility = "hidden";
+		}
+	});
+
 	$(document).on('click','#leftarrow', function(e) {
 	    leftArrow();
 	});
-	
+
 	$(document).on('click','#rightarrow', function(e) {
 	    rightArrow();
 	});

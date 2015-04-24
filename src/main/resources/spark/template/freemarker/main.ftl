@@ -6,7 +6,6 @@
 <script src="\js/jquery-2.1.1.js"></script>
 <script src="\js/calendar.js"></script>
 <script src="\js/contacts.js"></script>
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script type="text/javascript" src="\jquery.timepicker.js"></script>
 <script type="text/javascript" src="\lib/bootstrap-datepicker.js"></script>
