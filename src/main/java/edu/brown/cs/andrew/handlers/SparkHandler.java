@@ -103,10 +103,12 @@ public class SparkHandler {
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       ClientHandler cli = clients.get(clientID);
       String title = qm.value("title");
+      boolean noon = qm.value("date").contains(" 12:");
+      System.out.println(noon);
       Date date = null;
       try {
         System.out.println(qm.value("date"));
-        date = new SimpleDateFormat("dd-MMM-yyy hh:00").parse(qm.value("date"));
+        date = new SimpleDateFormat("dd-MMM-yyy hh:mm").parse(qm.value("date"));
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -122,7 +124,13 @@ public class SparkHandler {
         users = users.substring(users.indexOf(",") + 1);
       }
       Calendar c = Calendar.getInstance();
+      
       c.setTime(date);
+      if (noon) {
+        c.set(Calendar.HOUR_OF_DAY, 12);
+        date = c.getTime();
+      }
+      System.out.println(c.getTime());
       int dayWeek = c.get(Calendar.DAY_OF_WEEK);
       String dayOfWeek = numbersToDay.get(dayWeek);
       Event e = new Event(date, title, dayOfWeek, attendees,
