@@ -51,10 +51,12 @@ public class Ranker {
       ClientHandler curr = e.getValue();
       ConcurrentHashMap<Integer, Event> daysEvents = curr.getEventsByDay(d);
       System.out.println(d);
+      System.out.println(daysEvents.size());
       for(Entry<Integer, Event> event : daysEvents.entrySet()) {
         Date eventTime;
         try {
           eventTime = event.getValue().getDate();
+          System.out.println(d + " VERSUS" + eventTime);
           Calendar innerCal = Calendar.getInstance();
           innerCal.setTime(eventTime);
           c.add(Calendar.MINUTE, event.getValue().getDuration());

@@ -93,7 +93,7 @@ public class Main {
       List<String> hGroup = new ArrayList<String>();
       hGroup.add("Harsha");
       System.out.println(hGroup.size());
-      Date myDate2 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("13/4/2015 12:00");
+      Date myDate2 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("13/4/2015 13:00");
       Event e2 = new Event(myDate2, "Ninja Time!", "Monday", hGroup, "", 180,
           "Harsha going stealth-mode",
           "Harsha");
