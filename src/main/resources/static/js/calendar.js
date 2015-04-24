@@ -205,7 +205,7 @@ function parseData(responseJSON) {
 			newElem.setAttribute("style", "height:"+getEventHeight(value.duration)+"px");
 			placeEvents(newElem, value);
 		}
-		//change the date title on the top of the calendar
+		/* change the date title on the top of the calendar */
 		dateTitle();
 		/* sets z-indices of events so they overlay each other appropriately. */
 		zindexByDuration();
@@ -278,7 +278,7 @@ function placeEventDiv(id, elem, event) {
 	} else {
 		elem.appendChild(document.createTextNode('...'));
 		document.getElementById(id).appendChild(elem);
-		$("#" + id).children().each(function () {
+		$(".eventSlot#" + id).children().each(function () {
 		    this.innerHTML = '...';
 		    this.style.width = (1/size * 100) + "%";
 		});
@@ -313,13 +313,12 @@ function newEvent() {
 
 	$.post("/newevent", postParameters, function(responseJSON){
 /*
-		
 		if(responseJSON.status == 1) {
 			$dialog.dialog('destroy');
 		} else {
 			alert('ranking: ' + responseJSON.message);
 		}
-*/		
+*/
 	})
 }
 
@@ -371,18 +370,61 @@ function dateRegex(date) {
 
 function zindexByDuration() {
 	//cycle through all events...
-	var z = 1;
-	for(key in eventMap) {
-		value = eventMap[key];
-		console.log(z + ' ll ' + document.getElementById(value.id).style.zIndex);
-		document.getElementById(value.id).style.zIndex = z;
-		console.log(z + ' ll ' + document.getElementById(value.id).style.zIndex);
-		z++;
+	for (var i = 100; i < 725; i++) {
+		if ((i % 100) > 12) {
+			i += 86;
+		} else {
+			var height = 0;
+			var id = -1;
+			/* go thru all the children of an event slot and find the tallest one. */
+			$('.eventSlot#' + i).children().each(function () {
+				/* set z index by date and time */
+				this.style.zIndex = i;
+				currHeight = this.style.height;
+				currHeight = currHeight.substring(0, currHeight.length - 2);
+				if (currHeight > height) {
+		    		height = currHeight;
+		    		console.log(height);
+		    		id = this.id;
+				}
+			});
+			if (id != -1) {
+				addNegativeMargins(id, i);
+			}
+		}
+	}
+}
+
+function addNegativeMargins(id, slot) {
+	console.log('.event#' + id);
+	// we get the margin and height of the event
+	//get margin of event and add it to adjustedHeight
+	boxHeight = $('.event#' + id).height();
+	var adjustedHeight = boxHeight - 37.5;
+	if (adjustedHeight > 0) {
+		adjustMargin(adjustedHeight, slot);
+	}
+}
+
+function adjustMargin(ah, slot) {
+	rows = Math.ceil(ah/37.5);
+	console.log("slot- " + slot + " // rows- " + rows + "// ah - " + ah);
+	while (rows > 0) {
+		slot += 1;
+		//if condition for events that span more than one day 
+		$('.eventSlot#' + slot).children().each(function () {
+			currMarg = this.style.marginTop;
+			currMarg = (currMarg.substring(0, currMarg.length) * 1);
+			newMarg= currMarg - ah;
+			this.style.marginTop = newMarg + "px";
+		});
+		rows--;
+		ah -= 37.5;
 	}
 }
 
 $(document).ready(function(e) {
-	 $(".ui-dialog-titlebar").hide()  
+	$(".ui-dialog-titlebar").hide()  
 	updateDisplayedEvents();
 	
 	$("#x-button").click(function(e) {
