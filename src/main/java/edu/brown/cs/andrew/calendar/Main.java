@@ -87,7 +87,7 @@ public class Main {
       Event e1 = new Event(myDate1, "Ninja Time!", "Monday", hGroup1, "", 180,
           "Harsha going stealth-mode",
           "Harsha");
-      myDBHandler.addEvent(e1);
+      //myDBHandler.addEvent(e1);
       e1.setID(11);
       myDBHandler.closeConnection();
       List<String> hGroup = new ArrayList<String>();
@@ -98,7 +98,7 @@ public class Main {
           "Harsha going stealth-mode",
           "Harsha");
       Ranker myRanker = new Ranker(e2);
-     // System.out.println(myRanker.checkConflict(e2.getDate()));
+      System.out.println(myRanker.checkConflict(e2.getDate()));
       System.out.println(System.currentTimeMillis() / 1000);
     } catch (ClassNotFoundException | SQLException | ParseException e) {
       e.printStackTrace();

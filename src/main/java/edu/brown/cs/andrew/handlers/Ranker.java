@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import edu.brown.cs.andrew.calendar.Main;
 import edu.brown.cs.andrew.clientThreads.HeartBeatThread;
 
 public class Ranker {
@@ -34,9 +35,9 @@ public class Ranker {
       // TODO Auto-generated catch block
       e1.printStackTrace();
     }
-    //System.out.println(attendees.get(0).getEvents().size());
+    System.out.println(attendees.get(0).getEvents().size());
   }
-  
+
   public boolean checkConflict(Date d) {
     Calendar c = Calendar.getInstance();
     c.setTime(d);
@@ -68,5 +69,5 @@ public class Ranker {
     }
     return toReturn;
   }
-  
+ 
 }

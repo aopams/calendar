@@ -105,6 +105,7 @@ public class SparkHandler {
       String title = qm.value("title");
       Date date = null;
       try {
+        System.out.println(qm.value("date"));
         date = new SimpleDateFormat("dd-MMM-yyy hh:00").parse(qm.value("date"));
       } catch (ParseException e) {
         e.printStackTrace();
@@ -126,7 +127,7 @@ public class SparkHandler {
       String dayOfWeek = numbersToDay.get(dayWeek);
       Event e = new Event(date, title, dayOfWeek, attendees,
           group, duration, description, creator);
-      CalendarThread ct = new CalendarThread(cli, Commands.ACCEPT_FRIEND, e, null);
+      CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null);
       pool.submit(ct);
       clients.put(clientID, cli);
       int status = 0;

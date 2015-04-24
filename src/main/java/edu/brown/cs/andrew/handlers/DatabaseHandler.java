@@ -429,6 +429,7 @@ public class DatabaseHandler {
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     while (rs.next()) {
       theStat2.setInt(1, rs.getInt(1));
+      System.out.println(rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
         List<String> users = getUsersFromEvent(rs2.getInt(1));
         Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")),

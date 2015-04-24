@@ -26,7 +26,6 @@ public class HeartBeatThread implements Callable<String>{
   @Override
   public String call() throws Exception {
     DatabaseHandler myDBHandler = new DatabaseHandler("calendar.sqlite3");
-    System.out.println(clients.size());
     for(Entry<Integer, ClientHandler> e : clients.entrySet()) {
       ClientHandler client = e.getValue();
       try {
