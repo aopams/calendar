@@ -2,7 +2,7 @@ var eventMap = {};
 var weekInfo = [];
 
 /* opens dialog window for events that creators have control over editing */
-function openDialog(key) {
+function openDialog(key, google) {
 	value = eventMap[key.id];
 	var date = value.date.split(" ");
 	var day = date[0] + " " + date[1] + " " + date[2];
@@ -10,105 +10,82 @@ function openDialog(key) {
 	var am = date[4];
 	var time = date[3].substring(0, T.length - 3) + " " + am;
 	var dur = value.duration;
+	if (google == 1) {
+		var ds = 'disabled';
+	} else {
+		var ds = '';
+	}
 	form =
 	'<form class="form-inline" id ="newEventForm">' +
 	'<div class="form-group dialog-form">' +
 		'<img id="x-button" src="/img/x.png"/>' +
 	    '<div class="input-group">' +
-		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '">' +
+		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '"'+ ds +'>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' +
-		    '<input type="text" id="datepicker" value="' + day + '"/>' +
+	    '<div class="input-group margin-group">' +
+		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' + 
+		    '<input type="text" class="form-control" id="datepicker" placeholder="date" value="' + day + '"'+ ds +'>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'At <input id="dialog-time" type="text" class="time" onclick="timePicker()" value="' +  time + '" />' +
-			' for <input id="duration" type="text" value="' + dur + '"/> minutes ' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="formatted">At </div>' +
+	    		'<input id="dialog-time" type="text" class="form-control" onclick="timePicker()" value="' + time + '"'+ ds +' >' +
+			'<div class="formatted">   for </div>' +
+				'<input id="duration" type="text" class="form-control" value="' + dur + '"'+ ds +'><div class="formatted"> min </div>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description...">'+ value.description + '</textarea>' +
+	    '<div class="input-group margin-group">' +
+	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description..."'+ ds +'>'+ value.description + '</textarea>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'"/>' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'"'+ ds +'/>' +
 		'</div>' +
-	  	'<div class="input-group">' +
+	  	'<div class="input-group margin-group">' +
 		    '<div class="input-group-addon">@</div>' +
-		    '<input type="text" class="form-control" id="group" placeholder="Groups" value="'+ value.group +'"/>' +
+		    '<input type="text" class="form-control" id="group" placeholder="Groups" value="'+ value.group +'"'+ ds +'/>' +
 		'</div>' +
-	 '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
-	'</form>'
+		'<div class="margin-group-xl">';
+		
+	if (google == 1) {
+		form = form + '<img id="google-button" src="\\img/google.png"/>';
+	} else {
+		form = form + '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>';
+	}
+	form = form + '</div> </div> </form>';
 	$(form).dialog({ modal: true, resizable: false});
 }
 
-function openGoogleEvent(key) {
-	value = eventMap[key.id];
-	var date = value.date.split(" ");
-	var day = date[0] + " " + date[1] + " " + date[2];
-	var T = date[3];
-	var am = date[4];
-	var time = date[3].substring(0, T.length - 3) + " " + am;
-	var dur = value.duration;
-	form =
-	'<form class="form-inline">' +
-	'<img id="x-button" src="/img/x.png"/>' +
-	'<div class="form-group">' +
-	    '<div class="input-group">' +
-		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '" readonly>' +
-	    '</div>' +
-	    '<div class="input-group">' +
-		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true" readonly></span></div>' +
-		    '<input type="text" value="' + day + '" readonly />' +
-	    '</div>' +
-	    '<div class="input-group">' +
-	    	'At <input id="dialog-time" type="text" class="time" value="' +  time + '" readonly="true"/>' +
-			' for <input id="duration" value="' + dur + '" readonly/> minutes ' +
-	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<textarea type="text" class="form-control" id="descrip" readonly>'+ value.description + '</textarea>' +
-	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'" readonly/>' +
-		'</div>' +
-	  	'<div class="input-group">' +
-		    '<div class="input-group-addon">@</div>' +
-		    '<input type="text" class="form-control" id="group" placeholder="Groups" value="'+ value.group +'" readonly/>' +
-		'</div>' +
-	 '<img id="google-button" src="\\img/google.png"/>' +
-	'</form>'
-	$(form).dialog({modal: true, resizeable: false});
-}
-
-
 /* opens dialog window for events that creators have control over editing */
 function newEventDialog(date, time) {
-	form =	
-	'<form class="input-form-inline">' +
-	'<img id="x-button" src="\\img/x.png"/>' +
-	'<div class="form-group">' +
+	form =
+	'<form class="form-inline" id ="newEventForm">' +
+	'<div class="form-group dialog-form">' +
+		'<img id="x-button" src="/img/x.png"/>' +
 	    '<div class="input-group">' +
 		    '<input type="text" class="form-control" id="title" placeholder="Title">' +
 	    '</div>' +
-	    '<div class="input-group">' +
-		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' +
-		    '<input type="text" id="datepicker" value="' + date + '"/>' +
+	    '<div class="input-group margin-group">' +
+		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' + 
+		    '<input type="text" class="form-control" id="datepicker" placeholder="date" value="' + date + '">' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'At <input id="dialog-time" type="text" class="time" onclick="timePicker()" value="' +  time + '" />' +
-			' for <input id="duration" type="text"/> minutes' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="formatted">At </div>' +
+	    		'<input id="dialog-time" type="text" class="form-control" onclick="timePicker()" value="' + time + '">' +
+			'<div class="formatted">  for </div>' +
+				'<input id="duration" type="text" class="form-control"><div class="formatted"> min </div>' +
 	    '</div>' +
-	    '<div class="input-group">' +
+	    '<div class="input-group margin-group">' +
 	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description..."></textarea>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees"placeholder="People"/>' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value=""/>'+
 		'</div>' +
-	  	'<div class="input-group">' +
+	  	'<div class="input-group margin-group">' +
 		    '<div class="input-group-addon">@</div>' +
 		    '<input type="text" class="form-control" id="group" placeholder="Groups"/>' +
 		'</div>' +
-	 '<img id="new-event-button" src="\\img/check.png"/>' +
-	'</form>'
-	$(form).dialog({modal: true, resizeable: false});
+		'<div class="margin-group-xl">'+ 
+		'<img id="new-event-button" src="\\img/check.png"/>' +
+		'</div> </div> </form>';
+	$(form).dialog({ modal: true, resizable: false});
 }
 
 function datePicker() {
@@ -117,13 +94,12 @@ function datePicker() {
 	    'autoclose': true
 	});
 }
-  
+
 function timePicker() {
 	console.log('timepicker');
-	$('#basicExample').timepicker();
+	$('#dialog-time').timepicker();
 }
 
-                
 function isTime(time) {
     return time.match(/(^([0-9]|[0-1][0-9]|[2][0-3]):([0-5][0-9])$)|(^([0-9]|[1][0-9]|[2][0-3])$)/);
 }
@@ -236,7 +212,6 @@ function parseData(responseJSON) {
 		dateTitle();
 }
 
-
 function placeEvents(elem, event) {
 	var day = event.dayOfWeek;
 	var date = event.date.split(" ");
@@ -338,9 +313,6 @@ function newEvent() {
 	};
 
 	$.post("/newevent", postParameters, function(responseJSON){
-
-		
-		
 /*
 		
 		if(responseJSON.status == 1) {
@@ -348,8 +320,7 @@ function newEvent() {
 		} else {
 			alert('ranking: ' + responseJSON.message);
 		}
-*/
-		
+*/		
 	})
 }
 
@@ -398,7 +369,7 @@ $(document).ready(function(e) {
 	$(document).on('click','.google-event', function(e) {
 		console.log('here');
 		e.stopPropagation();
-	    openGoogleEvent(e.target);
+	    openDialog(e.target, 1);
 	});
 
 	$(document).on('click','#x-button', function(e) {
