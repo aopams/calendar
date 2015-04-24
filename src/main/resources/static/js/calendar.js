@@ -55,34 +55,37 @@ function openDialog(key, google) {
 
 /* opens dialog window for events that creators have control over editing */
 function newEventDialog(date, time) {
-	form =	
-	'<form class="input-form-inline">' +
-	'<img id="x-button" src="\\img/x.png"/>' +
-	'<div class="form-group">' +
+	form =
+	'<form class="form-inline" id ="newEventForm">' +
+	'<div class="form-group dialog-form">' +
+		'<img id="x-button" src="/img/x.png"/>' +
 	    '<div class="input-group">' +
 		    '<input type="text" class="form-control" id="title" placeholder="Title">' +
 	    '</div>' +
-	    '<div class="input-group">' +
-		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' +
-		    '<input type="text" id="datepicker" value="' + date + '"/>' +
+	    '<div class="input-group margin-group">' +
+		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' + 
+		    '<input type="text" class="form-control" id="datepicker" placeholder="date" value="' + date + '">' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'At <input id="dialog-time" type="text" class="time" onclick="timePicker()" value="' +  time + '" />' +
-			' for <input id="duration" type="text"/> minutes' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="formatted">At </div>' +
+	    		'<input id="dialog-time" type="text" class="form-control" onclick="timePicker()" value="' + time + '">' +
+			'<div class="formatted">  for </div>' +
+				'<input id="duration" type="text" class="form-control"><div class="formatted"> min </div>' +
 	    '</div>' +
-	    '<div class="input-group">' +
+	    '<div class="input-group margin-group">' +
 	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description..."></textarea>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees"placeholder="People"/>' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value=""/>'+
 		'</div>' +
-	  	'<div class="input-group">' +
+	  	'<div class="input-group margin-group">' +
 		    '<div class="input-group-addon">@</div>' +
 		    '<input type="text" class="form-control" id="group" placeholder="Groups"/>' +
 		'</div>' +
-	 '<img id="new-event-button" src="\\img/check.png"/>' +
-	'</form>'
-	$(form).dialog({modal: true, resizeable: false});
+		'<div class="margin-group-xl">'+ 
+		'<img id="new-event-button" src="\\img/check.png"/>' +
+		'</div> </div> </form>';
+	$(form).dialog({ modal: true, resizable: false});
 }
 
 function datePicker() {
