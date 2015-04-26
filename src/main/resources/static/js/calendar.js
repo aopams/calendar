@@ -365,33 +365,6 @@ function changeWeekNumbers(weekArray) {
 	}
 }
 
-function newEvent() {
-	var title = document.getElementById('title').value;
-	var date = document.getElementById('datepicker').value;
-	var time = document.getElementById('dialog-time').value;
-	var dur = document.getElementById('duration').value;
-	var descrip = document.getElementById('descrip').value;
-	var atten = document.getElementById('attendees').value + ",";
-	console.log(atten);
-	var group = document.getElementById('group').value;
-	var correctTime = getDBTime(date, time);
-	console.log(correctTime);
-	var postParameters = {string: window.location.pathname, title: title, date: correctTime,
-		time: time, duration: dur, description: descrip, attendees: atten,
-		group: group
-	};
-
-	$.post("/newevent", postParameters, function(responseJSON){
-/*
-		if(responseJSON.status == 1) {
-			$dialog.dialog('destroy');
-		} else {
-			alert('ranking: ' + responseJSON.message);
-		}
-*/
-	})
-}
-
 function getDBTime(date, time) {
 	date = date.replace(",", "");
 	console.log(date);
@@ -439,7 +412,7 @@ function dateRegex(date) {
 }
 
 function zindexByDuration() {
-	//cycle through all events...
+	//cycle through all events chronologically...
 	for (var i = 100; i < 725; i++) {
 		if ((i % 100) > 12) {
 			i += 86;
@@ -495,6 +468,7 @@ function adjustMargin(ah, slot) {
 	}
 }
 
+/* sorts events by their height, so longer events are at the end. */
 function sortEventsByHeight(parent) {
 	$(parent + ' > div').sort(function (a, b) {
 	    return $(a).height() > $(b).height() ? 1 : -1;  
