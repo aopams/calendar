@@ -171,7 +171,8 @@ body {
 }
 
 .form-inline, .form-group {
-	display: block !important;
+	display: block 
+/* 	!important; */
 }
 
 .dialog-form {
@@ -202,10 +203,8 @@ body {
 	display:inline-block;
 }
 
-#form_inline {
-	width:100%;
-	margin-left: auto;
-	margin-right: auto;
+#send {
+	display:inline-block;
 }
 
 #addFriend {
@@ -282,7 +281,7 @@ body {
 	height:25px;
 	width:30px;
 	padding:0px;
-	margin-left: 60px;
+	margin-left: 55px;
 }
 
 #accept {
@@ -290,8 +289,7 @@ body {
 	height:25px;
 	width:30px;
 	padding:0px;
-	margin-left: auto;
-	margin-right: auto;
+	margin-left: 10px;
 }
 
 /*dialog inner styling */

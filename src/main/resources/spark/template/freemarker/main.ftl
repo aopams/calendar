@@ -32,7 +32,7 @@
 		<div id="contactsWindow">
 			<div id="addFriendBar">
 <!-- 			CHANGE THIS FROM FORM TO A SUBMIT BUTTON -->
-				<div class="form-inline">
+				<div class="form-inline" id="send">
 					<div class="form-group">
 						<input type="text" class="form-control" id="addFriend" placeholder="@username">
 					</div>
