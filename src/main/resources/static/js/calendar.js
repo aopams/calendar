@@ -310,7 +310,8 @@ function newEvent() {
 	var time = document.getElementById('dialog-time').value;
 	var dur = document.getElementById('duration').value;
 	var descrip = document.getElementById('descrip').value;
-	var atten = document.getElementById('attendees').value;
+	var atten = document.getElementById('attendees').value + ",";
+	console.log(atten);
 	var group = document.getElementById('group').value;
 	var correctTime = getDBTime(date, time);
 	console.log(correctTime);
