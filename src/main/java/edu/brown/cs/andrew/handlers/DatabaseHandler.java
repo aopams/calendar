@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -134,6 +135,7 @@ public class DatabaseHandler {
     theStat.close();
   }
   
+
   public void addFriendRequest(String user_name1, String user_name2) throws SQLException {
     String query = "INSERT into Friends (user_name1, user_name2, status)"
         + "Select ?, ?, \'pending\' Where NOT EXISTS("
@@ -249,6 +251,7 @@ public class DatabaseHandler {
     theStat.executeUpdate();
     theStat.close();
   }
+  
   public void addEvent(Event e) throws SQLException, ParseException {
     String group_name = e.getGroup();
     List<String> users = e.getAttendees();

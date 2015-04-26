@@ -25,6 +25,8 @@ public class Main {
     System.out.println(System.currentTimeMillis() / 1000);
     try {
       myDBHandler = new DatabaseHandler("calendar.sqlite3");
+      myDBHandler.acceptFriendRequest("Will", "Rohan");
+      myDBHandler.addFriendRequest("Will", "Rohan");
      /** myDBHandler.createTablesForCalendar();
       myDBHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy",
           "hyeddana@cs.brown.edu");
@@ -80,14 +82,13 @@ public class Main {
       System.out.println(myDBHandler.findGroup("Harsha Squad"));
       myDBHandler.addEvent(e);
       myDBHandler.addEvent(e2);
-      myDBHandler.addEvent(e3); **/
+      myDBHandler.addEvent(e3); 
       List<String> hGroup1 = new ArrayList<String>();
       hGroup1.add("Harsha");
       Date myDate1 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("13/4/2015 13:00");
       Event e1 = new Event(myDate1, "Ninja Time!", "Monday", hGroup1, "", 180,
           "Harsha going stealth-mode",
           "Harsha");
-      //myDBHandler.addEvent(e1);
       e1.setID(11);
       myDBHandler.closeConnection();
       List<String> hGroup = new ArrayList<String>();
@@ -98,9 +99,11 @@ public class Main {
           "Harsha going stealth-mode",
           "Harsha");
       Ranker myRanker = new Ranker(e2);
-      System.out.println(myRanker.checkConflict(e2.getDate()));
+      **/
+      //System.out.println(myRanker.checkConflict(e2.getDate()));
+      myDBHandler.closeConnection();
       System.out.println(System.currentTimeMillis() / 1000);
-    } catch (ClassNotFoundException | SQLException | ParseException e) {
+    } catch (ClassNotFoundException | SQLException e) {
       e.printStackTrace();
     } finally {
       run(args);

@@ -36,8 +36,11 @@ public class CalendarThread implements Callable<String>{
     // TODO Auto-generated method stub
     switch (command) {
     case ADD_EVENT :
-      client1.addEvent(myEvent);
+      Event nextDay = client1.checkTwoDays(myEvent);
       myDBHandler.addEvent(myEvent);
+      if (nextDay != null) {
+        myDBHandler.addEvent(nextDay);
+      }
       break;
     case DELETE_EVENT :
       client1.removeEvent(deleteEvent);
@@ -46,8 +49,11 @@ public class CalendarThread implements Callable<String>{
     case EDIT_EVENT :
       client1.removeEvent(deleteEvent);
       myDBHandler.removeEvent(deleteEvent);
-      client1.addEvent(myEvent);
+      Event nextDay2 = client1.checkTwoDays(myEvent);
       myDBHandler.addEvent(myEvent);
+      if (nextDay2 != null) {
+        myDBHandler.addEvent(nextDay2);
+      }
       break;
     default :
       return null;
