@@ -122,14 +122,11 @@ public class ClientHandler {
   }
   public String requestFriend(String user_name) {
     String toReturn = null;
-    System.out.println("in request friend");
     if (!friends.containsKey(user_name)) {
-      System.out.println("uh huh?");
       friends.put(user_name, "pending");
       return toReturn;
     //friend already exists (pending or , no need to do anything
     } else {
-      System.out.println("friend already exists in client handler");
       toReturn = "exists";
       return toReturn;
     }
