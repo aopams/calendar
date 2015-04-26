@@ -26,13 +26,15 @@ public class ClientHandler {
   private int maxEventId;
 
 
-  public ClientHandler(String db, String user) {
+  public ClientHandler(String db, String user, boolean initItself) {
       this.user = user;
       updateList = new CopyOnWriteArrayList<String>();
       ConcurrentHashMap<Integer, ClientHandler> dummyMap = new ConcurrentHashMap<Integer, ClientHandler>();
       dummyMap.put(0, this);
-      HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
-      SparkHandler.pool.submit(initThread);
+      if (initItself) {
+        HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
+        SparkHandler.pool.submit(initThread);
+      }
   }
   
   public synchronized ConcurrentHashMap<String, String> getFriends() {
@@ -118,8 +120,16 @@ public class ClientHandler {
   public void acceptFriend(String user_name) {
     friends.put(user_name, "accepted");
   }
-  public void requestFriend(String user_name) {
-    friends.put(user_name, "pending");
+  public String requestFriend(String user_name) {
+    String toReturn = null;
+    if (!friends.containsKey(user_name)) {
+      friends.put(user_name, "pending");
+      return toReturn;
+    //friend already exists (pending or , no need to do anything
+    } else {
+      toReturn = "exists";
+      return toReturn;
+    }
   }
   public void addEvent(Event e) {
     maxEventId++;

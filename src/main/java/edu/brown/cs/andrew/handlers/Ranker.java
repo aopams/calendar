@@ -23,7 +23,7 @@ public class Ranker {
     System.out.println(attendeeList.get(0));
     for (int i = 0; i < attendeeList.size(); i++) {
       ClientHandler currHandler =
-          new ClientHandler("calendar.sqlite3", attendeeList.get(i));
+          new ClientHandler("calendar.sqlite3", attendeeList.get(i), false);
       attendees.put(i, currHandler);
     }
     base = e;
@@ -48,15 +48,16 @@ public class Ranker {
       if (!toReturn) {
         return false;
       }
+      System.out.println("attendees : " + attendees.entrySet().size());
       ClientHandler curr = e.getValue();
       ConcurrentHashMap<Integer, Event> daysEvents = curr.getEventsByDay(d);
       System.out.println(d);
-      System.out.println(daysEvents.size());
+      System.out.println("Events number " +daysEvents.size());
       for(Entry<Integer, Event> event : daysEvents.entrySet()) {
         Date eventTime;
         try {
           eventTime = event.getValue().getDate();
-          System.out.println(d + " VERSUS" + eventTime);
+          System.out.println(d + " VERSUS " + eventTime);
           Calendar innerCal = Calendar.getInstance();
           innerCal.setTime(eventTime);
           c.add(Calendar.MINUTE, event.getValue().getDuration());
