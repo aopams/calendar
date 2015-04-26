@@ -97,7 +97,6 @@ function datePicker() {
 }
 
 function timePicker() {
-	console.log('timepicker');
 	$('#dialog-time').timepicker();
 }
 
@@ -216,6 +215,8 @@ function parseData(responseJSON) {
 		dateTitle();
 		/* sets z-indices of events so they overlay each other appropriately. */
 		zindexByDuration();
+		/* offset events based on their minute start time */
+		timeOffsetMargin();
 }
 
 function placeEvents(elem, event) {
@@ -403,19 +404,12 @@ function zindexByDuration() {
 	}
 }
 
-function getTopMargin(time) {
-	var margin = (time/60) * 37.5;
-	return margin;
-}
-
 function addNegativeMargins(id, slot) {
 	console.log('.event#' + id);
 	// we get the margin and height of the event
 	boxHeight = $('.event#' + id).height();
-	//get margin of event and add it to adjustedHeight
-	time = eventMap[id].date.split(" ")[3].split(":")[1];
 	//subtract expected length and add any margin that might exist on top
-	var adjustedHeight = boxHeight - 37.5 + getTopMargin(time);
+	var adjustedHeight = boxHeight - 37.5;
 	if (adjustedHeight > 0) {
 		adjustMargin(adjustedHeight, slot);
 	}
@@ -428,14 +422,14 @@ function adjustMargin(ah, slot) {
 		slot += 1;
 		//if condition for events that span more than one day 
 		var len = $('.eventSlot#' + slot).children().length;
-		var index = 0;
+		var index = len - 1;
 		$('.eventSlot#' + slot).children().each(function () {
 			currMarg = this.style.marginTop;
 			currMarg = (currMarg.substring(0, currMarg.length) * 1);
 			newMarg= currMarg - ah;
 			this.style.marginTop = newMarg + "px";
 			this.style.marginRight = ((index/len)*100) + "%";
-			index++;
+			index--;
 		});
 		rows--;
 		ah -= 37.5;
@@ -458,6 +452,24 @@ function getEventColor(duration) {
 	} else {
 		return eventColors[6];
 	}
+}
+
+function timeOffsetMargin() {
+	var key;
+	for(key in eventMap) {
+		value = eventMap[key];
+		var evTime = eventMap[key].date.split(" ")[3].split(":")[1] * 1;
+		var currMarg = $('.event#' + key).css('margin-top');
+		currMarg = currMarg.substring(0, currMarg.length - 2);
+		var newMarg = (currMarg * 1) + getTimeOffsetMargin(evTime);
+		console.log('id: ' + key + ' newMarg: ' + newMarg);
+		$('.event#' + key).css('margin-top', newMarg+'px');
+	}
+}
+
+function getTimeOffsetMargin(t) {
+	var margin = (t/60) * 37.5;
+	return margin;
 }
 
 $(document).ready(function(e) {

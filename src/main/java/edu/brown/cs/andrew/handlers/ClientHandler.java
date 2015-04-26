@@ -131,6 +131,34 @@ public class ClientHandler {
       return toReturn;
     }
   }
+  public Event checkTwoDays(Event e) throws ParseException{
+    java.util.Date start = e.getDate();
+    int duration = e.getDuration();
+    Calendar c = Calendar.getInstance();
+    c.setTime(start);
+    c.add(Calendar.MINUTE, duration);
+    java.util.Date end = SparkHandler.setTimeToMidnight(c.getTime());
+    
+    if (SparkHandler.setTimeToMidnight(start).compareTo(end) != 0) {
+      c.setTime(start);
+      int hour = c.get(Calendar.HOUR_OF_DAY) * 60;
+      int minutes = c.get(Calendar.MINUTE);
+      hour += duration + minutes;
+      int newDuration = 0;
+      if (hour > 1440) {
+        newDuration = hour - 1440;
+        duration = duration - newDuration;
+      }
+      e.setDuration(duration);
+      c.setTime(end);
+      Event cont = new Event(end, e.getTitle() + " cont.", SparkHandler.numbersToDay.get(c.get(Calendar.DAY_OF_WEEK)),
+          e.getAttendees(), e.getGroup(), e.getDuration(), e.getDescription(), e.getCreator());
+      addEvent(cont);
+      return cont;
+    }
+    addEvent(e);
+    return null;
+  }
   public void addEvent(Event e) {
     maxEventId++;
     e.setID(maxEventId);
