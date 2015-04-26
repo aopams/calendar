@@ -1,5 +1,6 @@
 var eventMap = {};
 var weekInfo = [];
+var eventColors = ["lightblue", "lightgray", "lightcoral", "lightpink", "lightskyblue", "lightgreen", "lightgoldenrodyellow"]
 
 /* opens dialog window for events that creators have control over editing */
 function openDialog(key, google) {
@@ -201,8 +202,14 @@ function parseData(responseJSON) {
 			} else {
 				newElem.className = "event";
 			}
+			/* we set event id, height, and top-margin*/
+			
+			var time = value.date.split(" ")[3].split(":")[1];
 			newElem.setAttribute("id", key);
-			newElem.setAttribute("style", "height:"+getEventHeight(value.duration)+"px");
+			newElem.style.height = getEventHeight(value.duration) + "px";
+			newElem.style.backgroundColor = getEventColor(value.duration);
+			//newElem.style.marginTop = getTopMargin(time) + "px";
+			console.log("event margin is " + $('.event#45').css("marginTop"));
 			placeEvents(newElem, value);
 		}
 		/* change the date title on the top of the calendar */
@@ -388,6 +395,7 @@ function zindexByDuration() {
 		    		id = this.id;
 				}
 			});
+			//if we have an id
 			if (id != -1) {
 				addNegativeMargins(id, i);
 			}
@@ -395,12 +403,19 @@ function zindexByDuration() {
 	}
 }
 
+function getTopMargin(time) {
+	var margin = (time/60) * 37.5;
+	return margin;
+}
+
 function addNegativeMargins(id, slot) {
 	console.log('.event#' + id);
 	// we get the margin and height of the event
-	//get margin of event and add it to adjustedHeight
 	boxHeight = $('.event#' + id).height();
-	var adjustedHeight = boxHeight - 37.5;
+	//get margin of event and add it to adjustedHeight
+	time = eventMap[id].date.split(" ")[3].split(":")[1];
+	//subtract expected length and add any margin that might exist on top
+	var adjustedHeight = boxHeight - 37.5 + getTopMargin(time);
 	if (adjustedHeight > 0) {
 		adjustMargin(adjustedHeight, slot);
 	}
@@ -412,14 +427,36 @@ function adjustMargin(ah, slot) {
 	while (rows > 0) {
 		slot += 1;
 		//if condition for events that span more than one day 
+		var len = $('.eventSlot#' + slot).children().length;
+		var index = 0;
 		$('.eventSlot#' + slot).children().each(function () {
 			currMarg = this.style.marginTop;
 			currMarg = (currMarg.substring(0, currMarg.length) * 1);
 			newMarg= currMarg - ah;
 			this.style.marginTop = newMarg + "px";
+			this.style.marginRight = ((index/len)*100) + "%";
+			index++;
 		});
 		rows--;
 		ah -= 37.5;
+	}
+}
+
+function getEventColor(duration) {
+	if (duration <= 30) {
+		return eventColors[0];
+	} else if (duration <= 60) {
+		return eventColors[1];
+	} else if (duration <= 90) {
+		return eventColors[2];
+	} else if (duration <= 120) {
+		return eventColors[3];
+	} else if (duration <= 180) {
+		return eventColors[4];
+	} else if (duration <= 240) {
+		return eventColors[5];
+	} else {
+		return eventColors[6];
 	}
 }
 

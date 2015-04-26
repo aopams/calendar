@@ -90,7 +90,7 @@ body {
 
 .numeric-date {
 	position: absolute;
-  	z-index: 2;
+  	z-index: 99990;
   	width: 38px;
   	margin: 3px 0 0 3px;
 }
@@ -116,6 +116,8 @@ body {
 	min-height: 20px;
 	width: 132px;
     cursor: pointer;
+    position: relative;
+    border-radius: 3px;
 }
 
 .google-event {
@@ -159,7 +161,9 @@ body {
 }
 
 /* dialog styling */
-
+.ui-dialog {
+	z-index: 100000;
+}
 /* inner box of dialog */
 #ui-id-1 {
 	width: 300px;
