@@ -60,7 +60,7 @@ public class ContactsThread implements Callable<String> {
             System.out.println("friend does not exist");
             return "toobad";
           }
-        case ACCEPT_FRIEND : 
+      case ACCEPT_FRIEND : 
           client1.acceptFriend(user2);
           myDBHandler.acceptFriendRequest(user1, user2);
           break;
@@ -77,6 +77,8 @@ public class ContactsThread implements Callable<String> {
       default:
         break;
       }
+      System.out.println("connection over");
+      myDBHandler.closeConnection();
       return null;
   }
 }

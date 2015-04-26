@@ -138,7 +138,7 @@ public class ClientHandler {
     c.setTime(start);
     c.add(Calendar.MINUTE, duration);
     java.util.Date end = SparkHandler.setTimeToMidnight(c.getTime());
-    
+    Event cont = null;
     if (SparkHandler.setTimeToMidnight(start).compareTo(end) != 0) {
       c.setTime(start);
       int hour = c.get(Calendar.HOUR_OF_DAY) * 60;
@@ -147,20 +147,20 @@ public class ClientHandler {
       int newDuration = 0;
       if (hour > 1440) {
         newDuration = hour - 1440;
+        System.out.println("new Dat TIME: " + newDuration);
         duration = duration - newDuration;
       }
       e.setDuration(duration);
       c.setTime(end);
-      Event cont = new Event(end, e.getTitle() + " cont.", SparkHandler.numbersToDay.get(c.get(Calendar.DAY_OF_WEEK)),
-          e.getAttendees(), e.getGroup(), e.getDuration(), e.getDescription(), e.getCreator());
+      cont = new Event(end, e.getTitle() + " cont.", SparkHandler.numbersToDay.get(c.get(Calendar.DAY_OF_WEEK)),
+          e.getAttendees(), e.getGroup(), newDuration, e.getDescription(), e.getCreator());
       addEvent(cont);
-      return cont;
     }
     addEvent(e);
-    return null;
+    return cont;
   }
   public void addEvent(Event e) {
-    maxEventId++;
+    maxEventId += 1;
     e.setID(maxEventId);
     events.put(maxEventId, e);
   }

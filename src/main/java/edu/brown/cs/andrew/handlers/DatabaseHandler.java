@@ -22,8 +22,6 @@ public class DatabaseHandler {
   public DatabaseHandler(String dbFile) throws ClassNotFoundException, SQLException {
     Class.forName("org.sqlite.JDBC");
     conn = DriverManager.getConnection("jdbc:sqlite:" +dbFile);
-    conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-    conn.setAutoCommit(false);
     Statement stat = conn.createStatement();
     stat.executeUpdate("PRAGMA foreign_keys = ON;");
     stat.close();
@@ -163,6 +161,7 @@ public class DatabaseHandler {
     theStat.close();
   }
   public void removeFriend(String user_name1, String user_name2) throws SQLException {
+    System.out.println("removing a friendship");
     String query = "Delete From Friends where (user_name1 = ? and user_name2 = ?) "
         + "or (user_name1 = ? and user_name2 = ?);";
     PreparedStatement theStat = conn.prepareStatement(query);
@@ -170,7 +169,8 @@ public class DatabaseHandler {
     theStat.setString(2, user_name2);
     theStat.setString(3, user_name2);
     theStat.setString(4, user_name1);
-    theStat.executeUpdate();
+    System.out.println(theStat.executeUpdate());
+    System.out.println("friend removed");
     theStat.close();
   }
   public ConcurrentHashMap<String, String> getFriendsFromUser(String user_name) throws SQLException {
