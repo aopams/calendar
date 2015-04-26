@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="\//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="\css/calendar.css">
 <link rel="stylesheet" type="text/css" href="\lib/bootstrap-datepicker.css" />
+<link rel="stylesheet" type="text/css" href="\lib/jquery.timepicker.css" />
 
 </head>
 

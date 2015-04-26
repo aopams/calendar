@@ -132,7 +132,7 @@ function newEventDialog(date, time) {
 	    '</div>' +
 	    '<div class="input-group margin-group">' +
 	    	'<div class="formatted">At </div>' +
-	    		'<input id="dialog-time" type="text" class="form-control" onclick="timePicker()" value="' + time + '">' +
+	    		'<input id="dialog-time" type="text" class="form-control" value="' + time + '">' +
 			'<div class="formatted">  for </div>' +
 				'<input id="duration" type="text" class="form-control"><div class="formatted"> min </div>' +
 	    '</div>' +
@@ -417,23 +417,20 @@ function zindexByDuration() {
 		if ((i % 100) > 12) {
 			i += 86;
 		} else {
-			var height = 0;
-			var id = -1;
-			/* go thru all the children of an event slot and find the tallest one. */
+			/* add appropriate z index to every child */
 			$('.eventSlot#' + i).children().each(function () {
-				/* set z index by date and time */
 				this.style.zIndex = i;
-				currHeight = this.style.height;
-				currHeight = currHeight.substring(0, currHeight.length - 2);
-				if (currHeight > height) {
-		    		height = currHeight;
-		    		console.log(height);
-		    		id = this.id;
-				}
 			});
-			//if we have an id
-			if (id != -1) {
-				addNegativeMargins(id, i);
+
+			/* sort events by height, so tallest event is last */
+			sortEventsByHeight('.eventSlot#' + i);
+			
+			/* go thru all the children of an event slot and find the tallest one. */
+			var last = $('.eventSlot#' + i).children().last().attr('id');
+			
+			/* if last exists then we should see if we can add negative margins */
+			if (last != 'undefined') {
+				addNegativeMargins(last, i);
 			}
 		}
 	}
@@ -471,6 +468,13 @@ function adjustMargin(ah, slot) {
 	}
 }
 
+function sortEventsByHeight(parent) {
+	$(parent + ' > div').sort(function (a, b) {
+	    return $(a).height() > $(b).height() ? 1 : -1;  
+	}).appendTo($(parent));
+}
+
+/* assigns events color based on their duration. */
 function getEventColor(duration) {
 	if (duration <= 30) {
 		return eventColors[0];
