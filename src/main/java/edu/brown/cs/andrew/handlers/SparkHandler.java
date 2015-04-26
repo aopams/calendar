@@ -46,7 +46,7 @@ public class SparkHandler {
   private static Gson GSON = new Gson();
   private static int randomHolder = (int)(Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
-  private static ConcurrentHashMap<Integer, String> numbersToDay
+  protected static ConcurrentHashMap<Integer, String> numbersToDay
     = new ConcurrentHashMap<Integer, String>();
   
   public SparkHandler(String db) {

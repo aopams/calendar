@@ -68,4 +68,7 @@ public class Event {
   public String getCreator() {
     return creator;
   }
+  public void setDuration(int d) {
+    duration = d;
+  }
 }

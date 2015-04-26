@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -146,7 +147,6 @@ public class DatabaseHandler {
     if (results.next()) {
       return false;
     } else {
-      return true;
     }
   }
   
@@ -265,6 +265,7 @@ public class DatabaseHandler {
     theStat.executeUpdate();
     theStat.close();
   }
+  
   public void addEvent(Event e) throws SQLException, ParseException {
     String group_name = e.getGroup();
     List<String> users = e.getAttendees();
