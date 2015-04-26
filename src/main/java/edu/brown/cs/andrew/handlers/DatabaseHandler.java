@@ -132,22 +132,6 @@ public class DatabaseHandler {
     theStat.close();
   }
   
-  public boolean friendshipExists(String user_name1, String user_name2) throws SQLException {
-    String query = "SELECT * FROM Friends WHERE NOT EXISTS(SELECT * FROM Friends WHERE (user_name1 = ? AND user_name2 = ?) "
-        + "OR (user_name1 = ? AND user_name2 = ?));";
-    PreparedStatement stat = conn.prepareStatement(query);
-    stat.setString(1, user_name1);
-    stat.setString(2, user_name2);
-    stat.setString(3, user_name2);
-    stat.setString(4, user_name1);
-    ResultSet results = stat.executeQuery();
-    if (results.next()) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-  
   public void addFriendRequest(String user_name1, String user_name2) throws SQLException {
     String query = "INSERT into Friends (user_name1, user_name2, status)"
         + "Select ?, ?, \'pending\' Where NOT EXISTS("

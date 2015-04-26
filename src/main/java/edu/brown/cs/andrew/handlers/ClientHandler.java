@@ -96,8 +96,19 @@ public class ClientHandler {
   public void acceptFriend(String user_name) {
     friends.put(user_name, "accepted");
   }
-  public void requestFriend(String user_name) {
-    friends.put(user_name, "pending");
+  public String requestFriend(String user_name) {
+    String toReturn = null;
+    System.out.println("in request friend");
+    if (!friends.containsKey(user_name)) {
+      System.out.println("uh huh?");
+      friends.put(user_name, "pending");
+      return toReturn;
+    //friend already exists (pending or , no need to do anything
+    } else {
+      System.out.println("friend already exists in client handler");
+      toReturn = "exists";
+      return toReturn;
+    }
   }
   public void addEvent(Event e) {
     maxEventId++;

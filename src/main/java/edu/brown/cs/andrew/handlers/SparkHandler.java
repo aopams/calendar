@@ -326,6 +326,7 @@ public class SparkHandler {
       List<String[]> myFriends = new ArrayList<String[]>();
       for (String key : tempMap.keySet()) {
         String status = tempMap.get(key);
+        System.out.println(key + " " + status);
         String[] toAdd = {key, status};
         myFriends.add(toAdd);
       }
@@ -395,11 +396,22 @@ public class SparkHandler {
             ct = new ContactsThread(clients.get(id),
                 user2, null, null, Commands.ADD_FRIEND);
             pool.submit(ct);
-            ct.call();
-            message = "Friend added!";
-            variables = new ImmutableMap.Builder()
-            .put("message", message).build();
-            return GSON.toJson(variables);
+            String exists = ct.call();
+            if (exists.equals("toobad")) {
+              message = "User does not exist.";
+              variables = new ImmutableMap.Builder()
+              .put("message", message).build();
+              return GSON.toJson(variables);
+            } else if (exists.equals("exists")) {
+              message = "Already friends or request was sent before.";
+              variables = new ImmutableMap.Builder()
+              .put("message", message).build();
+              return GSON.toJson(variables);
+            } else {
+              message = "Friend request sent!";
+              variables = new ImmutableMap.Builder()
+              .put("message", message).build();
+            }
           } catch (SQLException e2) {
             message = "ERROR: Bug in SQL.";
             variables = new ImmutableMap.Builder()
@@ -409,57 +421,6 @@ public class SparkHandler {
       }
       message = "ERROR: Bug has occured, try again.";
       variables = new ImmutableMap.Builder()
-      .put("message", message).build();
-      return GSON.toJson(variables);
-    }
-  }
-  
-  private static class SendFriendReqHandler implements Route {
-    @Override
-    public Object handle(Request arg0, Response arg1) {
-      QueryParamsMap qm = arg0.queryMap();
-      int id = Integer.parseInt(qm.value("url"));
-      String user1 = clients.get(id).user;
-      String user2 = qm.value("friendToAdd").replaceAll("^\"|\"$", "");;
-      String message = "";
-      try {
-        DatabaseHandler myDBHandler = new DatabaseHandler(database);
-        //check if friendship exists first
-        if (myDBHandler.friendshipExists(user1, user2) == false) {
-          myDBHandler.addFriendRequest(user1, user2);
-          message = "Friend request sent!";
-        } else {
-          message = "Invalid username, already friends, or request still pending.";
-        }
-        Map<String, String> variables = new ImmutableMap.Builder()
-        .put("message", message).build();
-        return GSON.toJson(variables);
-      } catch (SQLException | ClassNotFoundException e) {
-        message = "ERROR: Invalid username entered.";
-        Map<String, String> variables = new ImmutableMap.Builder()
-        .put("message", message).build();
-        return GSON.toJson(variables);
-      }
-    }
-  }
-  
-  private static class AcceptFriendReqHandler implements Route {
-    @Override
-    public Object handle(Request arg0, Response arg1) {
-      QueryParamsMap qm = arg0.queryMap();
-      int id = Integer.parseInt(qm.value("url").replace("#", ""));
-      String user1 = clients.get(id).user;
-      String user2 = qm.value("toAdd").replaceAll("^\"|\"$", "");;
-      String message = "";
-      System.out.println(user1);
-      System.out.println(user2);
-      //DatabaseHandler myDBHandler = new DatabaseHandler(database);
-      //myDBHandler.acceptFriendRequest(user1, user2);
-      ContactsThread ct = new ContactsThread(clients.get(id),
-        user2, null, null, Commands.ACCEPT_FRIEND);
-      pool.submit(ct);
-      message = "Friend request accepted!";
-      Map<String, String> variables = new ImmutableMap.Builder()
       .put("message", message).build();
       return GSON.toJson(variables);
     }

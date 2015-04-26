@@ -1,6 +1,17 @@
-var friends = [];
-var pendingFriends = [];
-var url = "";
+friends = [];
+pendingFriends = [];
+url = "";
+
+/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
+/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
+/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
+/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
+/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
+
+
+/** for groups: functionality is to be able to create groups where creation involves specifying users to add
+				and also be able to remove yourself from the group **/
+
 $(document).ready(function(e) {
 	$('#calWrap').show(0);
 	$('#contacts').hide(0);
@@ -52,8 +63,27 @@ $(document).ready(function(e) {
 			responseObject = JSON.parse(responseJSON);
 			message = responseObject.message;
 			alert(message);
+			
+			//send same post request as on document load to grab newly updated friend's list
+			postParameters = {url : url};
+			$.post('/getfriends', postParameters, function(responseJSON) {
+				//empty arrays
+				friends = [];
+				pendingFriends = [];
+				responseObject = JSON.parse(responseJSON);
+				temp = responseObject.friends;
+				for (i = 0; i < temp.length; i++) {
+					if (temp[i][1] == "pending") {
+						pendingFriends.push(temp[i][0]);
+					} else {
+						friends.push(temp[i][0]);
+					}
+				};
+				createFriends();
+			});
 		});
 	});
+	
 });
 
 //function that loops through two arrays (pendingFriends and
@@ -64,15 +94,30 @@ function createFriends() {
 	//figure out how to remove everything from existing divs!!!!!
 	//might have to modify id's and change themto classes
 	$('.friend').remove();
+	$('.pending').remove();
+	$('.scrollRow').remove();
+	$('.contacts-row').remove();
+	
+	console.log("pending friends");
+	for (i = 0; i < pendingFriends.length; i++) {
+		console.log(pendingFriends[i]);
+	}
+	console.log("friends");
+	for (i = 0; i < friends.length; i++) {
+		console.log(friends[i]);
+	}
+		
 	//loop through pending friends list to show on contacts page
 	if (pendingFriends.length > 0) {
 		var pending = document.createElement('div');
-		pending.id = 'pending';
-		pending.appendChild(document.createTextNode("Pending"));
+		pending.className = 'pending';
+		var text = document.createElement('h3');
+		text.innerHTML = "Pending";
+		pending.appendChild(text);
 		var grid = document.getElementById('contactsGrid');
 		grid.appendChild(pending);
 		var scrollRow = document.createElement('div');
-		scrollRow.id = 'scrollRow';
+		scrollRow.className = 'scrollRow';
 		grid.appendChild(scrollRow);
 		for (i = 0; i < pendingFriends.length; i++) {
 			var friend = document.createElement('div');
@@ -105,7 +150,7 @@ function createFriends() {
 	//loops through accepted friends list to show on contacts page
 	var count = 0;
 	var len = friends.length;
-	var rows = Math.floor(len/5) + 1;
+	var rows = Math.ceil(len/5);
 	var grid = document.getElementById('contactsGrid');
 	if (len != 0 ) {
 		for (i = 0; i < rows; i++) {
@@ -160,23 +205,23 @@ function acceptFriend(elem) {
 		responseObject = JSON.parse(responseJSON);
 		message = responseObject.message;
 		alert(message);
-	});
-	//send same post request as on document load to grab newly updated friend's list
-	postParameters = {url : url};
-	$.post('/getfriends', postParameters, function(responseJSON) {
-		//empty arrays
-		friends = [];
-		pendingFriends = [];
-		responseObject = JSON.parse(responseJSON);
-		temp = responseObject.friends;
-		for (i = 0; i < temp.length; i++) {
-			if (temp[i][1] == "pending") {
-				pendingFriends.push(temp[i][0]);
-			} else {
-				friends.push(temp[i][0]);
-			}
-		};
-		createFriends();
+		//send same post request as on document load to grab newly updated friend's list
+		postParameters = {url : url};
+		$.post('/getfriends', postParameters, function(responseJSON) {
+			//empty arrays
+			friends = [];
+			pendingFriends = [];
+			responseObject = JSON.parse(responseJSON);
+			temp = responseObject.friends;
+			for (i = 0; i < temp.length; i++) {
+				if (temp[i][1] == "pending") {
+					pendingFriends.push(temp[i][0]);
+				} else {
+					friends.push(temp[i][0]);
+				}
+			};
+			createFriends();
+		});
 	});
 };
 
@@ -199,6 +244,25 @@ function removeFriend(elem) {
 		responseObject = JSON.parse(responseJSON);
 		message = responseObject.message;
 		alert(message);
+	//send same post request as on document load to grab newly updated friend's list
+		postParameters = {url : url};
+		$.post('/getfriends', postParameters, function(responseJSON) {
+			console.log("should update removed friend");
+			//empty arrays
+			friends = [];
+			pendingFriends = [];
+			responseObject = JSON.parse(responseJSON);
+			temp = responseObject.friends;
+			for (i = 0; i < temp.length; i++) {
+				if (temp[i][1] == "pending") {
+					pendingFriends.push(temp[i][0]);
+				} else {
+					friends.push(temp[i][0]);
+				}
+			};
+			createFriends();
+		});
 	});
+	
 	
 };
