@@ -1,8 +1,9 @@
 var eventMap = {};
 var weekInfo = [];
+var eventColors = ["lightblue", "lightgray", "lightcoral", "lightpink", "lightskyblue", "lightgreen", "lightgoldenrodyellow"]
 
 /* opens dialog window for events that creators have control over editing */
-function openDialog(key) {
+function openDialog(key, google) {
 	value = eventMap[key.id];
 	var date = value.date.split(" ");
 	var day = date[0] + " " + date[1] + " " + date[2];
@@ -10,106 +11,82 @@ function openDialog(key) {
 	var am = date[4];
 	var time = date[3].substring(0, T.length - 3) + " " + am;
 	var dur = value.duration;
+	if (google == 1) {
+		var ds = 'disabled';
+	} else {
+		var ds = '';
+	}
 	form =
 	'<form class="form-inline" id ="newEventForm">' +
-	'<img id="x-button" src="/img/x.png"/>' +
-	'<div class="form-group">' +
+	'<div class="form-group dialog-form">' +
+		'<img id="x-button" src="/img/x.png"/>' +
 	    '<div class="input-group">' +
-		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '">' +
+		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '"'+ ds +'>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' +
-		    '<input type="text" id="datepicker" value="' + day + '"/>' +
+	    '<div class="input-group margin-group">' +
+		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' + 
+		    '<input type="text" class="form-control" id="datepicker" placeholder="date" value="' + day + '"'+ ds +'>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'At <input id="dialog-time" type="text" class="time" onclick="timePicker()" value="' +  time + '" />' +
-			' for <input id="duration" type="text" value="' + dur + '"/> minutes ' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="formatted">At </div>' +
+	    		'<input id="dialog-time" type="text" class="form-control" onclick="" value="' + time + '"'+ ds +' >' +
+			'<div class="formatted">   for </div>' +
+				'<input id="duration" type="text" class="form-control" value="' + dur + '"'+ ds +'><div class="formatted"> min </div>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<textarea type="text" class="form-control" id="descrip">'+ value.description + '</textarea>' +
+	    '<div class="input-group margin-group">' +
+	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description..."'+ ds +'>'+ value.description + '</textarea>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'"/>' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'"'+ ds +'/>' +
 		'</div>' +
-	  	'<div class="input-group">' +
+	  	'<div class="input-group margin-group">' +
 		    '<div class="input-group-addon">@</div>' +
-		    '<input type="text" class="form-control" id="group" placeholder="Groups" value="'+ value.group +'"/>' +
+		    '<input type="text" class="form-control" id="group" placeholder="Groups" value="'+ value.group +'"'+ ds +'/>' +
 		'</div>' +
-	 '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>' +
-	'</form>'
-	//form = $(form).resizable({disabled: true});
-	$(form).dialog({ modal: true}).resizable("disable");
+		'<div class="margin-group-xl">';
+		
+	if (google == 1) {
+		form = form + '<img id="google-button" src="\\img/google.png"/>';
+	} else {
+		form = form + '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>';
+	}
+	form = form + '</div> </div> </form>';
+	$(form).dialog({ modal: true, resizable: false});
 }
-
-function openGoogleEvent(key) {
-	value = eventMap[key.id];
-	var date = value.date.split(" ");
-	var day = date[0] + " " + date[1] + " " + date[2];
-	var T = date[3];
-	var am = date[4];
-	var time = date[3].substring(0, T.length - 3) + " " + am;
-	var dur = value.duration;
-	form =
-	'<form class="form-inline">' +
-	'<img id="x-button" src="/img/x.png"/>' +
-	'<div class="form-group">' +
-	    '<div class="input-group">' +
-		    '<input type="text" class="form-control" id="title" placeholder="Title" value="' + value.title + '" readonly>' +
-	    '</div>' +
-	    '<div class="input-group">' +
-		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true" readonly></span></div>' +
-		    '<input type="text" value="' + day + '" readonly />' +
-	    '</div>' +
-	    '<div class="input-group">' +
-	    	'At <input id="dialog-time" type="text" class="time" value="' +  time + '" readonly="true"/>' +
-			' for <input id="duration" value="' + dur + '" readonly/> minutes ' +
-	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<textarea type="text" class="form-control" id="descrip" readonly>'+ value.description + '</textarea>' +
-	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'" readonly/>' +
-		'</div>' +
-	  	'<div class="input-group">' +
-		    '<div class="input-group-addon">@</div>' +
-		    '<input type="text" class="form-control" id="group" placeholder="Groups" value="'+ value.group +'" readonly/>' +
-		'</div>' +
-	 '<img id="google-button" src="\\img/google.png"/>' +
-	'</form>'
-	$(form).dialog({modal: true, resizeable: false});
-}
-
 
 /* opens dialog window for events that creators have control over editing */
 function newEventDialog(date, time) {
-	form =	
-	'<form class="input-form-inline">' +
-	'<img id="x-button" src="\\img/x.png"/>' +
-	'<div class="form-group">' +
+	form =
+	'<form class="form-inline" id ="newEventForm">' +
+	'<div class="form-group dialog-form">' +
+		'<img id="x-button" src="/img/x.png"/>' +
 	    '<div class="input-group">' +
 		    '<input type="text" class="form-control" id="title" placeholder="Title">' +
 	    '</div>' +
-	    '<div class="input-group">' +
-		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' +
-		    '<input type="text" id="datepicker" value="' + date + '"/>' +
+	    '<div class="input-group margin-group">' +
+		    '<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>' + 
+		    '<input type="text" class="form-control" id="datepicker" placeholder="date" value="' + date + '">' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'At <input id="dialog-time" type="text" class="time" onclick="timePicker()" value="' +  time + '" />' +
-			' for <input id="duration" type="text"/> minutes' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="formatted">At </div>' +
+	    		'<input id="dialog-time" type="text" class="form-control" onclick="timePicker()" value="' + time + '">' +
+			'<div class="formatted">  for </div>' +
+				'<input id="duration" type="text" class="form-control"><div class="formatted"> min </div>' +
 	    '</div>' +
-	    '<div class="input-group">' +
+	    '<div class="input-group margin-group">' +
 	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description..."></textarea>' +
 	    '</div>' +
-	    '<div class="input-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees"placeholder="People"/>' +
+	    '<div class="input-group margin-group">' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value=""/>'+
 		'</div>' +
-	  	'<div class="input-group">' +
+	  	'<div class="input-group margin-group">' +
 		    '<div class="input-group-addon">@</div>' +
 		    '<input type="text" class="form-control" id="group" placeholder="Groups"/>' +
 		'</div>' +
-	 '<img id="new-event-button" src="\\img/check.png"/>' +
-	'</form>'
-	$(form).dialog({modal: true, resizeable: false});
+		'<div class="margin-group-xl">'+ 
+		'<img id="new-event-button" src="\\img/check.png"/>' +
+		'</div> </div> </form>';
+	$(form).dialog({ modal: true, resizable: false});
 }
 
 function datePicker() {
@@ -118,15 +95,10 @@ function datePicker() {
 	    'autoclose': true
 	});
 }
-  
+
 function timePicker() {
 	console.log('timepicker');
-	$('#basicExample').timepicker();
-}
-
-                
-function isTime(time) {
-    return time.match(/(^([0-9]|[0-1][0-9]|[2][0-3]):([0-5][0-9])$)|(^([0-9]|[1][0-9]|[2][0-3])$)/);
+	$('#dialog-time').timepicker();
 }
 
 function createEvent(eventSlot) {
@@ -168,6 +140,7 @@ function getWrittenDate(index) {
 	return weekInfo[index].month + " " + weekInfo[index].day + ", " + weekInfo[index].year;
 }
 
+/* updates all the events on the caledar at the given moment. */
 function updateDisplayedEvents() {
 	var postParameters = {string: window.location.pathname};
 	$.post("/getevents", postParameters, function(responseJSON){
@@ -229,14 +202,21 @@ function parseData(responseJSON) {
 			} else {
 				newElem.className = "event";
 			}
+			/* we set event id, height, and top-margin*/
+			
+			var time = value.date.split(" ")[3].split(":")[1];
 			newElem.setAttribute("id", key);
-			newElem.setAttribute("style", "height:"+getEventHeight(value.duration)+"px");
+			newElem.style.height = getEventHeight(value.duration) + "px";
+			newElem.style.backgroundColor = getEventColor(value.duration);
+			//newElem.style.marginTop = getTopMargin(time) + "px";
+			console.log("event margin is " + $('.event#45').css("marginTop"));
 			placeEvents(newElem, value);
 		}
-		//change the date title on the top of the calendar
+		/* change the date title on the top of the calendar */
 		dateTitle();
+		/* sets z-indices of events so they overlay each other appropriately. */
+		zindexByDuration();
 }
-
 
 function placeEvents(elem, event) {
 	var day = event.dayOfWeek;
@@ -292,16 +272,22 @@ function placeEventDiv(id, elem, event) {
 	var size = $("#" + id + " > div").size() + 1;
 
 	if (size == 1) {
-		elem.appendChild(document.createTextNode(event.title));
+		var len = event.title.length;
+		var hgt = elem.style.height;
+		hgt = hgt.substring(0, hgt.length - 2);
+		var lines = hgt/18.75;
+		if ((lines * 15) > len) {
+			elem.appendChild(document.createTextNode(event.title));
+		} else {
+			elem.appendChild(document.createTextNode('...'));
+		}
+		document.getElementById(id).appendChild(elem);
 	} else {
 		elem.appendChild(document.createTextNode('...'));
-	}
-
-	document.getElementById(id).appendChild(elem);
-	$( "#" + id ).children().css( "width", (1/size * 100) + "%");
-	if (size > 1) {
-		$("#" + id).children().each(function () {
+		document.getElementById(id).appendChild(elem);
+		$(".eventSlot#" + id).children().each(function () {
 		    this.innerHTML = '...';
+		    this.style.width = (1/size * 100) + "%";
 		});
 	}
 }
@@ -333,18 +319,13 @@ function newEvent() {
 	};
 
 	$.post("/newevent", postParameters, function(responseJSON){
-
-		
-		
 /*
-		
 		if(responseJSON.status == 1) {
 			$dialog.dialog('destroy');
 		} else {
 			alert('ranking: ' + responseJSON.message);
 		}
 */
-		
 	})
 }
 
@@ -366,7 +347,121 @@ function getDBTime(date, time) {
 		arr[2] + " " + sHours + ":" + sMinutes;
 }
 
+function dateRegex(date) {
+	date = date.replace(",", "");
+	console.log(date);
+	arr = date.split(' ');
+	if (arr.length != 3) {
+		return false;
+	} else {
+		var month = false;
+		var mon = arr[0];
+		if( mon === "Jan" | mon == "Feb" | mon === "Mar" | mon == "Apr" |
+			mon === "May" | mon == "Jun" | mon === "Jul" | mon == "Aug" |
+			mon === "Sep" | mon == "Oct" | mon === "Nov" | mon == "Dec") {
+				month = true;
+		}
+		var day = false;
+		var d = arr[1];
+		if (d >= 1 && d <= 31) {
+			day = true;
+		}
+		var year = false;
+		var y = arr[2];
+		if (y >= 2015) {
+			y = true;
+		}
+	return month && day && year;
+	}
+}
+
+function zindexByDuration() {
+	//cycle through all events...
+	for (var i = 100; i < 725; i++) {
+		if ((i % 100) > 12) {
+			i += 86;
+		} else {
+			var height = 0;
+			var id = -1;
+			/* go thru all the children of an event slot and find the tallest one. */
+			$('.eventSlot#' + i).children().each(function () {
+				/* set z index by date and time */
+				this.style.zIndex = i;
+				currHeight = this.style.height;
+				currHeight = currHeight.substring(0, currHeight.length - 2);
+				if (currHeight > height) {
+		    		height = currHeight;
+		    		console.log(height);
+		    		id = this.id;
+				}
+			});
+			//if we have an id
+			if (id != -1) {
+				addNegativeMargins(id, i);
+			}
+		}
+	}
+}
+
+function getTopMargin(time) {
+	var margin = (time/60) * 37.5;
+	return margin;
+}
+
+function addNegativeMargins(id, slot) {
+	console.log('.event#' + id);
+	// we get the margin and height of the event
+	boxHeight = $('.event#' + id).height();
+	//get margin of event and add it to adjustedHeight
+	time = eventMap[id].date.split(" ")[3].split(":")[1];
+	//subtract expected length and add any margin that might exist on top
+	var adjustedHeight = boxHeight - 37.5 + getTopMargin(time);
+	if (adjustedHeight > 0) {
+		adjustMargin(adjustedHeight, slot);
+	}
+}
+
+function adjustMargin(ah, slot) {
+	rows = Math.ceil(ah/37.5);
+	console.log("slot- " + slot + " // rows- " + rows + "// ah - " + ah);
+	while (rows > 0) {
+		slot += 1;
+		//if condition for events that span more than one day 
+		var len = $('.eventSlot#' + slot).children().length;
+		var index = 0;
+		$('.eventSlot#' + slot).children().each(function () {
+			currMarg = this.style.marginTop;
+			currMarg = (currMarg.substring(0, currMarg.length) * 1);
+			newMarg= currMarg - ah;
+			this.style.marginTop = newMarg + "px";
+			this.style.marginRight = ((index/len)*100) + "%";
+			index++;
+		});
+		rows--;
+		ah -= 37.5;
+	}
+}
+
+function getEventColor(duration) {
+	if (duration <= 30) {
+		return eventColors[0];
+	} else if (duration <= 60) {
+		return eventColors[1];
+	} else if (duration <= 90) {
+		return eventColors[2];
+	} else if (duration <= 120) {
+		return eventColors[3];
+	} else if (duration <= 180) {
+		return eventColors[4];
+	} else if (duration <= 240) {
+		return eventColors[5];
+	} else {
+		return eventColors[6];
+	}
+}
+
 $(document).ready(function(e) {
+	$(".ui-dialog-titlebar").hide()  
 	updateDisplayedEvents();
 	
 	$("#x-button").click(function(e) {
@@ -392,7 +487,7 @@ $(document).ready(function(e) {
 	$(document).on('click','.google-event', function(e) {
 		console.log('here');
 		e.stopPropagation();
-	    openGoogleEvent(e.target);
+	    openDialog(e.target, 1);
 	});
 
 	$(document).on('click','#x-button', function(e) {
@@ -404,10 +499,36 @@ $(document).ready(function(e) {
 	    datePicker();
 	});
 	
+	$(document).on('keyup','#datepicker', function(e) {
+		date = $('#datepicker').val();
+		console.log(date);
+		var res = dateRegex();
+		if (res) {
+			$('#datepicker').removeClass('has-error');
+		} else {
+			$('#datepicker').addClass('has-error');
+		}
+	});
+
+	$(document).on('click','#dialog-time', function(e) {		    
+		timePicker();
+	});
+	
+	$(document).on('keyup','#dialog-time', function(e) {
+		var time = $('#dialog-time').val().match(/^(0?[1-9]|1[012])(:[0-5]\d) [APap][mM]$/i);
+		if (time) {
+			$('#dialog-time').removeClass('has-error');
+			document.getElementById("new-event-button").style.visibility = "visible";
+		} else {
+			$('#dialog-time').addClass('has-error');
+			document.getElementById("new-event-button").style.visibility = "hidden";
+		}
+	});
+
 	$(document).on('click','#leftarrow', function(e) {
 	    leftArrow();
 	});
-	
+
 	$(document).on('click','#rightarrow', function(e) {
 	    rightArrow();
 	});

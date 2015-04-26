@@ -26,13 +26,15 @@ public class ClientHandler {
   private int maxEventId;
 
 
-  public ClientHandler(String db, String user) {
+  public ClientHandler(String db, String user, boolean initItself) {
       this.user = user;
       updateList = new CopyOnWriteArrayList<String>();
       ConcurrentHashMap<Integer, ClientHandler> dummyMap = new ConcurrentHashMap<Integer, ClientHandler>();
       dummyMap.put(0, this);
-      HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
-      initThread.run();
+      if (initItself) {
+        HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
+        SparkHandler.pool.submit(initThread);
+      }
   }
   
   public synchronized ConcurrentHashMap<String, String> getFriends() {
@@ -46,9 +48,9 @@ public class ClientHandler {
   }
 
   
-  public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date start) {
+  public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date startTimed) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
-    System.out.println(events.size());
+    Date start = SparkHandler.setTimeToMidnight(startTimed);
     for (Entry<Integer, Event> e : events.entrySet()) {
       try {
         Date eventDate = e.getValue().getDate();
@@ -56,6 +58,28 @@ public class ClientHandler {
         c.setTime(start);
         c.add(Calendar.DATE, 6);
         Date endDate = c.getTime();
+        if (eventDate.after(start) && eventDate.before(endDate)) {
+          toReturn.put(e.getKey(), e.getValue());
+        }
+      } catch (ParseException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+    }
+    return toReturn;
+  }
+  public ConcurrentHashMap<Integer, Event> getEventsByDay(Date startTimed) {
+    ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
+    Date start = SparkHandler.setTimeToMidnight(startTimed);
+    System.out.println("events size: " + events.size());
+    for (Entry<Integer, Event> e : events.entrySet()) {
+      try {
+        Date eventDate = e.getValue().getDate();
+        Calendar c = Calendar.getInstance();
+        c.setTime(start);
+        c.add(Calendar.DATE, 1);
+        Date endDate = c.getTime();
+        System.out.println(eventDate);
         if (eventDate.after(start) && eventDate.before(endDate)) {
           toReturn.put(e.getKey(), e.getValue());
         }

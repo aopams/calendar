@@ -2,18 +2,13 @@ package edu.brown.cs.andrew.clientThreads;
 
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.eclipse.jetty.server.Server;
 
 import edu.brown.cs.andrew.handlers.ClientHandler;
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
-import edu.brown.cs.andrew.handlers.Event;
-import edu.brown.cs.rmchandr.APICalls.ServerCalls;
-public class HeartBeatThread implements Runnable{
+public class HeartBeatThread implements Callable<String>{
   private ConcurrentHashMap<Integer, ClientHandler> clients;
   String typeHeartBeat;
   
@@ -23,24 +18,24 @@ public class HeartBeatThread implements Runnable{
   }
   
   @Override
-  public void run() {
-    if(typeHeartBeat.equals("pull")) {
-      for(Entry<Integer, ClientHandler> e : clients.entrySet()) {
-        ClientHandler client = e.getValue();
-        try {
-          DatabaseHandler myDBHandler = new DatabaseHandler("calendar.sqlite3");
-          String user = client.getClient();
-          client.setFriends(myDBHandler.getFriendsFromUser(user));
-          client.setGroups(myDBHandler.getGroupsNameFromUser(user));  
-          client.setEvents(myDBHandler.getAllEventsFromUser(user));
-          client.setMaxGroupId(myDBHandler.getMaxGroupID());
-          client.setMaxEventId(myDBHandler.getMaxEventID());
-          myDBHandler.closeConnection();
-        } catch (SQLException | ParseException | ClassNotFoundException e2) {
-          e2.printStackTrace();
-        }
+  public String call() throws Exception {
+    DatabaseHandler myDBHandler = new DatabaseHandler("calendar.sqlite3");
+    for(Entry<Integer, ClientHandler> e : clients.entrySet()) {
+      ClientHandler client = e.getValue();
+      try {
+        System.out.println("one client made");
+        String user = client.getClient();
+        client.setFriends(myDBHandler.getFriendsFromUser(user));
+        client.setGroups(myDBHandler.getGroupsNameFromUser(user));  
+        client.setEvents(myDBHandler.getAllEventsFromUser(user));
+        client.setMaxGroupId(myDBHandler.getMaxGroupID());
+        client.setMaxEventId(myDBHandler.getMaxEventID());
+      } catch (SQLException | ParseException e2) {
+        e2.printStackTrace();
       }
-    } 
+    }
+    myDBHandler.closeConnection();
+    return null;
   }
 
 }

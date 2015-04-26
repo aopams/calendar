@@ -90,7 +90,7 @@ body {
 
 .numeric-date {
 	position: absolute;
-  	z-index: 2;
+  	z-index: 99990;
   	width: 38px;
   	margin: 3px 0 0 3px;
 }
@@ -108,7 +108,7 @@ body {
 	border-color: #D3D3D3;
 }
 
-.event {
+.event, .google-event {
 	display: block;
 	float: right;
 	border: 1px solid;
@@ -116,17 +116,12 @@ body {
 	min-height: 20px;
 	width: 132px;
     cursor: pointer;
+    position: relative;
+    border-radius: 3px;
 }
 
 .google-event {
 	background-color: rgba(62, 115, 240, 0.57);
-	display: block;
-	float: right;
-	border: 1px solid;
-	font-family: Helvetica;
-	min-height: 20px;
-	width: 132px;
-    cursor: pointer;
 }
 
 .footer {
@@ -138,7 +133,7 @@ body {
 }
 
 #x-button, #check-button, #delete-button, #google-button, #new-event-button {
-	height: 30px;
+	height: 24px;
 }
 
 #x-button, #check-button, #google-button, #new-event-button {
@@ -149,31 +144,40 @@ body {
 	float: left;
 }
 
+.formatted {
+	display: inline-block;
+	width: 20px;
+	float: left;
+	margin: 0 5px 0 5px;
+	padding-top: 4px;
+}
+
+.margin-group {
+	margin-top: 5px;
+}
+
+.margin-group-xl {
+	margin-top: 14px;
+}
+
 /* dialog styling */
-.ui-dialog, .ui-dialog-title, .ui-state-default, .ui-widget-content, .ui-state-default, .ui-resizable {
-	display: none;
-	border: none;
-	resize: none;
+.ui-dialog {
+	z-index: 100000;
 }
-
-.ui-draggable .ui-dialog-titlebar {
-	border: none;
-}
-
-.ui-dialog .ui-dialog-content {
-	padding: 2px 2px;
-}
-
-.ui-widget-header {
-	background: #00000;
-	height: 2px;
-}
-
 /* inner box of dialog */
 #ui-id-1 {
 	width: 300px;
+	height: 1px;
 }
 
+.form-inline, .form-group {
+	display: block !important;
+}
+
+.dialog-form {
+	width: 250px;
+	margin: auto;
+}
 
 /* contacts page stuff */
 
@@ -292,7 +296,7 @@ body {
 
 /*dialog inner styling */
 #duration {
-	width: 70px;
+	width: 55px;
 }
 
 #dialog-time {
@@ -301,7 +305,7 @@ body {
 
 #descrip {
 	resize: none;
-	width: 260px;
+	width: 250px;
 }
 
 #title {
@@ -310,4 +314,9 @@ body {
 	box-shadow: none;
 	border: none;
 	border-bottom: 1px black solid;
+}
+
+.has-error {
+	border-color: #a94442;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
 }

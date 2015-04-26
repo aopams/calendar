@@ -21,6 +21,8 @@ public class DatabaseHandler {
   public DatabaseHandler(String dbFile) throws ClassNotFoundException, SQLException {
     Class.forName("org.sqlite.JDBC");
     conn = DriverManager.getConnection("jdbc:sqlite:" +dbFile);
+    conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+    conn.setAutoCommit(false);
     Statement stat = conn.createStatement();
     stat.executeUpdate("PRAGMA foreign_keys = ON;");
     stat.close();
@@ -184,7 +186,11 @@ public class DatabaseHandler {
     theStat2.setString(1, user_name);
     ResultSet rs2 = theStat2.executeQuery();
     while (rs2.next()) {
-      toReturn.put(rs2.getString(1), rs2.getString(2));
+      if (rs2.getString(2).equals("Pending")) {
+        toReturn.put(rs.getString(1), "Sent");
+      } else {
+        toReturn.put(rs2.getString(1), rs2.getString(2));
+      }
     }
     rs2.close();
     return toReturn;
@@ -260,7 +266,6 @@ public class DatabaseHandler {
     ResultSet row =  theStat.getGeneratedKeys();
     int theRow = row.getInt(1);
     theStat.close();
-    System.out.println("Row Number " + theRow);
     e.setID(theRow);
     String eventToGroup = "";
     if (group_name.equals("")) {
@@ -289,6 +294,7 @@ public class DatabaseHandler {
   }
   public void removeEvent(Event e) throws SQLException, ParseException {
     int eventID = e.getId();
+    System.out.println(eventID);
     List<String> attendees = e.getAttendees();
     String group = e.getGroup();
     if (group != null && !group.equals("")) {
@@ -299,14 +305,10 @@ public class DatabaseHandler {
       stat3.setInt(2, eventID);
       stat3.executeUpdate();
     } else {
-      String query2 = "Delete From User_Event where event_id = ? and user_id = ?";
+      String query2 = "Delete From User_Event where event_id = ?";
       PreparedStatement stat2 = conn.prepareStatement(query2);
-      for (int i = 0; i < attendees.size(); i++) {
-        stat2.setInt(1, eventID);
-        stat2.setString(1, attendees.get(i));
-        stat2.addBatch();
-      }
-      stat2.executeQuery();
+      stat2.setInt(1, eventID);
+      stat2.executeUpdate();
       stat2.close();
     }
     String query = "Delete From Events where event_id = ?";
@@ -398,10 +400,12 @@ public class DatabaseHandler {
     while (rs.next()) {
       theStat2.setInt(1, rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
-      Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")), rs2.getString("title"), rs2.getString("day_of_week"),
-          users, group_name, rs2.getInt("duration"), rs2.getString("description"),  rs2.getString("creator"));
-      toAdd.setID(rs2.getInt("event_id"));
-      groupEvents.add(toAdd);
+      if (rs2.isClosed()) {
+        Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")), rs2.getString("title"), rs2.getString("day_of_week"),
+            users, group_name, rs2.getInt("duration"), rs2.getString("description"),  rs2.getString("creator"));
+        toAdd.setID(rs2.getInt("event_id"));
+        groupEvents.add(toAdd);
+      }
     }
     return groupEvents;
   }
@@ -415,14 +419,15 @@ public class DatabaseHandler {
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     while (rs.next()) {
       theStat2.setInt(1, rs.getInt(1));
+      System.out.println(rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
-      List<String> users = getUsersFromEvent(rs2.getInt(1));
-      Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")),
-        rs2.getString("title"), rs2.getString("day_of_week"),
-        users, "", rs2.getInt("duration"), rs2.getString("description"),
-        rs2.getString("creator"));
-      toAdd.setID(rs2.getInt("event_id"));
-      userEvents.add(toAdd);
+        List<String> users = getUsersFromEvent(rs2.getInt(1));
+        Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")),
+          rs2.getString("title"), rs2.getString("day_of_week"),
+          users, "", rs2.getInt("duration"), rs2.getString("description"),
+          rs2.getString("creator"));
+        toAdd.setID(rs2.getInt("event_id"));
+        userEvents.add(toAdd);
     }
     return userEvents;
   }
@@ -430,7 +435,7 @@ public class DatabaseHandler {
   public ConcurrentHashMap<Integer, Event> getAllEventsFromUser(String user_name) throws SQLException, ParseException {
     List<Event> eventList = new CopyOnWriteArrayList<Event>();
     eventList.addAll(getPersonnalEventsFromUser(user_name));
-    System.out.println(eventList.size());
+    System.out.println("DB retrieval " + eventList.size());
     List<Integer> groups = getGroupsIDFromUser(user_name);
     for (int i = 0; i < groups.size(); i++) {
       eventList.addAll(getEventsFromGroup(groups.get(i)));
