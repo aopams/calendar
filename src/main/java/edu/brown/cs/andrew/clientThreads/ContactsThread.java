@@ -46,14 +46,18 @@ public class ContactsThread implements Callable<String> {
           if (myDBHandler.findUser(user2) != null) {
             //check if user already sent this friend a request,
             //or the user is already friends with this other user.
-            if (client1.requestFriend(user2).equals("exists")) {
+            String status = client1.requestFriend(user2);
+            if (status.equals("exists")) {
+              System.out.println("relation already exists");
               return "exists";
             } else {
+              System.out.println("friend request sent");
               myDBHandler.addFriendRequest(user1, user2);
               return "success";
             }
           //friend does not exist
           } else {
+            System.out.println("friend does not exist");
             return "toobad";
           }
         case ACCEPT_FRIEND : 

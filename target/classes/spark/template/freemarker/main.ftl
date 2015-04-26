@@ -13,8 +13,8 @@
 <link rel="stylesheet" type="text/css" href="\css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="\css/bootstrap.css.map">
 <link rel="stylesheet" href="\//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="\lib/bootstrap-datepicker.css" />
 <link rel="stylesheet" type="text/css" href="\css/calendar.css">
+<link rel="stylesheet" type="text/css" href="\lib/bootstrap-datepicker.css" />
 
 </head>
 
@@ -32,7 +32,7 @@
 		<div id="contactsWindow">
 			<div id="addFriendBar">
 <!-- 			CHANGE THIS FROM FORM TO A SUBMIT BUTTON -->
-				<div class="form-inline">
+				<div class="form-inline" id="send">
 					<div class="form-group">
 						<input type="text" class="form-control" id="addFriend" placeholder="@username">
 					</div>

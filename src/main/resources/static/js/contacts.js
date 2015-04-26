@@ -30,6 +30,18 @@ $(document).ready(function(e) {
 		$('#calendarbutton').removeClass("btn btn-default").addClass("btn btn-default btn-primary");
 	});
 	
+	$('#friendsTab').bind('click', function(e) {
+		$('#friendsTab').addClass("active");		
+		$('#groupsTab').removeClass("active");
+		$('#contactsWindow').show(0);
+		$('#groupsWindow').hide(0);
+	});
+	$('#groupsTab').bind('click', function(e) {
+		$('#groupsTab').addClass("active");		
+		$('#friendsTab').removeClass("active");
+		$('#contactsWindow').hide(0);
+		$('#groupsWindow').show(0);
+	});	
 	/* grabbing id for client */
 	
 	url = window.location.href;
@@ -44,7 +56,7 @@ $(document).ready(function(e) {
 		for (i = 0; i < temp.length; i++) {
 			if (temp[i][1] == "pending") {
 				pendingFriends.push(temp[i][0]);
-			} else {
+			} else if (temp[i][1] == "accepted" {
 				friends.push(temp[i][0]);
 			}
 		};

@@ -420,7 +420,7 @@ public class SparkHandler {
               variables = new ImmutableMap.Builder()
               .put("message", message).build();
               return GSON.toJson(variables);
-            } else {
+            } else if (exists.equals("")){
               message = "Friend request sent!";
               variables = new ImmutableMap.Builder()
               .put("message", message).build();
