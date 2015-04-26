@@ -120,8 +120,16 @@ public class ClientHandler {
   public void acceptFriend(String user_name) {
     friends.put(user_name, "accepted");
   }
-  public void requestFriend(String user_name) {
-    friends.put(user_name, "pending");
+  public String requestFriend(String user_name) {
+    String toReturn = null;
+    if (!friends.containsKey(user_name)) {
+      friends.put(user_name, "pending");
+      return toReturn;
+    //friend already exists (pending or , no need to do anything
+    } else {
+      toReturn = "exists";
+      return toReturn;
+    }
   }
   public Event checkTwoDays(Event e) throws ParseException{
     java.util.Date start = e.getDate();
