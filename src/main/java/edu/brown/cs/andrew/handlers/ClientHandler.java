@@ -26,13 +26,15 @@ public class ClientHandler {
   private int maxEventId;
 
 
-  public ClientHandler(String db, String user) {
+  public ClientHandler(String db, String user, boolean initItself) {
       this.user = user;
       updateList = new CopyOnWriteArrayList<String>();
       ConcurrentHashMap<Integer, ClientHandler> dummyMap = new ConcurrentHashMap<Integer, ClientHandler>();
       dummyMap.put(0, this);
-      HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
-      SparkHandler.pool.submit(initThread);
+      if (initItself) {
+        HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
+        SparkHandler.pool.submit(initThread);
+      }
   }
   
   public synchronized ConcurrentHashMap<String, String> getFriends() {

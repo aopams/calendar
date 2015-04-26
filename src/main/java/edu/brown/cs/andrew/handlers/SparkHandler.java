@@ -215,7 +215,7 @@ public class SparkHandler {
             "message", "");
         ServerCalls sc = new ServerCalls();
         String html = sc.loginClicked();
-        ClientHandler newClient = new ClientHandler(database, user);
+        ClientHandler newClient = new ClientHandler(database, user, true);
         clients.put(id, newClient);
         return new ModelAndView(variables, "main.ftl");
       } else {
@@ -487,7 +487,7 @@ public class SparkHandler {
       HashMap<String, String> map = sc.authorize(code);
       String accessToken = map.get("access_token");
       String user = "9999";
-      ClientHandler client = new ClientHandler(database, user);
+      ClientHandler client = new ClientHandler(database, user, true);
       HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
       HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList, accessToken);
       List<Event> events = sc.getAllEvents(eventsList);

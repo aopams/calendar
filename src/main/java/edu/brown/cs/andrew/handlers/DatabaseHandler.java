@@ -21,6 +21,8 @@ public class DatabaseHandler {
   public DatabaseHandler(String dbFile) throws ClassNotFoundException, SQLException {
     Class.forName("org.sqlite.JDBC");
     conn = DriverManager.getConnection("jdbc:sqlite:" +dbFile);
+    conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+    conn.setAutoCommit(false);
     Statement stat = conn.createStatement();
     stat.executeUpdate("PRAGMA foreign_keys = ON;");
     stat.close();
@@ -200,7 +202,11 @@ public class DatabaseHandler {
     theStat2.setString(1, user_name);
     ResultSet rs2 = theStat2.executeQuery();
     while (rs2.next()) {
-      toReturn.put(rs2.getString(1), rs2.getString(2));
+      if (rs2.getString(2).equals("Pending")) {
+        toReturn.put(rs.getString(1), "Sent");
+      } else {
+        toReturn.put(rs2.getString(1), rs2.getString(2));
+      }
     }
     rs2.close();
     return toReturn;

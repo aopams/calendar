@@ -2,18 +2,12 @@ package edu.brown.cs.andrew.clientThreads;
 
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eclipse.jetty.server.Server;
-
 import edu.brown.cs.andrew.handlers.ClientHandler;
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
-import edu.brown.cs.andrew.handlers.Event;
-import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 public class HeartBeatThread implements Callable<String>{
   private ConcurrentHashMap<Integer, ClientHandler> clients;
   String typeHeartBeat;
@@ -36,11 +30,11 @@ public class HeartBeatThread implements Callable<String>{
         client.setEvents(myDBHandler.getAllEventsFromUser(user));
         client.setMaxGroupId(myDBHandler.getMaxGroupID());
         client.setMaxEventId(myDBHandler.getMaxEventID());
-        myDBHandler.closeConnection();
       } catch (SQLException | ParseException e2) {
         e2.printStackTrace();
       }
     }
+    myDBHandler.closeConnection();
     return null;
   }
 
