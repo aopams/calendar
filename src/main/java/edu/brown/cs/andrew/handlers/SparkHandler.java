@@ -16,8 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 import spark.ExceptionHandler;
 import spark.ModelAndView;
@@ -136,7 +139,13 @@ public class SparkHandler {
       Event e = new Event(date, title, dayOfWeek, attendees,
           group, duration, description, creator);
       CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null);
-      pool.submit(ct);
+      Future<String> t = pool.submit(ct);
+      try {
+        t.get();
+      } catch (InterruptedException | ExecutionException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
       clients.put(clientID, cli);
       int status = 0;
       String message = "accepted";
@@ -374,13 +383,14 @@ public class SparkHandler {
             System.out.println("in accept");
             ct = new ContactsThread(clients.get(id),
                 user2, null, null, Commands.ACCEPT_FRIEND);
-            pool.submit(ct);
-            ct.call();
+            Future<String> t = pool.submit(ct);
+            t.get();
             message = "Friends request accepted!";
             variables = new ImmutableMap.Builder()
             .put("message", message).build();
             return GSON.toJson(variables);
-          } catch (SQLException e) {
+          } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
             message = "ERROR: Bug in SQL.";
             variables = new ImmutableMap.Builder()
             .put("message", message).build();
@@ -391,14 +401,15 @@ public class SparkHandler {
             System.out.println("in remove");
             ct = new ContactsThread(clients.get(id),
                 user2, null, null, Commands.REMOVE_FRIEND);
-            pool.submit(ct);
-            ct.call();
+            Future<String> t = pool.submit(ct);
+            t.get();
             message = "Friend removed!";
             variables = new ImmutableMap.Builder()
             .put("message", message).build();
             return GSON.toJson(variables);
-          } catch (SQLException e1) {
+          } catch (ExecutionException | InterruptedException e1) {
             message = "ERROR: Bug in SQL.";
+            e1.printStackTrace();
             variables = new ImmutableMap.Builder()
             .put("message", message).build();
             return GSON.toJson(variables);
@@ -408,8 +419,8 @@ public class SparkHandler {
             System.out.println("in add");
             ct = new ContactsThread(clients.get(id),
                 user2, null, null, Commands.ADD_FRIEND);
-            pool.submit(ct);
-            String exists = ct.call();
+            Future<String> t =pool.submit(ct);
+            String exists = t.get();
             if (exists.equals("toobad")) {
               message = "User does not exist.";
               variables = new ImmutableMap.Builder()
@@ -425,8 +436,9 @@ public class SparkHandler {
               variables = new ImmutableMap.Builder()
               .put("message", message).build();
             }
-          } catch (SQLException e2) {
+          } catch (InterruptedException | ExecutionException e2) {
             message = "ERROR: Bug in SQL.";
+            e2.printStackTrace();
             variables = new ImmutableMap.Builder()
             .put("message", message).build();
             return GSON.toJson(variables);
