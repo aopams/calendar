@@ -1,6 +1,69 @@
+/* GLOBAL VARIABLES */
+//global hashmap that holds all the events in the calendar.
 var eventMap = {};
+
+//global array to hold information about the week we are displaying.
 var weekInfo = [];
-var eventColors = ["lightblue", "lightgray", "lightcoral", "lightpink", "lightskyblue", "lightgreen", "lightgoldenrodyellow"]
+
+//colors that we assign to event boxes
+var eventColors = ["#9FCAEC", "lightgray", "lightcoral", "lightpink", "lightskyblue", "#A9D8B6", "lightgoldenrodyellow"]
+/* END GLOBAL VARIABLES */
+
+/* POST HANDLERS */
+/* updates all the events on the caledar at the given moment. */
+function updateDisplayedEvents() {
+	var postParameters = {string: window.location.pathname};
+	$.post("/getevents", postParameters, function(responseJSON){
+		parseData(responseJSON);
+	})
+}
+
+/* switch to previous week */
+function leftArrow() {
+	var daydetails = weekInfo[0].day  + "-" + weekInfo[0].month + "-" + weekInfo[0].year;
+	var postParameters = {string: window.location.pathname, date: daydetails};
+	$.post("/leftarrow", postParameters, function(responseJSON){
+		parseData(responseJSON);
+	})
+}
+
+/* switch to next week */
+function rightArrow() {
+	var daydetails = weekInfo[6].day  + "-" + weekInfo[6].month + "-" + weekInfo[6].year;
+	var postParameters = {string: window.location.pathname, date: daydetails };
+	$.post("/rightarrow", postParameters, function(responseJSON){
+		parseData(responseJSON);
+	})
+}
+
+/* create new event */
+function newEvent() {
+	var title = document.getElementById('title').value;
+	var date = document.getElementById('datepicker').value;
+	var time = document.getElementById('dialog-time').value;
+	var dur = document.getElementById('duration').value;
+	var descrip = document.getElementById('descrip').value;
+	var atten = document.getElementById('attendees').value;
+	var group = document.getElementById('group').value;
+	var correctTime = getDBTime(date, time);
+	console.log(correctTime);
+	var postParameters = {string: window.location.pathname, title: title, date: correctTime,
+		time: time, duration: dur, description: descrip, attendees: atten,
+		group: group
+	};
+
+	$.post("/newevent", postParameters, function(responseJSON){
+/*
+	add code to handle messaging for ranking, etc
+		if(responseJSON.status == 1) {
+			$dialog.dialog('destroy');
+		} else {
+			alert('ranking: ' + responseJSON.message);
+		}
+*/
+	})
+}
+/* END POST HANDLERS */
 
 /* opens dialog window for events that creators have control over editing */
 function openDialog(key, google) {
@@ -89,6 +152,7 @@ function newEventDialog(date, time) {
 	$(form).dialog({ modal: true, resizable: false});
 }
 
+/* opens calendar view selection */
 function datePicker() {
 	$( "#datepicker" ).datepicker({
 	    'format': 'M d, yyyy',
@@ -96,10 +160,12 @@ function datePicker() {
 	});
 }
 
+/* opens time view selection */
 function timePicker() {
 	$('#dialog-time').timepicker();
 }
 
+/* opens dialog to create a new event */
 function createEvent(eventSlot) {
 	var slot = eventSlot.id;
 	var day = getDay(slot.substring(0, 1));
@@ -107,11 +173,15 @@ function createEvent(eventSlot) {
 	newEventDialog(day, time);
 }
 
+//SUB createEvent()
+/* gets day information to autofill in new event dialog */
 function getDay(day) {
 	var int = parseInt(day) - 1;
 	return weekInfo[int].month + " " + weekInfo[int].day + ", " + weekInfo[int].year;
 }
 
+//SUB createEvent()
+/* gets time of the event slot clicked to create new event */
 function getTime(time) {
 	var int = parseInt(time);
 	var hr = time % 12;
@@ -130,47 +200,31 @@ function getTime(time) {
 	}
 }
 
-function dateTitle() {
+/* changes date on top of the calendar to reflect current week we are looking at. */
+function weekTitle() {
 	var toReturn = getWrittenDate(0) + " - " + getWrittenDate(6);
 	document.getElementById("date-title").innerHTML = toReturn;
 }
 
+//SUB weekTitle()
+/* gets written form of a date */
 function getWrittenDate(index) {
 	return weekInfo[index].month + " " + weekInfo[index].day + ", " + weekInfo[index].year;
 }
 
-/* updates all the events on the caledar at the given moment. */
-function updateDisplayedEvents() {
-	var postParameters = {string: window.location.pathname};
-	$.post("/getevents", postParameters, function(responseJSON){
-		parseData(responseJSON);
-	})
-}
-
-function leftArrow() {
-	var daydetails = weekInfo[0].day  + "-" + weekInfo[0].month + "-" + weekInfo[0].year;
-	var postParameters = {string: window.location.pathname, date: daydetails};
-	$.post("/leftarrow", postParameters, function(responseJSON){
-		parseData(responseJSON);
-	})
-}
-
-function rightArrow() {
-	var daydetails = weekInfo[6].day  + "-" + weekInfo[6].month + "-" + weekInfo[6].year;
-	var postParameters = {string: window.location.pathname, date: daydetails };
-	$.post("/rightarrow", postParameters, function(responseJSON){
-		parseData(responseJSON);
-	})
-}
-
+// IMPORTANT!
+/* 
+	parses large piece of data given by the backend, adds events to the calendar
+	updates margins, and call approriate functions to adjust event elements
+*/
 function parseData(responseJSON) {
 	var responseObject = JSON.parse(responseJSON);
 		var list = responseObject.events;
 		var weekList = responseObject.week;
-		console.log(weekList);
 		//clear week array
 		var weekArray = [];
 
+		//append week list to global week array
 		for (var i = 0; i < weekList.length; i++) {
 			weekArray.push(weekList[i]);
 		}
@@ -178,47 +232,54 @@ function parseData(responseJSON) {
 		changeWeekNumbers(weekArray);
 		weekInfo = weekArray;
 
-		//clear current map of events
+		// clear current map of events
 		eventMap = {};
-		
+
+		// remove all html event objects currently on the calendar
 		var paras = document.getElementsByClassName('event');
 		while(paras[0]) {
 			paras[0].parentNode.removeChild(paras[0]);
 		}
-		//add all events
+
+		// add all new event objects
 		for (var i = 0; i < list.length; i++) {
 			var obj = JSON.parse(list[i]);
 			eventMap[obj.id] = obj;
 		}
 
-		//display all events
+		// display all events
 		var key;
 		for(key in eventMap) {
 			value = eventMap[key];
+			// create new event div
 			var newElem = document.createElement("div");
+			
+			// based on id make it google-event or regular event
 			if (key < 0) {
 				newElem.className = "google-event";
 			} else {
 				newElem.className = "event";
 			}
-			/* we set event id, height, and top-margin*/
 			
+			/* we set event id, height */
 			var time = value.date.split(" ")[3].split(":")[1];
 			newElem.setAttribute("id", key);
 			newElem.style.height = getEventHeight(value.duration) + "px";
 			newElem.style.backgroundColor = getEventColor(value.duration);
-			//newElem.style.marginTop = getTopMargin(time) + "px";
-			console.log("event margin is " + $('.event#45').css("marginTop"));
+			
+			// place the events on the calendar
 			placeEvents(newElem, value);
 		}
-		/* change the date title on the top of the calendar */
-		dateTitle();
+
+		/* change the week title on the top of the calendar */
+		weekTitle();
 		/* sets z-indices of events so they overlay each other appropriately. */
 		zindexByDuration();
 		/* offset events based on their minute start time */
 		timeOffsetMargin();
 }
 
+/* places event correctly on the page based on the main.ftl skeleton */
 function placeEvents(elem, event) {
 	var day = event.dayOfWeek;
 	var date = event.date.split(" ");
@@ -302,32 +363,6 @@ function changeWeekNumbers(weekArray) {
 		var imgID = "day" + (i+1);
 		document.getElementById(imgID).src="\\img/num/" + weekArray[i].day + ".png";
 	}
-}
-
-function newEvent() {
-	var title = document.getElementById('title').value;
-	var date = document.getElementById('datepicker').value;
-	var time = document.getElementById('dialog-time').value;
-	var dur = document.getElementById('duration').value;
-	var descrip = document.getElementById('descrip').value;
-	var atten = document.getElementById('attendees').value;
-	var group = document.getElementById('group').value;
-	var correctTime = getDBTime(date, time);
-	console.log(correctTime);
-	var postParameters = {string: window.location.pathname, title: title, date: correctTime,
-		time: time, duration: dur, description: descrip, attendees: atten,
-		group: group
-	};
-
-	$.post("/newevent", postParameters, function(responseJSON){
-/*
-		if(responseJSON.status == 1) {
-			$dialog.dialog('destroy');
-		} else {
-			alert('ranking: ' + responseJSON.message);
-		}
-*/
-	})
 }
 
 function getDBTime(date, time) {
