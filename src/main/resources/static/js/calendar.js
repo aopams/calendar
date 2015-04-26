@@ -6,7 +6,7 @@ var eventMap = {};
 var weekInfo = [];
 
 //colors that we assign to event boxes
-var eventColors = ["#9FCAEC", "lightgray", "lightcoral", "lightpink", "lightskyblue", "#A9D8B6", "lightgoldenrodyellow"]
+var eventColors = ["#9FCAEC", "#F2E7D2", "#DCE3E9", "#E1C19A", "lightskyblue", "#A9D8B6", "lightgoldenrodyellow"]
 /* END GLOBAL VARIABLES */
 
 /* POST HANDLERS */
@@ -459,11 +459,11 @@ function adjustMargin(ah, slot) {
 		var len = $('.eventSlot#' + slot).children().length;
 		var index = len - 1;
 		$('.eventSlot#' + slot).children().each(function () {
-			currMarg = this.style.marginTop;
-			currMarg = (currMarg.substring(0, currMarg.length) * 1);
-			newMarg= currMarg - ah;
+			var currMarg = this.style.marginTop;
+			var currMarg = (currMarg.substring(0, currMarg.length) * 1);
+			var newMarg = (currMarg * 1) - ah;
 			this.style.marginTop = newMarg + "px";
-			this.style.marginRight = ((index/len)*100) + "%";
+			this.style.marginRight = ((index/len)*133.984) + "px";
 			index--;
 		});
 		rows--;
