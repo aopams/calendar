@@ -125,6 +125,7 @@ public class SparkHandler {
       attendees.add(cli.getClient());
       while (users.contains(",")) {
         String friend = users.substring(0, users.indexOf(","));
+        System.out.println(friend);
         if (cli.getFriends().containsKey(friend)){
           System.out.println("friend added");
           attendees.add(friend);

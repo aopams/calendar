@@ -43,7 +43,7 @@ function newEvent() {
 	var time = document.getElementById('dialog-time').value;
 	var dur = document.getElementById('duration').value;
 	var descrip = document.getElementById('descrip').value;
-	var atten = document.getElementById('attendees').value;
+	var atten = document.getElementById('attendees').value + ",";
 	var group = document.getElementById('group').value;
 	var correctTime = getDBTime(date, time);
 	var postParameters = {string: window.location.pathname, title: title, date: correctTime,
