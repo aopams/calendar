@@ -37,6 +37,9 @@ public class ContactsThread implements Callable<String> {
     String user1 = client1.getClient();
       int groupId = myDBHandler.findGroup(groupName);
       switch (command) {
+        case GET_NAME:
+          String name = myDBHandler.getName(user1);
+          return name;
         case REMOVE_FRIEND:
           client1.removeFriend(user2);
           myDBHandler.removeFriend(user1, user2);

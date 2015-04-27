@@ -1,13 +1,8 @@
 friends = [];
 pendingFriends = [];
+groups = [];
+username = "";
 url = "";
-
-/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
-/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
-/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
-/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
-/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
-
 
 /** for groups: functionality is to be able to create groups where creation involves specifying users to add
 				and also be able to remove yourself from the group **/
@@ -54,9 +49,6 @@ $(document).ready(function(e) {
 		responseObject = JSON.parse(responseJSON);
 		temp = responseObject.friends;
 		for (i = 0; i < temp.length; i++) {
-			console.log(temp[i][0]);
-			
-			console.log(temp[i][1]);
 			if (temp[i][1] == "pending") {
 				pendingFriends.push(temp[i][0]);
 			} else if (temp[i][1] == "accepted") {
@@ -65,6 +57,18 @@ $(document).ready(function(e) {
 		};
 		createFriends();
 	});
+	
+	//grabs groups from database and populates
+	var postParameters = {url: url};
+	$.post('/getgroups', postParameters, function(responseJSON) {
+		responseObject = JSON.parse(responseJSON);
+		temp = responseObject.groups;
+		
+		for (i = 0; i < temp.length; i++) {
+			
+		}
+		
+	})
 	
 	//button to add friend at top of contacts page
 	$("#sendInvite").bind('click', function(e) {
@@ -97,6 +101,21 @@ $(document).ready(function(e) {
 				createFriends();
 			});
 		});
+	});
+	
+	$("#makeGroup").bind('click', function(e) {
+		var groupName = $("#groupName").val();
+		
+		console.log(groupName);
+	});
+	
+	var postParameters = {url : url};
+	$.post('/getusername', postParameters, function(responseJSON) {
+		responseObject = JSON.parse(responseJSON);
+		username = responseObject.name;
+		console.log("here");
+		console.log(username);
+		document.getElementById('#cal-owner').innerHTML = username;
 	});
 	
 });
@@ -184,19 +203,16 @@ function createFriends() {
 				name.style.marginRight='auto';
 				name.style.display='block';
 				name.innerHTML = friends[count];
-				
-				
 				var img = document.createElement('img');
 				img.src = getProfPic(friends[count]);
-				var refuse = document.createElement('img');
-				refuse.id = 'refuse';
-				refuse.src = '/img/x.png';
-				refuse.onclick=function() {removeFriend(this);};
-				refuse.style.marginRight='175px';
-				friend.appendChild(refuse);
+				var rem = document.createElement('img');
+				rem.id = 'rem';
+				rem.src = '/img/x.png';
+				rem.onclick=function() {removeFriend(this);};
+				rem.style.marginRight='175px';
+				friend.appendChild(rem);
 				friend.appendChild(img);
 				friend.appendChild(name);
-
 				row.appendChild(friend);
 				count++;
 				if (count == len) {
@@ -290,6 +306,4 @@ function removeFriend(elem) {
 			createFriends();
 		});
 	});
-	
-	
 };

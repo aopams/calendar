@@ -90,6 +90,20 @@ public class DatabaseHandler {
     buildTable(userGroupTable);
     buildTable(groupEventTable);
   }
+  
+  public String getName(String user_name) throws SQLException {
+    String query = "select name from Users where user_name = ?";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    ResultSet rs = theStat.executeQuery();
+    String toReturn = null;
+    if (rs.next()) {
+      toReturn = rs.getString(1);
+    }
+    rs.close();
+    return toReturn;
+  }
+  
   public String findUser(String user_name) throws SQLException {
     String query = "select user_name from Users where user_name = ?";
     PreparedStatement theStat = conn.prepareStatement(query);

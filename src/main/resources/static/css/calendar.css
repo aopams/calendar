@@ -296,6 +296,13 @@ body {
 	margin-left: 55px;
 }
 
+#rem {
+	float:left;
+	height:25px;
+	width:30px;
+	padding:0px;
+}
+
 #accept {
 	float:left;
 	height:25px;

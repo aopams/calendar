@@ -95,6 +95,7 @@ public class SparkHandler {
     Spark.post("/register", new RegisterHandler(), freeMarker);
     Spark.post("/logout", new LogoutHandler());
     Spark.post("/editfriends", new ModifyFriendsHandler());
+    Spark.post("/getusername", new GetNameHandler());
   }
   
   
@@ -343,6 +344,37 @@ public class SparkHandler {
    * @author wtruong02151
    *
    */
+  private static class GetNameHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url").replace("#", ""));
+      System.out.println(id);
+      ContactsThread ct = new ContactsThread(clients.get(id),
+          null, null, null, Commands.GET_NAME);
+      Future<String> t = pool.submit(ct);
+      String name;
+      try {
+        name = t.get();
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("name", name).build();
+        return GSON.toJson(variables);
+      } catch (InterruptedException | ExecutionException e) {
+        name = "SQL ERROR";
+        e.printStackTrace();
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("name", name).build();
+        return GSON.toJson(variables);
+      }
+    }
+  }
+  
+  /**
+   * FriendsHandler grabs all the friends for a given user.
+   * Used to load up contacts page and refresh friends list.
+   * @author wtruong02151
+   *
+   */
   private static class FriendsHandler implements Route {
     @Override
     public Object handle(Request arg0, Response arg1) {
@@ -454,6 +486,31 @@ public class SparkHandler {
       message = "ERROR: Bug has occured, try again.";
       variables = new ImmutableMap.Builder()
       .put("message", message).build();
+      return GSON.toJson(variables);
+    }
+  }
+  
+  /**
+   * GroupsHandler grabs all the groups for a given user.
+   * Used to load up contacts page and refresh groups list.
+   * @author wtruong02151
+   *
+   */
+  private static class GroupsHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url").replace("#", ""));
+      System.out.println(id);
+      Map<Integer, String> tempMap = clients.get(id).getGroups();
+      List<String> myGroups = new ArrayList<String>();
+      for (Integer key : tempMap.keySet()) {
+        String groupName = tempMap.get(key);
+        System.out.println(groupName);;
+        myGroups.add(groupName);
+      }
+      Map<String, List<String[]>> variables = new ImmutableMap.Builder()
+      .put("groups", myGroups).build();
       return GSON.toJson(variables);
     }
   }
