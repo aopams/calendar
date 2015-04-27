@@ -21,8 +21,9 @@ body {
 #cal-owner {
 	display: inline-block;
 	text-align: center;
-	width: 750px;
-	font-size: 22px;
+	font-size: 20px;
+	margin: 0 0 0 0;
+	padding-top: 3px;
 }
 
 .cal-info {
