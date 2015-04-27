@@ -150,7 +150,7 @@ function createFriends() {
 				var accept = document.createElement('img');
 				refuse.id = 'refuse';
 				accept.id = 'accept';
-				img.src = '/img/placeholder.jpg';
+				img.src = getProfPic(name);
 				refuse.src = '/img/x.png';
 				refuse.onclick=function() {removeFriend(this);};
 				accept.src = '/img/check.png';
@@ -187,7 +187,7 @@ function createFriends() {
 				
 				
 				var img = document.createElement('img');
-				img.src = '/img/placeholder.jpg';
+				img.src = getProfPic(friends[count]);
 				var refuse = document.createElement('img');
 				refuse.id = 'refuse';
 				refuse.src = '/img/x.png';
@@ -207,6 +207,18 @@ function createFriends() {
 	}
 };
 
+function getProfPic(name) {
+	name = name.toString();
+	console.log(name);
+	var let = name.substring(0, 1).toLowerCase();
+	var toReturn = "/img/placeholder.jpg";
+	console.log('let is ' + let);
+	if (/[a-z]/i.test(let)) {
+		console.log('is string');
+		toReturn = "\\img/let/" + let + ".png";
+	}
+	return toReturn;
+}
 function acceptFriend(elem) {
 	var parent = elem.parentNode;
 	var user = parent.getAttribute('username');
@@ -259,7 +271,7 @@ function removeFriend(elem) {
 		responseObject = JSON.parse(responseJSON);
 		message = responseObject.message;
 		alert(message);
-	//send same post request as on document load to grab newly updated friend's list
+		//send same post request as on document load to grab newly updated friend's list
 		postParameters = {url : url};
 		$.post('/getfriends', postParameters, function(responseJSON) {
 			console.log("should update removed friend");

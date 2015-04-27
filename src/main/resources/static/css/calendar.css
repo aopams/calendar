@@ -125,7 +125,7 @@ body {
 }
 
 .google-event {
-	background-color: rgba(62, 115, 240, 0.57);
+	background-color: rgba(62, 115, 240, 0.57) !important;
 }
 
 .footer {

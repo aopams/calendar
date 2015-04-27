@@ -122,8 +122,13 @@ public class SparkHandler {
       String users = qm.value("attendees");
       List<String> attendees = new ArrayList<String>(); 
       attendees.add(cli.getClient());
+      System.out.println(users);
       while (users.contains(",")) {
-        attendees.add(users.substring(0, users.indexOf(",")));
+        String friend = users.substring(0, users.indexOf(","));
+        if (cli.getFriends().containsKey(friend)){
+          System.out.println(friend);
+          attendees.add(friend);
+        }
         users = users.substring(users.indexOf(",") + 1);
       }
       Calendar c = Calendar.getInstance();
