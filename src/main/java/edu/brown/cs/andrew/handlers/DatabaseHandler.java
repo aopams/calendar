@@ -91,6 +91,12 @@ public class DatabaseHandler {
     buildTable(groupEventTable);
   }
   
+  /**
+   * gets user name of a given user.
+   * @param user_name
+   * @return
+   * @throws SQLException
+   */
   public String getName(String user_name) throws SQLException {
     String query = "select name from Users where user_name = ?";
     PreparedStatement theStat = conn.prepareStatement(query);
