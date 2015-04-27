@@ -73,7 +73,7 @@ function openDialog(key, google) {
 	var am = date[4];
 	var time = date[3].substring(0, T.length - 3) + " " + am;
 	var dur = value.duration;
-	if (google == 1) {
+	if (google == 1 || google == 2) {
 		var ds = 'disabled';
 	} else {
 		var ds = '';
@@ -109,8 +109,10 @@ function openDialog(key, google) {
 		
 	if (google == 1) {
 		form = form + '<img id="google-button" src="\\img/google.png"/>';
+	} else if (google == 2) {
+		form = form + '<img id="delete-button" src="\\img/minus.png"/>';
 	} else {
-		form = form + '<img id="delete-button" src="/img/minus.png"/><img id="check-button" src="\\img/check.png"/>';
+		form = form + '<img id="delete-button" src="\\img/minus.png"/><img id="check-button" src="\\img/check.png"/>';
 	}
 	form = form + '</div> </div> </form>';
 	$(form).dialog({ modal: true, resizable: false});
@@ -251,20 +253,19 @@ function parseData(responseJSON) {
 		var key;
 		for(key in eventMap) {
 			value = eventMap[key];
-			console.log(value[date]);
 			// create new event div
 			var newElem = document.createElement("div");
 			
-			// based on id make it google-event or regular event
+			// based on id/creator status make it noncreator-event, google-event or regular event
 			if (key < 0) {
 				newElem.className = "google-event";
+			} else if (value.creator != 1) {
+				newElem.className = "noncreator-event";
 			} else {
 				newElem.className = "event";
 			}
 			
 			/* we set event id, height */
-			
-			console.log(value[date]);
 			var time = value.date.split(" ")[3].split(":")[1];
 			newElem.setAttribute("id", key);
 			newElem.style.height = getEventHeight(value.duration) + "px";
@@ -517,15 +518,10 @@ $(document).ready(function(e) {
 	updateDisplayedEvents();
 	
 	/* update calendar every 5 seconds */
+/*
 	window.setInterval(function() { 
 		updateDisplayedEvents();
 	}, 5000);
-	
-/*
-	$("#x-button").click(function(e) {
-		dialog.close();
-		$('#terms').dialog('close');
-	});
 */
 
 	/* create new event when they click eventSlot */
@@ -545,6 +541,11 @@ $(document).ready(function(e) {
 	$(document).on('click','.google-event', function(e) {
 		e.stopPropagation();
 	    openDialog(e.target, 1);
+	});
+	
+	$(document).on('click','.noncreator-event', function(e) {
+		e.stopPropagation();
+	    openDialog(e.target, 2);
 	});
 
 	$(document).on('click','#x-button', function(e) {
