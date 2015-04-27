@@ -26,6 +26,7 @@
 	<div class="row choices">
 		<a class="btn btn-default btn-primary" href="#" id="calendarbutton" role="button">Calendar</a>
 		<a class="btn btn-default" id="contactsbutton" href="#" role="button">Contacts</a>
+		<p id="cal-owner"> </p>
 		<a class="btn btn-default" id="logoutbutton" href="#" role="button" id="logout-btn">Log Out</a>
 	</div>
 	
