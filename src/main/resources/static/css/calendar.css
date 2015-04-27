@@ -18,6 +18,13 @@ body {
 	margin-top: 5px;
 }
 
+#cal-owner {
+	display: inline-block;
+	text-align: center;
+	width: 750px;
+	font-size: 22px;
+}
+
 .cal-info {
 	height: 35px;
 	border: solid 1px;
