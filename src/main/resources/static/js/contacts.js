@@ -58,6 +58,7 @@ $(document).ready(function(e) {
 		createFriends();
 	});
 	
+/*
 	//grabs groups from database and populates
 	var postParameters = {url: url};
 	$.post('/getgroups', postParameters, function(responseJSON) {
@@ -69,6 +70,7 @@ $(document).ready(function(e) {
 		}
 		
 	})
+*/
 	
 	//button to add friend at top of contacts page
 	$("#sendInvite").bind('click', function(e) {
@@ -113,9 +115,7 @@ $(document).ready(function(e) {
 	$.post('/getusername', postParameters, function(responseJSON) {
 		responseObject = JSON.parse(responseJSON);
 		username = responseObject.name;
-		console.log("here");
-		console.log(username);
-		document.getElementById('#cal-owner').innerHTML = username;
+		$('#cal-owner').text(username);
 	});
 	
 });
