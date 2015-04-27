@@ -30,6 +30,10 @@
 	</div>
 	
 	<div id="contacts">
+			<ul class="nav nav-tabs" id="tabs">
+			  <li role="presentation" class="active" id="friendsTab"><a href="#">Friends</a></li>
+			  <li role="presentation" id="groupsTab"><a href="#">Groups</a></li>
+			</ul>
 		<div id="contactsWindow">
 			<div id="addFriendBar">
 <!-- 			CHANGE THIS FROM FORM TO A SUBMIT BUTTON -->
@@ -45,6 +49,9 @@
 			<div id="contactsGrid">
 
 			</div>
+		</div>
+		<div id="groupsWindow">
+		
 		</div>
 	</div>
 	

@@ -25,6 +25,7 @@ public class Main {
     System.out.println(System.currentTimeMillis() / 1000);
     try {
       myDBHandler = new DatabaseHandler("calendar.sqlite3");
+      myDBHandler.addFriendRequest("Andrew", "Rohan");
       //myDBHandler.acceptFriendRequest("Will", "Rohan");
       //myDBHandler.addFriendRequest("Will", "Rohan");
      /** myDBHandler.createTablesForCalendar();

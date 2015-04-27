@@ -121,9 +121,9 @@ public class ClientHandler {
     friends.put(user_name, "accepted");
   }
   public String requestFriend(String user_name) {
-    String toReturn = null;
+    String toReturn = "";
     if (!friends.containsKey(user_name)) {
-      friends.put(user_name, "pending");
+      friends.put(user_name, "sent");
       return toReturn;
     //friend already exists (pending or , no need to do anything
     } else {
