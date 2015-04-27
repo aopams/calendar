@@ -35,12 +35,11 @@
 			</ul>
 		<div id="contactsWindow">
 			<div id="addFriendBar">
-<!-- 			CHANGE THIS FROM FORM TO A SUBMIT BUTTON -->
 				<div class="form-inline" id="send">
 					<div class="form-group">
 						<input type="text" class="form-control" id="addFriend" placeholder="@username">
 					</div>
-					<button type="submit" class="btn btn-default" id="sendInvite">Send invitation</button>
+					<button type="submit" class="btn btn-default" id="sendInvite">Send Invitation</button>
 				</div>
 			</div>
 			
@@ -50,7 +49,14 @@
 			</div>
 		</div>
 		<div id="groupsWindow">
-		
+			<div id="addFriendBar">
+				<div class="form-inline" id="send">
+					<div class="form-group">
+						<input type="text" class="form-control" id="groupName" placeholder="@groupname">
+					</div>
+					<button type="submit" class="btn btn-default" id="makeGroup">Make Group</button>
+				</div>
+			</div>
 		</div>
 	</div>
 	

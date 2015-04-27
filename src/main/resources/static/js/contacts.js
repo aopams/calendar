@@ -15,7 +15,7 @@ url = "";
 $(document).ready(function(e) {
 	$('#calWrap').show(0);
 	$('#contacts').hide(0);
-	
+	$('#groupsWindow').hide(0);
 	$("#contactsbutton").bind('click', function(e) {
 		$('#calWrap').hide(0);
 		$('#contacts').show(0);
@@ -54,9 +54,12 @@ $(document).ready(function(e) {
 		responseObject = JSON.parse(responseJSON);
 		temp = responseObject.friends;
 		for (i = 0; i < temp.length; i++) {
+			console.log(temp[i][0]);
+			
+			console.log(temp[i][1]);
 			if (temp[i][1] == "pending") {
 				pendingFriends.push(temp[i][0]);
-			} else if (temp[i][1] == "accepted" {
+			} else if (temp[i][1] == "accepted") {
 				friends.push(temp[i][0]);
 			}
 		};
@@ -87,7 +90,7 @@ $(document).ready(function(e) {
 				for (i = 0; i < temp.length; i++) {
 					if (temp[i][1] == "pending") {
 						pendingFriends.push(temp[i][0]);
-					} else {
+					} else if (temp[i][1] == "accepted") {
 						friends.push(temp[i][0]);
 					}
 				};
@@ -228,7 +231,7 @@ function acceptFriend(elem) {
 			for (i = 0; i < temp.length; i++) {
 				if (temp[i][1] == "pending") {
 					pendingFriends.push(temp[i][0]);
-				} else {
+				} else if (temp[i][1] == "accepted") {
 					friends.push(temp[i][0]);
 				}
 			};
@@ -268,7 +271,7 @@ function removeFriend(elem) {
 			for (i = 0; i < temp.length; i++) {
 				if (temp[i][1] == "pending") {
 					pendingFriends.push(temp[i][0]);
-				} else {
+				} else if (temp[i][1] == "accepted") {
 					friends.push(temp[i][0]);
 				}
 			};

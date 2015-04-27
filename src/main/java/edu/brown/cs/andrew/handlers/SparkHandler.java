@@ -419,7 +419,7 @@ public class SparkHandler {
             System.out.println("in add");
             ct = new ContactsThread(clients.get(id),
                 user2, null, null, Commands.ADD_FRIEND);
-            Future<String> t =pool.submit(ct);
+            Future<String> t = pool.submit(ct);
             String exists = t.get();
             if (exists.equals("toobad")) {
               message = "User does not exist.";
@@ -431,12 +431,14 @@ public class SparkHandler {
               variables = new ImmutableMap.Builder()
               .put("message", message).build();
               return GSON.toJson(variables);
-            } else if (exists.equals("")){
+            } else {
               message = "Friend request sent!";
               variables = new ImmutableMap.Builder()
               .put("message", message).build();
+              return GSON.toJson(variables);
             }
           } catch (InterruptedException | ExecutionException e2) {
+            System.out.println("caught");
             message = "ERROR: Bug in SQL.";
             e2.printStackTrace();
             variables = new ImmutableMap.Builder()

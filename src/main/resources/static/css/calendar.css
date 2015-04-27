@@ -3,6 +3,10 @@ body {
 	font-family: Helvetica;
 }
 
+.btn btn-default btn-primary {
+	background-color: #2950A6;
+}
+
 .header {
 	width: 1000px;
 	margin: auto;
@@ -311,6 +315,15 @@ body {
 
 #groupsTab {
 	border:none;
+}
+
+#groupName {
+	width:570px;
+}
+
+#makeGroup {
+	display: inline-block; 
+	width: 120px;
 }
 
 /*dialog inner styling */

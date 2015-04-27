@@ -188,8 +188,8 @@ public class DatabaseHandler {
     theStat2.setString(1, user_name);
     ResultSet rs2 = theStat2.executeQuery();
     while (rs2.next()) {
-      if (rs2.getString(2).equals("Pending")) {
-        toReturn.put(rs.getString(1), "Sent");
+      if (rs2.getString(2).equals("pending")) {
+        toReturn.put(rs2.getString(1), "Sent");
       } else {
         toReturn.put(rs2.getString(1), rs2.getString(2));
       }
