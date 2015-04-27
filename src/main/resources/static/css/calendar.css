@@ -124,7 +124,7 @@ body {
 	border-color: #D3D3D3;
 }
 
-.event, .google-event {
+.event, .noncreator-event, .google-event {
 	display: block;
 	float: right;
 	border: 1px solid;
