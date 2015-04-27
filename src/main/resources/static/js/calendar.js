@@ -429,7 +429,7 @@ function zindexByDuration() {
 			var last = $('.eventSlot#' + i).children().last().attr('id');
 			
 			/* if last exists then we should see if we can add negative margins */
-			if (last != 'undefined') {
+			if (last !== undefined) {
 				addNegativeMargins(last, i);
 			}
 		}
@@ -441,14 +441,16 @@ function addNegativeMargins(id, slot) {
 	// we get the margin and height of the event
 	boxHeight = $('.event#' + id).height();
 	//subtract expected length and add any margin that might exist on top
-	var adjustedHeight = boxHeight - 37.5;
+	var evTime = eventMap[id].date.split(" ")[3].split(":")[1] * 1;
+	var tOffset = getTimeOffsetMargin(evTime);
+	var adjustedHeight = boxHeight - 37.5 + tOffset;
 	if (adjustedHeight > 0) {
 		adjustMargin(adjustedHeight, slot);
 	}
 }
 
 function adjustMargin(ah, slot) {
-	rows = Math.ceil(ah/37.5);
+	rows = Math.ceil(ah / 37.5);
 	console.log("slot- " + slot + " // rows- " + rows + "// ah - " + ah);
 	while (rows > 0) {
 		slot += 1;
