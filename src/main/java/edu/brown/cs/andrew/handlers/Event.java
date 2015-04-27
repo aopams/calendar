@@ -54,19 +54,18 @@ public class Event {
   public int getDuration() {
     return duration;
   }
+  public String getCreator() {
+    return creator;
+  }
   public void setID(int id) {
     this.id = id;
   }
-  
   public List<String> getAttendees() {
     List<String> toReturn = new ArrayList<String>();
     for (int i = 0; i < attendees.size(); i++) {
       toReturn.add(attendees.get(i));
     }
     return toReturn;
-  }
-  public String getCreator() {
-    return creator;
   }
   public void setDuration(int d) {
     duration = d;

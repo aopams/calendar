@@ -23,7 +23,6 @@ public class HeartBeatThread implements Callable<String>{
     for(Entry<Integer, ClientHandler> e : clients.entrySet()) {
       ClientHandler client = e.getValue();
       try {
-        System.out.println("one client made");
         String user = client.getClient();
         client.setFriends(myDBHandler.getFriendsFromUser(user));
         client.setGroups(myDBHandler.getGroupsNameFromUser(user));  

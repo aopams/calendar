@@ -116,7 +116,8 @@ public class SparkHandler {
         e.printStackTrace();
       }
       String description = qm.value("description");
-      String creator = cli.getClient();
+      String creator = cli.user;
+      System.out.println(creator);
       String group = qm.value("group");
       int duration = Integer.parseInt(qm.value("duration"));
       String users = qm.value("attendees");
@@ -319,15 +320,22 @@ public class SparkHandler {
         e1.printStackTrace();
       }
       Gson gson = new Gson();
-      System.out.println(currentWeekStart);
       List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
       ConcurrentHashMap<Integer, Event> testEvents;
       testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
-      System.out.println(testEvents.size());
       List<String> toFrontEnd = new ArrayList<String>();
       for (Entry<Integer, Event> e : testEvents.entrySet()) {
         Event curr = e.getValue();
-        toFrontEnd.add(gson.toJson(curr));
+        String creator = e.getValue().getCreator();
+        int cre = 0;
+        if (creator != null && creator.equals(clients.get(clientID).user)) {
+          cre = 1;
+        }
+        String eventList = gson.toJson(curr);
+        if (creator != null) {
+          eventList = eventList.substring(0, eventList.indexOf("\"creator")) + "\"creator\":" + cre + "}";
+        }
+          toFrontEnd.add(gson.toJson(curr));
       }
 
       Map<String, Object> variables = new ImmutableMap.Builder()
