@@ -251,6 +251,7 @@ function parseData(responseJSON) {
 		var key;
 		for(key in eventMap) {
 			value = eventMap[key];
+			console.log(value[date]);
 			// create new event div
 			var newElem = document.createElement("div");
 			
@@ -262,6 +263,8 @@ function parseData(responseJSON) {
 			}
 			
 			/* we set event id, height */
+			
+			console.log(value[date]);
 			var time = value.date.split(" ")[3].split(":")[1];
 			newElem.setAttribute("id", key);
 			newElem.style.height = getEventHeight(value.duration) + "px";

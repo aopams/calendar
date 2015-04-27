@@ -24,9 +24,16 @@
 		<img src="\img/logo.png" style="width:140px;">
 	</div>
 	<div class="row choices">
-		<a class="btn btn-default btn-primary" href="#" id="calendarbutton" role="button">Calendar</a>
-		<a class="btn btn-default" id="contactsbutton" href="#" role="button">Contacts</a>
-		<a class="btn btn-default" id="logoutbutton" href="#" role="button" id="logout-btn">Log Out</a>
+		<div class="col-md-4 col-sm-4 col-xs-4">
+			<a class="btn btn-default btn-primary" href="#" id="calendarbutton" role="button">Calendar</a>
+			<a class="btn btn-default" id="contactsbutton" href="#" role="button">Contacts</a>
+		</div>
+		<div class="col-md-4 col-sm-4 col-xs-4" style="text-align: center">
+			<p id="cal-owner"> </p>
+		</div>
+		<div class="col-md-4 col-sm-4 col-xs-4">
+			<a class="btn btn-default" id="logoutbutton" href="#" role="button" id="logout-btn">Log Out</a>
+		</div>
 	</div>
 	
 	<div id="contacts">
@@ -36,12 +43,11 @@
 			</ul>
 		<div id="contactsWindow">
 			<div id="addFriendBar">
-<!-- 			CHANGE THIS FROM FORM TO A SUBMIT BUTTON -->
 				<div class="form-inline" id="send">
 					<div class="form-group">
 						<input type="text" class="form-control" id="addFriend" placeholder="@username">
 					</div>
-					<button type="submit" class="btn btn-default" id="sendInvite">Send invitation</button>
+					<button type="submit" class="btn btn-default" id="sendInvite">Send Invitation</button>
 				</div>
 			</div>
 			
@@ -51,20 +57,27 @@
 			</div>
 		</div>
 		<div id="groupsWindow">
-		
+			<div id="addFriendBar">
+				<div class="form-inline" id="send">
+					<div class="form-group">
+						<input type="text" class="form-control" id="groupName" placeholder="@groupname">
+					</div>
+					<button type="submit" class="btn btn-default" id="makeGroup">Make Group</button>
+				</div>
+			</div>
 		</div>
 	</div>
 	
 	<div id="calWrap">
 		<div class="row cal-info">
-			<div class="col-md-4">
+			<div class="col-md-4 col-sm-4 col-xs-4">
 				<!-- nothing here -->
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-4 col-sm-4 col-xs-4">
 				<div class="date" id = "date-title">
 				</div>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-4 col-sm-4 col-xs-4">
 				<img class="arrow" src="\img/rightarrow.png" id="rightarrow">
 				<img class="arrow" src="\img/leftarrow.png" id="leftarrow">
 			</div>

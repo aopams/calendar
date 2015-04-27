@@ -334,9 +334,9 @@ public class SparkHandler {
         }
         String eventList = gson.toJson(curr);
         if (creator != null) {
-          eventList = eventList.substring(0, eventList.indexOf("\"creator")) + "\"creator\":" + cre + "}";
+          eventList = eventList.substring(0, eventList.indexOf("\"creator\"")) + "\"creator\": " + cre + "}";
         }
-          toFrontEnd.add(gson.toJson(curr));
+          toFrontEnd.add(eventList);
       }
 
       Map<String, Object> variables = new ImmutableMap.Builder()
