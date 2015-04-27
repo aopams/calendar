@@ -118,17 +118,15 @@ public class SparkHandler {
       }
       String description = qm.value("description");
       String creator = cli.user;
-      System.out.println(creator);
       String group = qm.value("group");
       int duration = Integer.parseInt(qm.value("duration"));
       String users = qm.value("attendees");
       List<String> attendees = new ArrayList<String>(); 
       attendees.add(cli.getClient());
-      System.out.println(users);
       while (users.contains(",")) {
         String friend = users.substring(0, users.indexOf(","));
         if (cli.getFriends().containsKey(friend)){
-          System.out.println(friend);
+          System.out.println("friend added");
           attendees.add(friend);
         }
         users = users.substring(users.indexOf(",") + 1);
@@ -346,6 +344,7 @@ public class SparkHandler {
       return GSON.toJson(variables);
   }
  } 
+  
   /**
    * FriendsHandler grabs all the friends for a given user.
    * Used to load up contacts page and refresh friends list.

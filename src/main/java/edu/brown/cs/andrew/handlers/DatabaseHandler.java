@@ -90,20 +90,6 @@ public class DatabaseHandler {
     buildTable(userGroupTable);
     buildTable(groupEventTable);
   }
-  
-  public String getName(String user_name) throws SQLException {
-    String query = "select name from Users where user_name = ?";
-    PreparedStatement theStat = conn.prepareStatement(query);
-    theStat.setString(1, user_name);
-    ResultSet rs = theStat.executeQuery();
-    String toReturn = null;
-    if (rs.next()) {
-      toReturn = rs.getString(1);
-    }
-    rs.close();
-    return toReturn;
-  }
-  
   public String findUser(String user_name) throws SQLException {
     String query = "select user_name from Users where user_name = ?";
     PreparedStatement theStat = conn.prepareStatement(query);
@@ -202,8 +188,8 @@ public class DatabaseHandler {
     theStat2.setString(1, user_name);
     ResultSet rs2 = theStat2.executeQuery();
     while (rs2.next()) {
-      if (rs2.getString(2).equals("pending")) {
-        toReturn.put(rs2.getString(1), "Sent");
+      if (rs2.getString(2).equals("Pending")) {
+        toReturn.put(rs.getString(1), "Sent");
       } else {
         toReturn.put(rs2.getString(1), rs2.getString(2));
       }
@@ -281,7 +267,6 @@ public class DatabaseHandler {
     theStat.setInt(5, e.getDuration());
     theStat.setString(6, e.getCreator());
     theStat.executeUpdate();
-    System.out.println("new event made");
     ResultSet row =  theStat.getGeneratedKeys();
     int theRow = row.getInt(1);
     theStat.close();
@@ -437,7 +422,6 @@ public class DatabaseHandler {
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     while (rs.next()) {
       theStat2.setInt(1, rs.getInt(1));
-      System.out.println(rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
         List<String> users = getUsersFromEvent(rs2.getInt(1));
         Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")),
