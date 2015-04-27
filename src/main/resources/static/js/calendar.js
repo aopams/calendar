@@ -46,7 +46,6 @@ function newEvent() {
 	var atten = document.getElementById('attendees').value;
 	var group = document.getElementById('group').value;
 	var correctTime = getDBTime(date, time);
-	console.log(correctTime);
 	var postParameters = {string: window.location.pathname, title: title, date: correctTime,
 		time: time, duration: dur, description: descrip, attendees: atten,
 		group: group
@@ -244,6 +243,7 @@ function parseData(responseJSON) {
 		// add all new event objects
 		for (var i = 0; i < list.length; i++) {
 			var obj = JSON.parse(list[i]);
+			console.log(obj);
 			eventMap[obj.id] = obj;
 		}
 
@@ -367,7 +367,6 @@ function changeWeekNumbers(weekArray) {
 
 function getDBTime(date, time) {
 	date = date.replace(",", "");
-	console.log(date);
 	arr = date.split(" ");
 	var hours = Number(time.match(/^(\d+)/)[1]);
 	var minutes = Number(time.match(/:(\d+)/)[1]);
@@ -378,14 +377,12 @@ function getDBTime(date, time) {
 	var sMinutes = minutes.toString();
 	if(hours<10) sHours = "0" + sHours;
 	if(minutes<10) sMinutes = "0" + sMinutes;
-	console.log(sHours + ":" + sMinutes);
 	return arr[1] + "-" + arr[0] + "-" +
 		arr[2] + " " + sHours + ":" + sMinutes;
 }
 
 function dateRegex(date) {
 	date = date.replace(",", "");
-	console.log(date);
 	arr = date.split(' ');
 	if (arr.length != 3) {
 		return false;
@@ -437,7 +434,6 @@ function zindexByDuration() {
 }
 
 function addNegativeMargins(id, slot) {
-	console.log('.event#' + id);
 	// we get the margin and height of the event
 	boxHeight = $('.event#' + id).height();
 	//subtract expected length and add any margin that might exist on top
@@ -451,7 +447,6 @@ function addNegativeMargins(id, slot) {
 
 function adjustMargin(ah, slot) {
 	rows = Math.ceil(ah / 37.5);
-	console.log("slot- " + slot + " // rows- " + rows + "// ah - " + ah);
 	while (rows > 0) {
 		slot += 1;
 		//if condition for events that span more than one day 
@@ -504,7 +499,6 @@ function timeOffsetMargin() {
 		var currMarg = $('.event#' + key).css('margin-top');
 		currMarg = currMarg.substring(0, currMarg.length - 2);
 		var newMarg = (currMarg * 1) + getTimeOffsetMargin(evTime);
-		console.log('id: ' + key + ' newMarg: ' + newMarg);
 		$('.event#' + key).css('margin-top', newMarg+'px');
 	}
 }
@@ -515,14 +509,21 @@ function getTimeOffsetMargin(t) {
 }
 
 $(document).ready(function(e) {
-	$(".ui-dialog-titlebar").hide()  
+	$(".ui-state-default").hide()  
+	/* update the displayed events to get events on page */
 	updateDisplayedEvents();
 	
+	/* update calendar every 5 seconds */
+	window.setInterval(function() { 
+		updateDisplayedEvents();
+	}, 5000);
+	
+/*
 	$("#x-button").click(function(e) {
-		console.log("here");
 		dialog.close();
 		$('#terms').dialog('close');
 	});
+*/
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {
@@ -539,7 +540,6 @@ $(document).ready(function(e) {
 	});
 	
 	$(document).on('click','.google-event', function(e) {
-		console.log('here');
 		e.stopPropagation();
 	    openDialog(e.target, 1);
 	});
@@ -555,7 +555,6 @@ $(document).ready(function(e) {
 	
 	$(document).on('keyup','#datepicker', function(e) {
 		date = $('#datepicker').val();
-		console.log(date);
 		var res = dateRegex();
 		if (res) {
 			$('#datepicker').removeClass('has-error');
