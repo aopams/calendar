@@ -256,7 +256,7 @@ function removeFriend(elem) {
 		responseObject = JSON.parse(responseJSON);
 		message = responseObject.message;
 		alert(message);
-	//send same post request as on document load to grab newly updated friend's list
+		//send same post request as on document load to grab newly updated friend's list
 		postParameters = {url : url};
 		$.post('/getfriends', postParameters, function(responseJSON) {
 			console.log("should update removed friend");
