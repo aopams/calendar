@@ -17,10 +17,14 @@ jQuery(document).ready(function($) {
 		var password = document.getElementById('pass').value;
 		var fullname = document.getElementById('regName').value;
 		var postParameters = {username : username, password : password, fullname : fullname};
-		
-		$.post('/register', postParameters, function(responseJSON) {
-			
-		});
+		register(postParameters);
 	})
 	
 });
+
+function register(postParameters) {
+	console.log('here');
+	$.post('/register', postParameters, function(responseJSON) {
+			
+	});
+}
