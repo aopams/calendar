@@ -231,8 +231,8 @@ public class SparkHandler {
     public ModelAndView handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
       String code = qm.value("code");
+      System.out.println("CODE: " + code);
       if (code != null) {
-
         ServerCalls sc = new ServerCalls();
         HashMap<String, String> map = sc.authorize(code);
         String accessToken = map.get("access_token");
@@ -249,12 +249,6 @@ public class SparkHandler {
 
           client.addEvent(event);
         }
-        try {
-          System.out.println(events.get(0).getDate());
-        } catch (ParseException e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        }
 
         clients.put(120456778, client);
         Date currentWeekStart = new Date();
@@ -270,12 +264,13 @@ public class SparkHandler {
         List<String> toFrontEnd = new ArrayList<String>();
         for (Entry<Integer, Event> e : testEvents.entrySet()) {
           Event curr = e.getValue();
+          
           toFrontEnd.add(GSON.toJson(curr));
+          System.out.println("GSON: " + GSON.toJson(curr));
         }
         Map<String, Object> variables = new ImmutableMap.Builder()
             .put("events", toFrontEnd).put("week", currentWeek)
             .put("form", getRandomForm()).build();
-        System.out.println("GOT HERE");
         return new ModelAndView(variables, "main.ftl");
       } else {
         String user = qm.value("user");
@@ -365,53 +360,7 @@ public class SparkHandler {
       Calendar c = Calendar.getInstance();
       c.setTime(date);
       QueryParamsMap qm = req.queryMap();
-      String code = qm.value("code");
-      if (code != null) {
-        ServerCalls sc = new ServerCalls();
-        HashMap<String, String> map = sc.authorize(code);
-        String accessToken = map.get("access_token");
-        String user = "9999";
-        ClientHandler client = new ClientHandler(database, user, true);
-        HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
-        HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList,
-            accessToken);
-        client.setEvents(new ConcurrentHashMap<Integer, Event>());
-        List<Event> events = sc.getAllEvents(eventsList);
-        System.out.println(client);
-        for (Event event : events) {
-          // System.out.println(event);
-
-          client.addEvent(event);
-        }
-        try {
-          System.out.println(events.get(0).getDate());
-        } catch (ParseException e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        }
-
-        clients.put(120456778, client);
-        Date currentWeekStart = new Date();
-        List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
-        ConcurrentHashMap<Integer, Event> testEvents;
-        testEvents = client.getEventsByWeek(currentWeekStart);
-        try {
-          System.out.println(events.get(0).getDate());
-        } catch (ParseException e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        }
-        List<String> toFrontEnd = new ArrayList<String>();
-        for (Entry<Integer, Event> e : testEvents.entrySet()) {
-          Event curr = e.getValue();
-          toFrontEnd.add(GSON.toJson(curr));
-        }
-        Map<String, Object> variables = new ImmutableMap.Builder()
-            .put("events", toFrontEnd).put("week", currentWeek)
-            .put("form", getRandomForm()).build();
-        return GSON.toJson(variables);
-
-      } else {
+      
         int week = c.get(Calendar.WEEK_OF_YEAR);
         int clientID = Integer.parseInt(qm.value("string").substring(10));
         c.set(Calendar.WEEK_OF_YEAR, week);
@@ -479,7 +428,7 @@ public class SparkHandler {
             .put("events", toFrontEnd).put("week", currentWeek).build();
         System.out.println(GSON.toJson(variables));
         return GSON.toJson(variables);
-      }
+      
     }
 
     /**
