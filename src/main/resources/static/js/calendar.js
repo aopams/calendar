@@ -566,9 +566,9 @@ $(document).ready(function(e) {
 	updateDisplayedEvents();
 	
 	/* update calendar every 5 seconds */
-	window.setInterval(function() { 
+	/*window.setInterval(function() { 
 		updateDisplayedEvents();
-	}, 5000);
+	}, 5000); */
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {

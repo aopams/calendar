@@ -32,13 +32,12 @@
     <!register page>
     <div class="registerpage">
     <h1>Register</h1><br>
-	  <form method = "POST" action="/register">
+	  <form method = "POST" action="/register" onsubmit ="Window.close()">
 	    <input type="text" name="user" placeholder="Username">
 	    <input type="password" name="pass" placeholder="Password">
 	    <input type="password" name="pass" placeholder="Confirm password">
-	    <input type="text" name="name" placeholder="Full name">
-	    <input type="text" name="email" placeholder="Google E-mail">	    
-	    <input type="submit" name="register" class="btn btn-primary" value="Register">
+	    <input type="text" name="name" placeholder="Full name">	    
+	    <input id = "kill" type="submit" name="register" class="btn btn-primary" value="Register">
 	  </form>
 	  <input type="image" src="\img/leftarrow.png" class ="backbutton" name="backbutton">
     </div>

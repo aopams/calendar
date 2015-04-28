@@ -258,6 +258,9 @@ public class SparkHandler {
     public ModelAndView handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
       String code = qm.value("code");
+      int clientID = Integer.parseInt(req.params(":id"));
+      System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+      System.out.println("ID: " + clientID);
       System.out.println("CODE: " + code);
       if (code != null) {
         ServerCalls sc = new ServerCalls();
@@ -282,12 +285,6 @@ public class SparkHandler {
         List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
         ConcurrentHashMap<Integer, Event> testEvents;
         testEvents = client.getEventsByWeek(currentWeekStart);
-        try {
-          System.out.println(events.get(0).getDate());
-        } catch (ParseException e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        }
         List<String> toFrontEnd = new ArrayList<String>();
         for (Entry<Integer, Event> e : testEvents.entrySet()) {
           Event curr = e.getValue();
@@ -649,9 +646,7 @@ public class SparkHandler {
         String form = getRandomForm();
         Map<String, String> variables = new ImmutableMap.Builder()
             .put("code", code).put("form", form).build();
-
         return new ModelAndView(variables, "redirect.ftl");
-
       }
     }
 
@@ -672,11 +667,10 @@ public class SparkHandler {
     public static class RegisterHandler implements TemplateViewRoute {
       @Override
       public ModelAndView handle(Request req, Response res) {
-        Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
-            "message", "");
+        Map<String, Object> variables = ImmutableMap.of();
         ServerCalls sc = new ServerCalls();
         sc.openURLInBrowser("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com");
-        return new ModelAndView(variables, "main.ftl");
+        return new ModelAndView(variables, "load.ftl");
       }
     }
   }
