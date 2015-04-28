@@ -271,6 +271,15 @@ public class DatabaseHandler {
     theStat.executeUpdate();
     theStat.close();
   }
+  public void removeUserFromEvent(String user_name, int event_id) throws SQLException {
+    String query = "Delete from User_Event"
+        + " where user_name = ? and event_id = ?;";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    theStat.setInt(2, event_id);
+    theStat.executeUpdate();
+    theStat.close();
+  }
   
   public void addEvent(Event e) throws SQLException, ParseException {
     String group_name = e.getGroup();

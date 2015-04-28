@@ -58,6 +58,9 @@ public class CalendarThread implements Callable<String>{
       System.out.println("DB Delete");
       myDBHandler.removeEvent(deleteEvent);
       break;
+    case REMOVE_USER_EVENT :
+      client1.removeEvent(deleteEvent);
+      myDBHandler.removeUserFromEvent(client1.getClient(), deleteEvent.getId());
     case EDIT_EVENT :
       client1.removeEvent(deleteEvent);
       myDBHandler.removeEvent(deleteEvent);
