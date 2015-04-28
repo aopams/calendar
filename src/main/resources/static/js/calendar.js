@@ -78,7 +78,7 @@ function editEvent(id) {
 		group: group
 	};
 	console.log("edit event");
-	$.post("/editevent", postParameters, function(responseJSON){
+	$.post("/newevent", postParameters, function(responseJSON){
 /*
 	add code to handle messaging for ranking, etc
 		if(responseJSON.status == 1) {

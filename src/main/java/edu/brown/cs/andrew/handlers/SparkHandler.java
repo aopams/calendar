@@ -145,6 +145,11 @@ public class SparkHandler {
     @Override
     public Object handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
+      String id = qm.value("id");
+      int eventID = -1;
+      if (id != null) {
+        eventID =  Integer.parseInt(id);
+      }
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       ClientHandler cli = clients.get(clientID);
       String title = qm.value("title");
@@ -183,6 +188,10 @@ public class SparkHandler {
       Event e = new Event(date, title, dayOfWeek, attendees,
           group, duration, description, creator);
       CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null, null);
+      if (eventID != -1) {
+        Event d = cli.getEvents().get(eventID);
+        ct = new CalendarThread(cli, Commands.EDIT_EVENT, e, d, clients);
+      }
       Future<String> t = pool.submit(ct);
       try {
         t.get();

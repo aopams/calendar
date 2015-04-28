@@ -45,7 +45,7 @@ public class CalendarThread implements Callable<String>{
       myDBHandler.addEvent(myEvent);
       while(nextDay != null) {
         myDBHandler.addEvent(nextDay);
-        nextDay = client1.checkTwoDays(myEvent);
+        nextDay = client1.checkTwoDays(nextDay);
       }
       break;
     case DELETE_EVENT :
@@ -62,7 +62,14 @@ public class CalendarThread implements Callable<String>{
       myDBHandler.removeUserFromEvent(client1.getClient(), deleteEvent.getId());
       break;
     case EDIT_EVENT :
-      client1.removeEvent(deleteEvent);
+      System.out.println("event being edited");
+      System.out.println(myEvent.getDescription());
+      List<String> attends = deleteEvent.getAttendees();
+      for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
+        if (attends.contains(e.getValue().getClient())) {
+          e.getValue().removeEvent(deleteEvent);
+        }
+      }
       myDBHandler.removeEvent(deleteEvent);
       Event nextDay2 = client1.checkTwoDays(myEvent);
       myDBHandler.addEvent(myEvent);
