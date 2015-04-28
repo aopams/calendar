@@ -22,6 +22,8 @@ jQuery(document).ready(function($) {
 	
 });
 
+/* CHANGE */
+
 function register(postParameters) {
 	console.log('here');
 	$.post('/register', postParameters, function(responseJSON) {
