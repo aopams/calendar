@@ -96,9 +96,21 @@ public class SparkHandler {
     Spark.post("/logout", new LogoutHandler());
     Spark.post("/editfriends", new ModifyFriendsHandler());
     Spark.post("/getusername", new GetNameHandler());
+    Spark.post("/removevent", new RemoveEventHandler());
   }
   
-  
+  private static class RemoveEventHandler implements Route {
+
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int eventID = Integer.parseInt(qm.value("id"));
+      CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,  eventID);
+      pool.submit(ct);
+      return null;
+    }
+    
+  }
   private static class CreateEventHandler implements Route {
 
     @Override
@@ -125,9 +137,7 @@ public class SparkHandler {
       attendees.add(cli.getClient());
       while (users.contains(",")) {
         String friend = users.substring(0, users.indexOf(","));
-        System.out.println(friend);
         if (cli.getFriends().containsKey(friend)){
-          System.out.println("friend added");
           attendees.add(friend);
         }
         users = users.substring(users.indexOf(",") + 1);
@@ -144,7 +154,7 @@ public class SparkHandler {
       String dayOfWeek = numbersToDay.get(dayWeek);
       Event e = new Event(date, title, dayOfWeek, attendees,
           group, duration, description, creator);
-      CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null);
+      CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, 0);
       Future<String> t = pool.submit(ct);
       try {
         t.get();
