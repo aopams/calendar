@@ -43,8 +43,7 @@ public class DatabaseHandler {
       + "user_name nvarchar(16) PRIMARY KEY," 
       + "user_password nvarchar(30) NOT NULL,"
       + "name nvarchar(30) NOT NULL,"
-      + "google_token nvarchar(200),"
-      + "email nvarchar(30) NOT NULL);";
+      + "google_token nvarchar(200));";
     String groupTable = "CREATE Table Groups ("
       + "group_id integer PRIMARY KEY AUTOINCREMENT,"
       + "group_name nvarchar(16));";
@@ -133,17 +132,16 @@ public class DatabaseHandler {
     return toReturn;
   }
   public void insertUser(String user_name, String password,
-      String name, String email) throws SQLException {
-    String query = "INSERT into Users (user_name, user_password, name, email)"
-        + "Select ?, ?, ?, ? where not exists ("
+      String name) throws SQLException {
+    String query = "INSERT into Users (user_name, user_password, name)"
+        + "Select ?, ?, ? where not exists ("
         + "select * from Users where user_name = ?);";
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, user_name);
     theStat.setString(2, password);
     theStat.setString(3, name);
-    theStat.setString(4, email);
     theStat.setString(5, user_name);
-    theStat.executeUpdate();
+    System.out.println(theStat.executeUpdate());
     
   }
   public void deleteUser(String user_name) throws SQLException {
