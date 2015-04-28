@@ -6,7 +6,7 @@ var eventMap = {};
 var weekInfo = [];
 
 //colors that we assign to event boxes
-var eventColors = ["#FFE1E6", "#F2E7D2", "#DCE3E9", "#E1C19A", "lightskyblue", "#A9D8B6", "lightgoldenrodyellow"]
+var eventColors = ["#FF9393", "#98FB98", "#FFFF99", "#c0aee0", "#e0d9ae", "#A9D8B6", "lightgoldenrodyellow"]
 /* END GLOBAL VARIABLES */
 
 /* POST HANDLERS */
@@ -62,6 +62,23 @@ function newEvent() {
 */
 	})
 }
+
+/* delete event */
+function deleteEvent(id) {
+	var id = id;
+	var postParameters = {string: window.location.pathname, id: id};
+
+	$.post("/removeevent", postParameters, function(responseJSON){
+/*
+	add code to handle messaging for ranking, etc
+		if(responseJSON.status == 1) {
+			$dialog.dialog('destroy');
+		} else {
+			alert('ranking: ' + responseJSON.message);
+		}
+*/
+	})
+}
 /* END POST HANDLERS */
 
 /* opens dialog window for events that creators have control over editing */
@@ -80,6 +97,7 @@ function openDialog(key, google) {
 	}
 	form =
 	'<form class="form-inline" id ="newEventForm">' +
+	'<div id="dialog-event-id">' + value.id + '</div>' +
 	'<div class="form-group dialog-form">' +
 		'<img id="x-button" src="/img/x.png"/>' +
 	    '<div class="input-group">' +
@@ -110,9 +128,9 @@ function openDialog(key, google) {
 	if (google == 1) {
 		form = form + '<img id="google-button" src="\\img/google.png"/>';
 	} else if (google == 2) {
-		form = form + '<img id="delete-button" src="\\img/minus.png"/>';
+		form = form + '<img id="remove-button" src="\\img/minus.png"/>';
 	} else {
-		form = form + '<img id="delete-button" src="\\img/minus.png"/><img id="check-button" src="\\img/check.png"/>';
+		form = form + '<img id="delete-button" src="\\img/minus.png"/><img id="edit-button" src="\\img/check.png"/>';
 	}
 	form = form + '</div> </div> </form>';
 	$(form).dialog({ modal: true, resizable: false});
@@ -655,11 +673,33 @@ $(document).ready(function(e) {
 	    updateDisplayedEvents();
 	});
 	
+<<<<<<< HEAD
 	$("#continue").bind('click', function(event) {
 		console.log("reached");
 		var postParameters = {code: document.getElementById("code")};
 		$.post("/calendar/?", postParameters, function(responseJSON){
 			parseData(responseJSON);
 		})
+=======
+	/* owner wants to delete the entire event */
+	$(document).on('click','#delete-button', function(e) {
+		var id = document.getElementById("dialog-event-id").innerHTML;
+		console.log(id);
+		deleteEvent(id);
+	});
+	
+	/* participant doesn't want to attend event */
+	$(document).on('click','#remove-button', function(e) {
+		var id = document.getElementById("dialog-event-id").innerHTML;
+		console.log(id);
+		//removeUserFromEvent(id);
+	});
+	
+	/* owner wants to edit event */
+	$(document).on('click','#edit-button', function(e) {
+		var id = document.getElementById("dialog-event-id").innerHTML;
+		console.log(id);
+		//removeUserFromEvent(id);
+>>>>>>> b5e5462bea9751aadfc4bf06e3556c601db93c1d
 	});
 });
