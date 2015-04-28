@@ -127,7 +127,9 @@ $(document).ready(function(e) {
 	$.post('/getusername', postParameters, function(responseJSON) {
 		responseObject = JSON.parse(responseJSON);
 		username = responseObject.name;
-		$('#cal-owner').text(username);
+		if (username != '') {
+			$('#cal-owner').text(username + "'s Calendar");
+		}
 	});
 	
 });

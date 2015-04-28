@@ -1,21 +1,17 @@
 package edu.brown.cs.andrew.handlers;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import edu.brown.cs.andrew.clientThreads.HeartBeatThread;
-import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 
 public class ClientHandler {
   String user;
-  private String accesToken;
   private ConcurrentHashMap<String, String> friends;
   private ConcurrentHashMap<Integer, String> groups;
   private ConcurrentHashMap<Integer, Event> events;
@@ -24,29 +20,29 @@ public class ClientHandler {
   private List<String> updateList;
   private int maxEventId;
 
-
   public ClientHandler(String db, String user, boolean initItself) {
-      this.user = user;
-      updateList = new CopyOnWriteArrayList<String>();
-      ConcurrentHashMap<Integer, ClientHandler> dummyMap = new ConcurrentHashMap<Integer, ClientHandler>();
-      dummyMap.put(0, this);
-      if (initItself) {
-        HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
-        SparkHandler.pool.submit(initThread);
-      }
+    this.user = user;
+    updateList = new CopyOnWriteArrayList<String>();
+    ConcurrentHashMap<Integer, ClientHandler> dummyMap = new ConcurrentHashMap<Integer, ClientHandler>();
+    dummyMap.put(0, this);
+    if (initItself) {
+      HeartBeatThread initThread = new HeartBeatThread("pull", dummyMap);
+      SparkHandler.pool.submit(initThread);
+    }
   }
-  
+
   public synchronized ConcurrentHashMap<String, String> getFriends() {
     return friends;
   }
+
   public synchronized ConcurrentHashMap<Integer, String> getGroups() {
     return groups;
   }
+
   public synchronized ConcurrentHashMap<Integer, Event> getEvents() {
     return events;
   }
 
-  
   public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date startTimed) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
     Date start = SparkHandler.setTimeToMidnight(startTimed);
@@ -67,6 +63,7 @@ public class ClientHandler {
     }
     return toReturn;
   }
+
   public ConcurrentHashMap<Integer, Event> getEventsByDay(Date startTimed) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
     Date start = SparkHandler.setTimeToMidnight(startTimed);
@@ -89,48 +86,55 @@ public class ClientHandler {
     }
     return toReturn;
   }
-  
+
   public synchronized void setFriends(ConcurrentHashMap<String, String> friends) {
     this.friends = friends;
   }
+
   public synchronized void setGroups(ConcurrentHashMap<Integer, String> groups) {
     this.groups = groups;
   }
+
   public synchronized void setEvents(ConcurrentHashMap<Integer, Event> events) {
     this.events = events;
   } 
 //  public synchronized void setMaxGroupId(int maxID) {
 //    this.maxGroupId = maxID;
 //  }
+
   public synchronized void setMaxEventId(int maxID) {
     this.maxEventId = maxID;
   }
-  
+
   public synchronized String getClient() {
     return user;
   }
+
   public void editUpdateList(String edit) {
     updateList.add(edit);
   }
-  
+
   public void removeFriend(String user_name) {
     friends.remove(user_name);
   }
+
   public void acceptFriend(String user_name) {
     friends.put(user_name, "accepted");
   }
+
   public String requestFriend(String user_name) {
     String toReturn = "";
     if (!friends.containsKey(user_name)) {
       friends.put(user_name, "sent");
       return toReturn;
-    //friend already exists (pending or , no need to do anything
+      // friend already exists (pending or , no need to do anything
     } else {
       toReturn = "exists";
       return toReturn;
     }
   }
-  public Event checkTwoDays(Event e) throws ParseException{
+
+  public Event checkTwoDays(Event e) throws ParseException {
     java.util.Date start = e.getDate();
     int duration = e.getDuration();
     Calendar c = Calendar.getInstance();
@@ -151,34 +155,45 @@ public class ClientHandler {
       }
       e.setDuration(duration);
       c.setTime(end);
-      cont = new Event(end, e.getTitle() + " cont.", SparkHandler.numbersToDay.get(c.get(Calendar.DAY_OF_WEEK)),
-          e.getAttendees(), e.getGroup(), newDuration, e.getDescription(), e.getCreator());
+      cont = new Event(end, e.getTitle() + " cont.",
+          SparkHandler.numbersToDay.get(c.get(Calendar.DAY_OF_WEEK)),
+          e.getAttendees(), e.getGroup(), newDuration, e.getDescription(),
+          e.getCreator());
       addEvent(cont);
     }
     addEvent(e);
     return cont;
   }
+
   public void addEvent(Event e) {
     maxEventId += 1;
     e.setID(maxEventId);
+    System.out.println(events);
     events.put(maxEventId, e);
+
   }
-  public void removeEvent(Event e) {
-    events.remove(e.getId());
+
+  public void removeEvent(int e) {
+    events.remove(e);
   }
   //edited groupid count, handled in database
   public void addGroup(String group, int groupID) {
     groups.put(groupID, group);
   }
+//  public void addGroup(String group) {
+//    maxGroupId++;
+//    groups.put(maxGroupId, group);
+//  }
+
   public void removeGroup(String group) {
     groups.remove(group);
   }
-  
- public void setAccessToken(String accessToken) {
-   this.accessToken = accessToken;
- }
- 
- public String getAccessToken() {
-   return accessToken;
- }
+
+  public void setAccessToken(String accessToken) {
+    this.accessToken = accessToken;
+  }
+
+  public String getAccessToken() {
+    return accessToken;
+  }
 }

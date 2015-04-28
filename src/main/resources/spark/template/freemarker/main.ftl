@@ -24,10 +24,16 @@
 		<img src="\img/logo.png" style="width:140px;">
 	</div>
 	<div class="row choices">
-		<a class="btn btn-default btn-primary" href="#" id="calendarbutton" role="button">Calendar</a>
-		<a class="btn btn-default" id="contactsbutton" href="#" role="button">Contacts</a>
-		<p id="cal-owner"> </p>
-		<a class="btn btn-default" id="logoutbutton" href="#" role="button" id="logout-btn">Log Out</a>
+		<div class="col-md-4 col-sm-4 col-xs-4">
+			<a class="btn btn-default btn-primary" href="#" id="calendarbutton" role="button">Calendar</a>
+			<a class="btn btn-default" id="contactsbutton" href="#" role="button">Contacts</a>
+		</div>
+		<div class="col-md-4 col-sm-4 col-xs-4" style="text-align: center">
+			<p id="cal-owner"> </p>
+		</div>
+		<div class="col-md-4 col-sm-4 col-xs-4">
+			<a class="btn btn-default" id="logoutbutton" href="#" role="button" id="logout-btn">Log Out</a>
+		</div>
 	</div>
 	
 	<div id="contacts">
@@ -69,14 +75,14 @@
 	
 	<div id="calWrap">
 		<div class="row cal-info">
-			<div class="col-md-4">
+			<div class="col-md-4 col-sm-4 col-xs-4">
 				<!-- nothing here -->
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-4 col-sm-4 col-xs-4">
 				<div class="date" id = "date-title">
 				</div>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-4 col-sm-4 col-xs-4">
 				<img class="arrow" src="\img/rightarrow.png" id="rightarrow">
 				<img class="arrow" src="\img/leftarrow.png" id="leftarrow">
 			</div>
