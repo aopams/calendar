@@ -316,23 +316,18 @@ public class DatabaseHandler {
       theStat2.close();
     }
   }
-  public void removeEvent(Event e) throws SQLException, ParseException {
-    int eventID = e.getId();
-    String group = e.getGroup();
-    if (group != null && !group.equals("")) {
-      int group_id = findGroup(group);
-      String query3 = "Delete From Group_Event where group_id = ? and event_id = ?";
+  public void removeEvent(int e) throws SQLException, ParseException {
+    int eventID = e;
+
+      String query3 = "Delete From Group_Event and event_id = ?";
       PreparedStatement stat3 = conn.prepareStatement(query3);
-      stat3.setInt(1, group_id);
       stat3.setInt(2, eventID);
       stat3.executeUpdate();
-    } else {
       String query2 = "Delete From User_Event where event_id = ?";
       PreparedStatement stat2 = conn.prepareStatement(query2);
       stat2.setInt(1, eventID);
       stat2.executeUpdate();
       stat2.close();
-    }
 
     String query = "Delete From Events where event_id = ?";
     PreparedStatement stat = conn.prepareStatement(query);

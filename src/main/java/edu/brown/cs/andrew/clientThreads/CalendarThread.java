@@ -15,9 +15,9 @@ public class CalendarThread implements Callable<String>{
   private Commands command;
   private DatabaseHandler myDBHandler;
   private Event myEvent;
-  private Event deleteEvent;
+  private int deleteEvent;
   
-  public CalendarThread(ClientHandler client1, Commands command, Event e, Event d) {
+  public CalendarThread(ClientHandler client1, Commands command, Event e, int d) {
     this.client1 = client1;
     this.command = command;
     myEvent = e;
