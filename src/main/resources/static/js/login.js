@@ -19,7 +19,7 @@ jQuery(document).ready(function($) {
 		var postParameters = {username : username, password : password, fullname : fullname};
 		
 		$.post('/register', postParameters, function(responseJSON) {
-			
+		
 		});
 	})
 	

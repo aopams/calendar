@@ -4,11 +4,23 @@ jQuery(document).ready(function($) {
 		console.log("register");
 		$(".registerpage").show(0);
 		$(".logreg").hide(0);
-		window.close();
 	});
 	$(".backbutton").bind('click', function(event) {
 		console.log("asdf");
 		$(".logreg").show(0);
 		$(".registerpage").hide(0);
 	});
+	
+	$("#register").bind('click', function(event) {
+		console.log("noice");
+		var username = document.getElementById('regUser').value;
+		var password = document.getElementById('pass').value;
+		var fullname = document.getElementById('regName').value;
+		var postParameters = {username : username, password : password, fullname : fullname};
+		
+		$.post('/register', postParameters, function(responseJSON) {
+			
+		});
+	})
+	
 });

@@ -50,7 +50,7 @@ function newEvent() {
 		time: time, duration: dur, description: descrip, attendees: atten,
 		group: group
 	};
-
+	console.log("new event");
 	$.post("/newevent", postParameters, function(responseJSON){
 /*
 	add code to handle messaging for ranking, etc
@@ -79,6 +79,23 @@ function deleteEvent(id) {
 */
 	})
 }
+
+function removeUserEvent(id) {
+	var id = id;
+	var postParameters = {string: window.location.pathname, id: id};
+
+	$.post("/removeuserevent", postParameters, function(responseJSON){
+/*
+	add code to handle messaging for ranking, etc
+		if(responseJSON.status == 1) {
+			$dialog.dialog('destroy');
+		} else {
+			alert('ranking: ' + responseJSON.message);
+		}
+*/
+	})
+}
+
 /* END POST HANDLERS */
 
 /* opens dialog window for events that creators have control over editing */
@@ -566,9 +583,9 @@ $(document).ready(function(e) {
 	updateDisplayedEvents();
 	
 	/* update calendar every 5 seconds */
-	window.setInterval(function() { 
+	/*window.setInterval(function() { 
 		updateDisplayedEvents();
-	}, 5000);
+	}, 5000); */
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {
@@ -685,8 +702,9 @@ $(document).ready(function(e) {
 	/* participant doesn't want to attend event */
 	$(document).on('click','#remove-button', function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
-		console.log(id);
-		//removeUserFromEvent(id);
+		removeUserEvent(id);
+	    var $dialog = $(this).parents('.ui-dialog-content');
+	    $dialog.dialog('destroy');
 		updateDisplayedEvents();
 	});
 	
@@ -694,7 +712,7 @@ $(document).ready(function(e) {
 	$(document).on('click','#edit-button', function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
 		console.log(id);
-		//removeUserFromEvent(id);
+		//removeUserEvent(id);
 		updateDisplayedEvents();
 	});
 });
