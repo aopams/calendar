@@ -140,7 +140,7 @@ public class DatabaseHandler {
     theStat.setString(2, password);
     theStat.setString(3, name);
     theStat.setString(4, user_name);
-    System.out.println(theStat.executeUpdate());
+    theStat.executeUpdate();
     
   }
   public void deleteUser(String user_name) throws SQLException {

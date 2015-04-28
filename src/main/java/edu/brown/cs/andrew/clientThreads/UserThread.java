@@ -25,7 +25,6 @@ public class UserThread implements Callable<String>{
   public String call() throws Exception {
     //will sucks D for a living
     myDBHandler.insertUser(user, pass, name);
-    System.out.println("users insreted");
     myDBHandler.closeConnection();
     return null;
   }

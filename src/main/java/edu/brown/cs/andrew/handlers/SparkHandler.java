@@ -262,11 +262,13 @@ public class SparkHandler {
    
       String user = qm.value("user");
       String pass = qm.value("pass");
+     System.out.println("");
       int id = Integer.parseInt(req.params(":id"));
       boolean found = false;
       try {
         DatabaseHandler myDBHandler = new DatabaseHandler(database);
         found = myDBHandler.findUser(user, pass);
+        System.out.println(found);
         myDBHandler.closeConnection();
       } catch (SQLException | ClassNotFoundException e) {
         String form = getRandomForm();
@@ -491,7 +493,6 @@ public class SparkHandler {
         int id = Integer.parseInt(qm.value("url").replace("#", ""));
         String user1 = clients.get(id).user;
         String user2 = qm.value("user").replaceAll("^\"|\"$", "");
-        ;
         String command = qm.value("command").replace("\"", "");
         String message = "";
         System.out.println(user1);
@@ -704,7 +705,6 @@ public class SparkHandler {
       String user = qm.value("username");
       String pass = qm.value("password");
       String regName = qm.value("fullname");
-      System.out.println("making a thread");
       UserThread ut = new UserThread(user, pass, regName);
       Future<String> t = pool.submit(ut);
       int success = 0;
@@ -712,7 +712,6 @@ public class SparkHandler {
         t.get();
         success = 1;
       } catch (InterruptedException | ExecutionException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       Map<String, Object> variables = new ImmutableMap.Builder()
