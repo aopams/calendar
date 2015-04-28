@@ -18,15 +18,26 @@ jQuery(document).ready(function($) {
 		var fullname = document.getElementById('regName').value;
 		var postParameters = {username : username, password : password, fullname : fullname};
 		register(postParameters);
+
 	})
 	
 });
 
 /* CHANGE */
 
-function register(postParameters) {
-	console.log('here');
+function register(postParameters, loginParam) {
 	$.post('/register', postParameters, function(responseJSON) {
+		if (responseJSON.success == 1) {
+			var postParameters = {user : responseJSON.user, pass : responseJSON.pass};
+			login(posParameters);
+		}
+	});
+}
+
+function login(postParameters) {
+	var url = $("#login-form").attr('action');
+	console.log(url);
+	$.post(url, postParameters, function(responseJSON) {
 			
 	});
 }

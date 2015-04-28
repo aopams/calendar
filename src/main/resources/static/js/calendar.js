@@ -63,6 +63,33 @@ function newEvent() {
 	})
 }
 
+/* user edits her own event. */
+function editEvent() {
+	var title = document.getElementById('title').value;
+	var date = document.getElementById('datepicker').value;
+	var time = document.getElementById('dialog-time').value;
+	var dur = document.getElementById('duration').value;
+	var descrip = document.getElementById('descrip').value;
+	var atten = document.getElementById('attendees').value + ",";
+	var group = document.getElementById('group').value;
+	var correctTime = getDBTime(date, time);
+	var postParameters = {string: window.location.pathname, title: title, date: correctTime,
+		time: time, duration: dur, description: descrip, attendees: atten,
+		group: group
+	};
+	console.log("new event");
+	$.post("/editevent", postParameters, function(responseJSON){
+/*
+	add code to handle messaging for ranking, etc
+		if(responseJSON.status == 1) {
+			$dialog.dialog('destroy');
+		} else {
+			alert('ranking: ' + responseJSON.message);
+		}
+*/
+	})
+}
+
 /* delete event */
 function deleteEvent(id) {
 	var id = id;
@@ -711,8 +738,7 @@ $(document).ready(function(e) {
 	/* owner wants to edit event */
 	$(document).on('click','#edit-button', function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
-		console.log(id);
-		//removeUserEvent(id);
+		editEvent(id);
 		updateDisplayedEvents();
 	});
 });

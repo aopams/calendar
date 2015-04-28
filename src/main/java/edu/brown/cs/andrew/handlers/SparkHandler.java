@@ -699,6 +699,7 @@ public class SparkHandler {
   public static class RegisterHandler implements Route {
     @Override
     public Object handle(Request req, Response res) {
+      System.out.println("in the handler");
       QueryParamsMap qm = req.queryMap();
       String user = qm.value("username");
       String pass = qm.value("password");
@@ -714,11 +715,15 @@ public class SparkHandler {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
+      int randomNumber = 0;
+      while (clients.containsKey(randomHolder)) {
+        randomNumber = (int) (Math.random() * 1000000);
+      }
       Map<String, Object> variables = new ImmutableMap.Builder()
           .put("success", success)
           .put("user", user)
-          .put("pass", pass).build();
-      
+          .put("pass", pass)
+          .put("randomID", randomNumber).build();
       return GSON.toJson(variables);
     }
   }
