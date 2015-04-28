@@ -6,7 +6,7 @@ var eventMap = {};
 var weekInfo = [];
 
 //colors that we assign to event boxes
-var eventColors = ["#9FCAEC", "#F2E7D2", "#DCE3E9", "#E1C19A", "lightskyblue", "#A9D8B6", "lightgoldenrodyellow"]
+var eventColors = ["#FFE1E6", "#F2E7D2", "#DCE3E9", "#E1C19A", "lightskyblue", "#A9D8B6", "lightgoldenrodyellow"]
 /* END GLOBAL VARIABLES */
 
 /* POST HANDLERS */
@@ -103,7 +103,7 @@ function openDialog(key, google) {
 		'</div>' +
 	  	'<div class="input-group margin-group">' +
 		    '<div class="input-group-addon">@</div>' +
-		    '<input type="text" class="form-control" id="group" placeholder="Groups" value="'+ value.group +'"'+ ds +'/>' +
+		    '<input type="text" class="form-control" id="group" placeholder="Group" value="'+ value.group +'"'+ ds +'/>' +
 		'</div>' +
 		'<div class="margin-group-xl">';
 		
@@ -145,7 +145,7 @@ function newEventDialog(date, time) {
 		'</div>' +
 	  	'<div class="input-group margin-group">' +
 		    '<div class="input-group-addon">@</div>' +
-		    '<input type="text" class="form-control" id="group" placeholder="Groups"/>' +
+		    '<input type="text" class="form-control" id="group" placeholder="Group"/>' +
 		'</div>' +
 		'<div class="margin-group-xl">'+ 
 		'<img id="new-event-button" src="\\img/check.png"/>' +
@@ -237,15 +237,22 @@ function parseData(responseJSON) {
 		eventMap = {};
 
 		// remove all html event objects currently on the calendar
-		var paras = document.getElementsByClassName('event');
-		while(paras[0]) {
-			paras[0].parentNode.removeChild(paras[0]);
+		var a = document.getElementsByClassName('event'),
+			b = document.getElementsByClassName('noncreator-event'),
+			c = document.getElementsByClassName('google-event');
+		while(a[0]) {
+			a[0].parentNode.removeChild(a[0]);
+		}
+		while(b[0]) {
+			b[0].parentNode.removeChild(b[0]);
+		}
+		while(c[0]) {
+			c[0].parentNode.removeChild(c[0]);
 		}
 
 		// add all new event objects
 		for (var i = 0; i < list.length; i++) {
 			var obj = JSON.parse(list[i]);
-			console.log(obj);
 			eventMap[obj.id] = obj;
 		}
 
@@ -385,33 +392,6 @@ function getDBTime(date, time) {
 		arr[2] + " " + sHours + ":" + sMinutes;
 }
 
-function dateRegex(date) {
-	date = date.replace(",", "");
-	arr = date.split(' ');
-	if (arr.length != 3) {
-		return false;
-	} else {
-		var month = false;
-		var mon = arr[0];
-		if( mon === "Jan" | mon == "Feb" | mon === "Mar" | mon == "Apr" |
-			mon === "May" | mon == "Jun" | mon === "Jul" | mon == "Aug" |
-			mon === "Sep" | mon == "Oct" | mon === "Nov" | mon == "Dec") {
-				month = true;
-		}
-		var day = false;
-		var d = arr[1];
-		if (d >= 1 && d <= 31) {
-			day = true;
-		}
-		var year = false;
-		var y = arr[2];
-		if (y >= 2015) {
-			y = true;
-		}
-	return month && day && year;
-	}
-}
-
 function zindexByDuration() {
 	//cycle through all events chronologically...
 	for (var i = 100; i < 725; i++) {
@@ -501,7 +481,11 @@ function timeOffsetMargin() {
 		value = eventMap[key];
 		var evTime = eventMap[key].date.split(" ")[3].split(":")[1] * 1;
 		var currMarg = $('.event#' + key).css('margin-top');
-		currMarg = currMarg.substring(0, currMarg.length - 2);
+		if (currMarg == undefined) {
+			currMarg = 0;
+		} else {
+			currMarg = currMarg.substring(0, currMarg.length - 2);
+		}
 		var newMarg = (currMarg * 1) + getTimeOffsetMargin(evTime);
 		$('.event#' + key).css('margin-top', newMarg+'px');
 	}
@@ -512,17 +496,61 @@ function getTimeOffsetMargin(t) {
 	return margin;
 }
 
+/* basic "regex" to check if date is valid */
+function dateRegex(date) {
+	var comma = false;
+	if (date.indexOf(",") > -1) {
+		comma = true;
+	}
+	date = date.replace(",", "");
+	arr = date.split(' ');
+	console.log(arr[0] + " " + arr[1] + " " + arr[2]);
+	if (arr.length != 3) {
+		comma = false;
+	} else {
+		var month = false;
+		var day = false;
+		var mon = arr[0];
+		var d = parseInt(arr[1]);
+		if( mon === "Jan" || mon === "Mar" ||
+			mon === "May" || mon === "Jul" || mon === "Aug" ||
+			mon === "Oct" || mon === "Dec") {
+			month = true;
+			if (d >= 1 && d <= 31) {
+				day = true;
+			}
+		} else if ( mon === "Apr" || mon === "Jun" ||
+					mon === "Sep" || mon === "Nov") {
+			month = true;
+			if (d >= 1 && d <= 30) {
+				day = true;
+			}
+		} else if (mon === "Feb") {
+			month = true;
+			if (d >= 1 && d <= 29) {
+				day = true;
+			}
+		}
+		var year = false;
+		var y = parseInt(arr[2]);
+		console.log(y);
+		if (y >= 2015) {
+			year = true;
+		}
+	console.log(month + " " + day + " " + year);
+	return comma && month && day && year;
+	}
+}
+
 $(document).ready(function(e) {
 	$(".ui-state-default").hide()  
 	/* update the displayed events to get events on page */
 	updateDisplayedEvents();
 	
 	/* update calendar every 5 seconds */
-/*
 	window.setInterval(function() { 
 		updateDisplayedEvents();
 	}, 5000);
-*/
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {
@@ -559,11 +587,22 @@ $(document).ready(function(e) {
 	
 	$(document).on('keyup','#datepicker', function(e) {
 		date = $('#datepicker').val();
-		var res = dateRegex();
+		var res = dateRegex(date);
 		if (res) {
 			$('#datepicker').removeClass('has-error');
+			if ($('#new-event-button').length) {
+				document.getElementById("new-event-button").style.visibility = "visible";
+			} else {
+				document.getElementById("check-button").style.visibility = "visible";
+			}
 		} else {
 			$('#datepicker').addClass('has-error');
+			console.log($('#new-event-button').length);
+			if ($('#new-event-button').length) {
+				document.getElementById("new-event-button").style.visibility = "hidden";
+			} else {
+				document.getElementById("check-button").style.visibility = "hidden";
+			}
 		}
 	});
 
@@ -575,10 +614,29 @@ $(document).ready(function(e) {
 		var time = $('#dialog-time').val().match(/^(0?[1-9]|1[012])(:[0-5]\d) [APap][mM]$/i);
 		if (time) {
 			$('#dialog-time').removeClass('has-error');
-			document.getElementById("new-event-button").style.visibility = "visible";
+			if ($('#new-event-button').length) {
+				document.getElementById("new-event-button").style.visibility = "visible";
+			} else {
+				document.getElementById("check-button").style.visibility = "visible";
+			}
 		} else {
 			$('#dialog-time').addClass('has-error');
-			document.getElementById("new-event-button").style.visibility = "hidden";
+			if ($('#new-event-button').length) {
+				document.getElementById("new-event-button").style.visibility = "hidden";
+			} else {
+				document.getElementById("check-button").style.visibility = "hidden";
+			}
+		}
+	});
+	
+	$(document).on('keyup','#duration', function(e) {
+		var dur = $('#duration').val();
+		if (!isNaN(dur) && dur > 0 && dur < 1440) {
+			$('#duration').removeClass('has-error');
+			document.getElementById("check-button").style.visibility = "visible";
+		} else {
+			$('#duration').addClass('has-error');
+			document.getElementById("check-button").style.visibility = "hidden";
 		}
 	});
 
