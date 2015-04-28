@@ -1,6 +1,5 @@
 friends = [];
 pendingFriends = [];
-groups = [];
 username = "";
 url = "";
 
@@ -10,6 +9,7 @@ url = "";
 $(document).ready(function(e) {
 	$('#calWrap').show(0);
 	$('#contacts').hide(0);
+	$('#contactsWindow').show(0);
 	$('#groupsWindow').hide(0);
 	$("#contactsbutton").bind('click', function(e) {
 		$('#calWrap').hide(0);
@@ -58,19 +58,8 @@ $(document).ready(function(e) {
 		createFriends();
 	});
 	
-/*
-	//grabs groups from database and populates
-	var postParameters = {url: url};
-	$.post('/getgroups', postParameters, function(responseJSON) {
-		responseObject = JSON.parse(responseJSON);
-		temp = responseObject.groups;
-		
-		for (i = 0; i < temp.length; i++) {
-			
-		}
-		
-	})
-*/
+	//create groups
+	createGroups();
 	
 	//button to add friend at top of contacts page
 	$("#sendInvite").bind('click', function(e) {
@@ -107,8 +96,31 @@ $(document).ready(function(e) {
 	
 	$("#makeGroup").bind('click', function(e) {
 		var groupName = $("#groupName").val();
-		
-		console.log(groupName);
+		if (groupName) {
+			form =
+			'<form class="form-inline" id ="newEventForm">' +
+			'<div class="form-group dialog-form">' +
+				'<img id="x-button" src="/img/x.png"/>' +
+			    '<div class="input-group">' +
+			    	'<h3 id="groupname" align="center">' + groupName + '</h3>' +
+				    '<p>Please separate users with commas.</p>' +
+			    '</div>' +
+			    '<div class="input-group margin-group">' +
+			    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="Users to add"/>'+
+				'</div>' +
+				'<div class="margin-group-xl">'+ 
+				'<img id="new-group-button" src="\\img/check.png"/>' +
+				'</div> </div> </form>';
+			$(form).dialog({ modal: true, resizable: false});	
+		} else {
+			alert("Please enter a group name.");
+		}
+	});
+	
+	$(document).on('click','#new-group-button', function(e) {
+	    newGroup();
+	    var $dialog = $(this).parents('.ui-dialog-content');
+	    $dialog.dialog('destroy');
 	});
 	
 	var postParameters = {url : url};
@@ -225,18 +237,82 @@ function createFriends() {
 	}
 };
 
+function createGroups() {
+	//grabs groups from database and populates
+	//empty groups list;
+	var groups = [];
+	
+	var postParameters = {url: url};
+	$.post('/getgroups', postParameters, function(responseJSON) {
+		responseObject = JSON.parse(responseJSON);
+		temp = responseObject.groups;
+		for (i = 0; i < temp.length; i++) {
+			//push into group the group ID and group name
+			console.log(temp[i][0]);
+			console.log(temp[i][1]);
+			groups.push([temp[i][0],temp[i][1]]);
+		}
+	});
+	
+	//loops through accepted friends list to show on contacts page
+	var count = 0;
+	var len = groups.length;
+	console.log(len);
+	var rows = Math.ceil(len/5);
+	var grid = document.getElementById('groupsGrid');
+	if (len != 0 ) {
+		for (i = 0; i < rows; i++) {
+			var row = document.createElement('div');
+			row.className = 'group-row';
+			row.id = i;
+			grid.appendChild(row);
+			for (j = 0; j < 5; j++) {
+				console.log(groups[count][0]);
+				console.log(groups[count][1]);
+				var group = document.createElement('div');
+				group.className = 'group';
+				group.id = count;
+				group.setAttribute('groupid', groups[count][0])
+				group.setAttribute('groupname', groups[count][1]);
+				var name = document.createElement('div');
+				name.id = 'name';
+				name.style.marginLeft='auto';
+				name.style.marginRight='auto';
+				name.style.display='block';
+				name.innerHTML = groups[count][1];
+				var img = document.createElement('img');
+				img.src = getProfPic(groups[count]);
+				var rem = document.createElement('img');
+				rem.id = 'rem';
+				rem.src = '/img/x.png';
+				rem.onclick=function() {removeGroup(this);};
+				rem.style.marginRight='175px';
+				group.appendChild(rem);
+				group.appendChild(img);
+				group.appendChild(name);
+				row.appendChild(group);
+				count++;
+				if (count == len) {
+					break;
+				}
+			}
+		}
+	}
+}
+
 function getProfPic(name) {
 	name = name.toString();
-	console.log(name);
+/* 	console.log(name); */
 	var let = name.substring(0, 1).toLowerCase();
 	var toReturn = "/img/placeholder.jpg";
-	console.log('let is ' + let);
+/* 	console.log('let is ' + let); */
 	if (/[a-z]/i.test(let)) {
-		console.log('is string');
+/* 		console.log('is string'); */
 		toReturn = "\\img/let/" + let + ".png";
 	}
 	return toReturn;
 }
+
 function acceptFriend(elem) {
 	var parent = elem.parentNode;
 	var user = parent.getAttribute('username');
@@ -309,3 +385,19 @@ function removeFriend(elem) {
 		});
 	});
 };
+
+//FINISH REMOVING GROUPS, grab ID from front end;
+function removeGroup(elem) {
+	
+}
+
+function newGroup() {
+	var groupname = document.getElementById('groupname').innerText;
+	var users = document.getElementById('attendees').value;
+	var command = "add";
+	var postParameters = {url : url, users : users, groupname : groupname, command : command};
+	$.post('/editgroups', postParameters, function(responseJSON) {
+		console.log("editing groups");
+		createGroups();
+	});
+}

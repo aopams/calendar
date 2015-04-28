@@ -10,4 +10,17 @@ jQuery(document).ready(function($) {
 		$(".logreg").show(0);
 		$(".registerpage").hide(0);
 	});
+	
+	$("#register").bind('click', function(event) {
+		console.log("noice");
+		var username = document.getElementById('regUser').value;
+		var password = document.getElementById('pass').value;
+		var fullname = document.getElementById('regName').value;
+		var postParameters = {username : username, password : password, fullname : fullname};
+		
+		$.post('/register', postParameters, function(responseJSON) {
+			
+		});
+	})
+	
 });

@@ -35,11 +35,6 @@ import com.google.gson.Gson;
 
 import edu.brown.cs.andrew.clientThreads.CalendarThread;
 import edu.brown.cs.andrew.clientThreads.ContactsThread;
-import edu.brown.cs.andrew.handlers.SparkHandler.BTFEventHandler.CodeHandler;
-import edu.brown.cs.andrew.handlers.SparkHandler.BTFEventHandler.FriendsHandler;
-import edu.brown.cs.andrew.handlers.SparkHandler.BTFEventHandler.GetNameHandler;
-import edu.brown.cs.andrew.handlers.SparkHandler.BTFEventHandler.ModifyFriendsHandler;
-import edu.brown.cs.andrew.handlers.SparkHandler.BTFEventHandler.RegisterHandler;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
 
@@ -98,22 +93,50 @@ public class SparkHandler {
     Spark.post("/logout", new LogoutHandler());
     Spark.post("/editfriends", new ModifyFriendsHandler());
     Spark.post("/getusername", new GetNameHandler());
+    Spark.post("/getgroups", new GroupsHandler());
+    Spark.post("/editgroups", new ModifyGroupsHandler());
     Spark.post("/removeevent", new RemoveEventHandler());
+    Spark.post("/removeuserevent", new RemoveUserEventHandler());
   }
+  private static class RemoveUserEventHandler implements Route {
 
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int clientID = Integer.parseInt(qm.value("string").substring(10));
+      int eventID = Integer.parseInt(qm.value("id"));
+      Event e =  clients.get(clientID).getEvents().get(eventID);
+      ClientHandler cli = clients.get(clientID);
+      CalendarThread ct = new CalendarThread(cli, Commands.REMOVE_USER_EVENT, null, e, null);
+      pool.submit(ct);
+      int status = 0;
+      String message = "accepted";
+      Map<String, Object> variables = new ImmutableMap.Builder()
+      .put("status", status)
+      .put("message", message).build();
+      System.out.println(GSON.toJson(variables));
+      return GSON.toJson(variables);
+    }
+    
+  }
   private static class RemoveEventHandler implements Route {
 
     @Override
     public Object handle(Request arg0, Response arg1) {
-      System.out.println("hahaha");
       QueryParamsMap qm = arg0.queryMap();
+      int clientID = Integer.parseInt(qm.value("string").substring(10));
       int eventID = Integer.parseInt(qm.value("id"));
-      CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,
-          eventID);
+      Event e =  clients.get(clientID).getEvents().get(eventID);
+      CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,  e, clients);
       pool.submit(ct);
-      return null;
+      int status = 0;
+      String message = "accepted";
+      Map<String, Object> variables = new ImmutableMap.Builder()
+      .put("status", status)
+      .put("message", message).build();
+      System.out.println(GSON.toJson(variables));
+      return GSON.toJson(variables);
     }
-
   }
 
   private static class CreateEventHandler implements Route {
@@ -156,9 +179,9 @@ public class SparkHandler {
       }
       int dayWeek = c.get(Calendar.DAY_OF_WEEK);
       String dayOfWeek = numbersToDay.get(dayWeek);
-      Event e = new Event(date, title, dayOfWeek, attendees, group, duration,
-          description, creator);
-      CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, 0);
+      Event e = new Event(date, title, dayOfWeek, attendees,
+          group, duration, description, creator);
+      CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null, null);
       Future<String> t = pool.submit(ct);
       try {
         t.get();
@@ -231,6 +254,9 @@ public class SparkHandler {
     public ModelAndView handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
       String code = qm.value("code");
+      int clientID = Integer.parseInt(req.params(":id"));
+      System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+      System.out.println("ID: " + clientID);
       System.out.println("CODE: " + code);
       if (code != null) {
         ServerCalls sc = new ServerCalls();
@@ -255,12 +281,6 @@ public class SparkHandler {
         List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
         ConcurrentHashMap<Integer, Event> testEvents;
         testEvents = client.getEventsByWeek(currentWeekStart);
-        try {
-          System.out.println(events.get(0).getDate());
-        } catch (ParseException e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        }
         List<String> toFrontEnd = new ArrayList<String>();
         for (Entry<Integer, Event> e : testEvents.entrySet()) {
           Event curr = e.getValue();
@@ -428,8 +448,8 @@ public class SparkHandler {
             .put("events", toFrontEnd).put("week", currentWeek).build();
         System.out.println(GSON.toJson(variables));
         return GSON.toJson(variables);
-      
     }
+  }
 
     /**
      * FriendsHandler grabs all the friends for a given user. Used to load up
@@ -586,71 +606,137 @@ public class SparkHandler {
         return GSON.toJson(variables);
       }
     }
-
-    /**
-     * GroupsHandler grabs all the groups for a given user. Used to load up
-     * contacts page and refresh groups list.
-     *
-     * @author wtruong02151
-     *
-     */
-    private static class GroupsHandler implements Route {
-      @Override
-      public Object handle(Request arg0, Response arg1) {
-        QueryParamsMap qm = arg0.queryMap();
-        int id = Integer.parseInt(qm.value("url").replace("#", ""));
-        System.out.println(id);
-        Map<Integer, String> tempMap = clients.get(id).getGroups();
-        List<String> myGroups = new ArrayList<String>();
-        for (Integer key : tempMap.keySet()) {
-          String groupName = tempMap.get(key);
-          System.out.println(groupName);
-          ;
-          myGroups.add(groupName);
-        }
-        Map<String, List<String[]>> variables = new ImmutableMap.Builder().put(
-            "groups", myGroups).build();
-        return GSON.toJson(variables);
+  
+  /**
+   * GroupsHandler grabs all the groups for a given user.
+   * Used to load up contacts page and refresh groups list.
+   * Passes back to front end the unique integer key
+   * of a group and the group's name.
+   * @author wtruong02151
+   *
+   */
+  private static class GroupsHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url").replace("[^A-Za-z0-9 ]", ""));
+      System.out.println(id);
+      Map<Integer, String> tempMap = clients.get(id).getGroups();
+      List<String[]> myGroups = new ArrayList<String[]>();
+      for (Integer key : tempMap.keySet()) {
+        String keyString = Integer.toString(key);
+        String groupName = tempMap.get(key);
+        System.out.println(groupName);
+        String[] toAdd = {keyString, groupName};
+        myGroups.add(toAdd);
       }
+      Map<String, List<String>> variables = new ImmutableMap.Builder()
+      .put("groups", myGroups).build();
+      return GSON.toJson(variables);
     }
-
-    public static class CodeHandler implements TemplateViewRoute {
-      @Override
-      public ModelAndView handle(Request req, Response res) {
-        String code = req.queryString().substring(
-            req.queryString().indexOf('=') + 1);
-        String form = getRandomForm();
-        Map<String, String> variables = new ImmutableMap.Builder()
-            .put("code", code).put("form", form).build();
-
-        return new ModelAndView(variables, "redirect.ftl");
-
+  }
+  /**
+   * ModifyFriendsHandler takes in a particular command and
+   * modifies a user's friend's list acoording to the command.
+   * @author wtruong02151
+   *
+   */
+  private static class ModifyGroupsHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      ContactsThread ct;
+      Map<String, String> variables;
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url").replace("[^A-Za-z0-9 ]", ""));
+      String user1 = clients.get(id).user;
+      String groupName = qm.value("groupname").replace("\"", "");
+      String users = qm.value("users").replace("\"", "");
+      String command = qm.value("command").replace("\"", "");
+      String[] tempUsersList = users.split(",");
+      List<String> usersList = new ArrayList<String>();
+      //add user himself
+      usersList.add(user1);
+      for (String s : tempUsersList) {
+        usersList.add(s.trim());
       }
-    }
-
-    public static class ExceptionPrinter implements ExceptionHandler {
-      @Override
-      public void handle(Exception e, Request req, Response res) {
-        res.status(RESSTAT);
-        StringWriter stacktrace = new StringWriter();
-        try (PrintWriter pw = new PrintWriter(stacktrace)) {
-          pw.println("<pre>");
-          e.printStackTrace(pw);
-          pw.println("</pre>");
-        }
-        res.body(stacktrace.toString());
+      String message = "";
+      switch(command) {
+        case "remove":
+//          try {
+//            System.out.println("in remove group");
+//            ct = new ContactsThread(clients.get(id),
+//                null, groupName, null, Commands.REMOVE_GROUP);
+//            Future<String> t = pool.submit(ct);
+//            t.get();
+//            message = "Friend removed!";
+//            variables = new ImmutableMap.Builder()
+//            .put("message", message).build();
+//            return GSON.toJson(variables);
+//          } catch (ExecutionException | InterruptedException e1) {
+//            message = "ERROR: Bug in SQL.";
+//            e1.printStackTrace();
+//            variables = new ImmutableMap.Builder()
+//            .put("message", message).build();
+//            return GSON.toJson(variables);
+//          }
+          break;
+        case "add":
+          try {
+            System.out.println("in add group");
+            ct = new ContactsThread(clients.get(id),
+                null, groupName, usersList, Commands.ADD_GROUP);
+            Future<String> t = pool.submit(ct);
+            t.get();
+            
+          } catch (InterruptedException | ExecutionException e2) {
+            System.out.println("caught");
+            message = "ERROR: Bug in SQL.";
+            e2.printStackTrace();
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          }
       }
+      message = "ERROR: Bug has occured, try again.";
+      variables = new ImmutableMap.Builder()
+      .put("message", message).build();
+      return GSON.toJson(variables);
     }
-
-    public static class RegisterHandler implements TemplateViewRoute {
-      @Override
-      public ModelAndView handle(Request req, Response res) {
-        Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
-            "message", "");
-        ServerCalls sc = new ServerCalls();
-        sc.openURLInBrowser("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com");
-        return new ModelAndView(variables, "main.ftl");
+  }
+  
+  public static class CodeHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      String code = req.queryString().substring(
+          req.queryString().indexOf('=') + 1);
+      String form = getRandomForm();
+      Map<String, String> variables = new ImmutableMap.Builder()
+          .put("code", code).put("form", form).build();
+      return new ModelAndView(variables, "redirect.ftl");
+    }
+  }
+  
+  public static class ExceptionPrinter implements ExceptionHandler {
+    @Override
+    public void handle(Exception e, Request req, Response res) {
+      res.status(RESSTAT);
+      StringWriter stacktrace = new StringWriter();
+      try (PrintWriter pw = new PrintWriter(stacktrace)) {
+        pw.println("<pre>");
+        e.printStackTrace(pw);
+        pw.println("</pre>");
       }
     }
   }
+  
+  public static class RegisterHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request req, Response res) {
+      Map<String, Object> variables = ImmutableMap.of();
+      ServerCalls sc = new ServerCalls();
+      sc.openURLInBrowser("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com");
+      return new ModelAndView(variables, "load.ftl");
+    }
+  }
+  
 }

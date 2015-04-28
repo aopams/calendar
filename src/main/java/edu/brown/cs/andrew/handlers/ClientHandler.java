@@ -18,7 +18,6 @@ public class ClientHandler {
   String refreshToken;
   String accessToken;
   private List<String> updateList;
-  private int maxGroupId;
   private int maxEventId;
 
   public ClientHandler(String db, String user, boolean initItself) {
@@ -98,11 +97,10 @@ public class ClientHandler {
 
   public synchronized void setEvents(ConcurrentHashMap<Integer, Event> events) {
     this.events = events;
-  }
-
-  public synchronized void setMaxGroupId(int maxID) {
-    this.maxGroupId = maxID;
-  }
+  } 
+//  public synchronized void setMaxGroupId(int maxID) {
+//    this.maxGroupId = maxID;
+//  }
 
   public synchronized void setMaxEventId(int maxID) {
     this.maxEventId = maxID;
@@ -174,15 +172,18 @@ public class ClientHandler {
     events.put(maxEventId, e);
 
   }
+  public void removeEvent(Event e) {
+    events.remove(e.getId());
 
-  public void removeEvent(int e) {
-    events.remove(e);
   }
-
-  public void addGroup(String group) {
-    maxGroupId++;
-    groups.put(maxGroupId, group);
+  //edited groupid count, handled in database
+  public void addGroup(String group, int groupID) {
+    groups.put(groupID, group);
   }
+//  public void addGroup(String group) {
+//    maxGroupId++;
+//    groups.put(maxGroupId, group);
+//  }
 
   public void removeGroup(String group) {
     groups.remove(group);

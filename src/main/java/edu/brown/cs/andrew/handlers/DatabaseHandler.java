@@ -239,17 +239,28 @@ public class DatabaseHandler {
     }
     return toReturn;
   }
-  public void addGroup(String group_name) throws SQLException {
-    String query = "INSERT into Groups(group_name)"
-        + "Select ? where not exists ("
-        + "select * from Groups where group_name = ?);";
+  
+  public int getNewGroupID() throws SQLException {
+    String query = "SELECT COUNT(*) FROM Groups";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    ResultSet rs = theStat.executeQuery();
+    int count = 0;
+    if (rs.next()) {
+      count = rs.getInt(1);
+    }
+    count++;
+    return count;
+  }
+  
+  public void addGroup(String group_name, int group_id) throws SQLException {
+    String query = "INSERT into Groups (group_name, group_id)" 
+        + "VALUES (?, ?)";
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, group_name);
-    theStat.setString(2, group_name);
+    theStat.setInt(2, group_id);
     theStat.executeUpdate();
     theStat.close();
   }
-  
   public void addUserToGroup(String user_name, int group_id) throws SQLException {
     String query = "INSERT into User_Group(user_name, group_id)"
         + "Select ?, ? where not exists ("
@@ -268,6 +279,15 @@ public class DatabaseHandler {
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, user_name);
     theStat.setInt(2, group_id);
+    theStat.executeUpdate();
+    theStat.close();
+  }
+  public void removeUserFromEvent(String user_name, int event_id) throws SQLException {
+    String query = "Delete from User_Event"
+        + " where user_name = ? and event_id = ?;";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    theStat.setInt(2, event_id);
     theStat.executeUpdate();
     theStat.close();
   }
@@ -316,13 +336,15 @@ public class DatabaseHandler {
       theStat2.close();
     }
   }
-  public void removeEvent(int e) throws SQLException, ParseException {
-    int eventID = e;
+  public void removeEvent(Event e) throws SQLException, ParseException {
+    int eventID = e.getId();
 
-      String query3 = "Delete From Group_Event and event_id = ?";
+      String query3 = "Delete From Group_Event where event_id = ?";
       PreparedStatement stat3 = conn.prepareStatement(query3);
-      stat3.setInt(2, eventID);
+      stat3.setInt(1, eventID);
       stat3.executeUpdate();
+      stat3.close();
+      System.out.println("groups deleted");
       String query2 = "Delete From User_Event where event_id = ?";
       PreparedStatement stat2 = conn.prepareStatement(query2);
       stat2.setInt(1, eventID);
@@ -334,7 +356,7 @@ public class DatabaseHandler {
     stat.setInt(1, eventID);
     stat.executeUpdate(); 
     stat.close();
-   
+    System.out.println("DB Delete complete");
   }
   public List<String> getUsersFromGroup(int group_id) throws SQLException {
     List<String> toReturn = new CopyOnWriteArrayList<String>();

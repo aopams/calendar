@@ -24,6 +24,12 @@
 		<img src="\img/logo.png" style="width:140px;">
 	</div>
 	<div class="row choices">
+<<<<<<< HEAD
+		<a class="btn btn-default btn-primary" href="#" id="calendarbutton" role="button">Calendar</a>
+		<a class="btn btn-default" id="contactsbutton" href="#" role="button">Contacts</a>
+		<p id="cal-owner"> </p>
+		<a class="btn btn-default" id="logoutbutton" href="#" role="button" id="logout-btn">Log Out</a>
+=======
 		<div class="col-md-4 col-sm-4 col-xs-4">
 			<a class="btn btn-default btn-primary" href="#" id="calendarbutton" role="button">Calendar</a>
 			<a class="btn btn-default" id="contactsbutton" href="#" role="button">Contacts</a>
@@ -34,6 +40,7 @@
 		<div class="col-md-4 col-sm-4 col-xs-4">
 			<a class="btn btn-default" id="logoutbutton" href="#" role="button" id="logout-btn">Log Out</a>
 		</div>
+>>>>>>> 6da74835cee81abde4b873377356f8ae205a6a51
 	</div>
 	
 	<div id="contacts">
@@ -51,13 +58,19 @@
 				</div>
 			</div>
 			
-			
+			<!--populated through javascript-->
 			<div id="contactsGrid">
 
 			</div>
 		</div>
+<<<<<<< HEAD
+		
+		<div id="groupsWindow">
+			<div id="makeGroupBar">
+=======
 		<div id="groupsWindow">
 			<div id="addFriendBar">
+>>>>>>> 6da74835cee81abde4b873377356f8ae205a6a51
 				<div class="form-inline" id="send">
 					<div class="form-group">
 						<input type="text" class="form-control" id="groupName" placeholder="@groupname">
@@ -65,6 +78,13 @@
 					<button type="submit" class="btn btn-default" id="makeGroup">Make Group</button>
 				</div>
 			</div>
+<<<<<<< HEAD
+			<!--populated through javascript-->
+			<div id="groupsGrid">
+
+			</div>
+=======
+>>>>>>> 6da74835cee81abde4b873377356f8ae205a6a51
 		</div>
 	</div>
 	

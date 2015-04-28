@@ -17,6 +17,7 @@ public class ContactsThread implements Callable<String> {
   private List<String> groupMembers;
   private Commands command;
 
+  //ADD GROUP ID FOR CONSTRUCTOR TO BE ABLE TO REMOVE YOURSELF FROM A GROUP
   public ContactsThread(ClientHandler client1, String client2, String groupName, List<String> memberNames, Commands command) {
     this.client1 = client1;
     this.user2 = client2;
@@ -29,13 +30,10 @@ public class ContactsThread implements Callable<String> {
       e.printStackTrace();
     }
   }
- 
-
-
   @Override
   public String call() throws SQLException {
     String user1 = client1.getClient();
-      int groupId = myDBHandler.findGroup(groupName);
+//      int groupId = myDBHandler.findGroup(groupName);
       switch (command) {
         case GET_NAME:
           String name = myDBHandler.getName(user1);
@@ -63,19 +61,29 @@ public class ContactsThread implements Callable<String> {
             System.out.println("friend does not exist");
             return "toobad";
           }
-      case ACCEPT_FRIEND : 
-          client1.acceptFriend(user2);
-          myDBHandler.acceptFriendRequest(user1, user2);
-          break;
+        case ACCEPT_FRIEND : 
+            client1.acceptFriend(user2);
+            myDBHandler.acceptFriendRequest(user1, user2);
+            break;
+            
+            //CHECK IF EACH USER IS VALID
         case ADD_GROUP :
-          myDBHandler.addGroup(groupName);
-          for (int i = 0; i < groupMembers.size(); i++) {
-            myDBHandler.addUserToGroup(groupMembers.get(i), groupId);
+          for (String user : groupMembers) {
+            //user does not exist, remove from list
+            if (myDBHandler.findUser(user) == null) {
+              groupMembers.remove(user);
+            }
           }
+          int groupID = myDBHandler.getNewGroupID();
+          myDBHandler.addGroup(groupName, groupID);
+          for (int i = 0; i < groupMembers.size(); i++) {
+            myDBHandler.addUserToGroup(groupMembers.get(i), groupID);
+          }
+          client1.addGroup(groupName, groupID);
           break;
         case REMOVE_GROUP :
-          client1.removeGroup(groupName);
-          myDBHandler.removeUserFromGroup(user1, groupId);
+//          client1.removeGroup(groupName);
+//          myDBHandler.removeUserFromGroup(user1, groupId);
           break;
       default:
         break;
