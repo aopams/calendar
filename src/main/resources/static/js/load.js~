@@ -1,0 +1,5 @@
+jQuery(document).ready(function($) {
+	console.log("close me");
+	console.log("I should be dead");
+	open(location, '_self').close();
+});
