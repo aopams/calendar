@@ -701,6 +701,7 @@ public class SparkHandler {
       String user = qm.value("username");
       String pass = qm.value("password");
       String regName = qm.value("fullname");
+      System.out.println("making a thread");
       UserThread ut = new UserThread(user, pass, regName);
       Future<String> t = pool.submit(ut);
       int success = 0;
