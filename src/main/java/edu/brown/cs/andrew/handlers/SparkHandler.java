@@ -714,9 +714,14 @@ public class SparkHandler {
       } catch (InterruptedException | ExecutionException e) {
         e.printStackTrace();
       }
+      int randomNumber = 0;
+      while (clients.containsKey(randomHolder)) {
+        randomNumber = (int) (Math.random() * 1000000);
+      }
       Map<String, Object> variables = new ImmutableMap.Builder()
           .put("success", success)
           .put("user", user)
+          .put("id", randomNumber)
           .put("pass", pass).build();
       return GSON.toJson(variables);
     }
