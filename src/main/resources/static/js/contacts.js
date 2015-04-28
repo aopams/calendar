@@ -397,6 +397,7 @@ function removeGroup(elem) {
 	var command = "add";
 	console.log(groupid);
 	console.log(groupname);
+	var postParameters = {url : url, groupid : groupid, command : command}
 	$.post('/editgroups', )
 }
 
