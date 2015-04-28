@@ -619,14 +619,14 @@ public class SparkHandler {
     @Override
     public Object handle(Request arg0, Response arg1) {
       QueryParamsMap qm = arg0.queryMap();
-      int id = Integer.parseInt(qm.value("url").replace("[^A-Za-z0-9 ]", ""));
+      int id = Integer.parseInt(qm.value("url").replace("#", ""));
       System.out.println(id);
       Map<Integer, String> tempMap = clients.get(id).getGroups();
       List<String[]> myGroups = new ArrayList<String[]>();
       for (Integer key : tempMap.keySet()) {
         String keyString = Integer.toString(key);
         String groupName = tempMap.get(key);
-        System.out.println(groupName);
+        System.out.println(keyString + " " + groupName);
         String[] toAdd = {keyString, groupName};
         myGroups.add(toAdd);
       }
@@ -647,7 +647,7 @@ public class SparkHandler {
       ContactsThread ct;
       Map<String, String> variables;
       QueryParamsMap qm = arg0.queryMap();
-      int id = Integer.parseInt(qm.value("url").replace("[^A-Za-z0-9 ]", ""));
+      int id = Integer.parseInt(qm.value("url").replace("#", ""));
       String user1 = clients.get(id).user;
       String groupName = qm.value("groupname").replace("\"", "");
       String users = qm.value("users").replace("\"", "");
