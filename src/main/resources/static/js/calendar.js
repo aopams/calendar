@@ -77,7 +77,7 @@ function editEvent() {
 		time: time, duration: dur, description: descrip, attendees: atten,
 		group: group
 	};
-	console.log("new event");
+	console.log("edit event");
 	$.post("/editevent", postParameters, function(responseJSON){
 /*
 	add code to handle messaging for ranking, etc
