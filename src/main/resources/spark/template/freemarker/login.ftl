@@ -32,13 +32,13 @@
     <!register page>
     <div class="registerpage">
     <h1>Register</h1><br>
-	  <form>
+<!-- 	  <form> -->
 	    <input type="text" name="user" placeholder="Username">
 	    <input type="password" name="pass" placeholder="Password">
 	    <input type="password" name="pass" placeholder="Confirm password">
 	    <input type="text" name="name" placeholder="Full name">	    
 	    <input id = "register" type="submit" name="register" class="btn btn-primary" value="Register">
-	  </form>
+<!-- 	  </form> -->
 	  <input type="image" src="\img/leftarrow.png" class ="backbutton" name="backbutton">
     </div>
   </div>
