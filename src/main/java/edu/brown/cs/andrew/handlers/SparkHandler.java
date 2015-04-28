@@ -96,13 +96,14 @@ public class SparkHandler {
     Spark.post("/logout", new LogoutHandler());
     Spark.post("/editfriends", new ModifyFriendsHandler());
     Spark.post("/getusername", new GetNameHandler());
-    Spark.post("/removevent", new RemoveEventHandler());
+    Spark.post("/removeevent", new RemoveEventHandler());
   }
   
   private static class RemoveEventHandler implements Route {
 
     @Override
     public Object handle(Request arg0, Response arg1) {
+      System.out.println("hahaha");
       QueryParamsMap qm = arg0.queryMap();
       int eventID = Integer.parseInt(qm.value("id"));
       CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,  eventID);
@@ -149,7 +150,6 @@ public class SparkHandler {
         c.set(Calendar.HOUR_OF_DAY, 12);
         date = c.getTime();
       }
-      System.out.println(c.getTime());
       int dayWeek = c.get(Calendar.DAY_OF_WEEK);
       String dayOfWeek = numbersToDay.get(dayWeek);
       Event e = new Event(date, title, dayOfWeek, attendees,
