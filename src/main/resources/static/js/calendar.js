@@ -678,6 +678,7 @@ $(document).ready(function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
 		console.log(id);
 		deleteEvent(id);
+		updateDisplayedEvents();
 	});
 	
 	/* participant doesn't want to attend event */
@@ -685,6 +686,7 @@ $(document).ready(function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
 		console.log(id);
 		//removeUserFromEvent(id);
+		updateDisplayedEvents();
 	});
 	
 	/* owner wants to edit event */
@@ -692,5 +694,6 @@ $(document).ready(function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
 		console.log(id);
 		//removeUserFromEvent(id);
+		updateDisplayedEvents();
 	});
 });
