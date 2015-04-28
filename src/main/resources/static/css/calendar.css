@@ -160,6 +160,10 @@ body {
 	float: left;
 }
 
+#new-event-button, #edit-button {
+	visibility: hidden;
+}
+
 .formatted {
 	display: inline-block;
 	width: 20px;
