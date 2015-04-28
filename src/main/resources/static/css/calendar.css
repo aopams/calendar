@@ -148,11 +148,11 @@ body {
     display: none;
 }
 
-#x-button, #check-button, #delete-button, #google-button, #new-event-button {
+#x-button, #check-button, #delete-button, #google-button, #new-event-button, #edit-button {
 	height: 24px;
 }
 
-#x-button, #check-button, #google-button, #new-event-button {
+#x-button, #check-button, #google-button, #new-event-button, #edit-button {
 	float: right;
 }
 
