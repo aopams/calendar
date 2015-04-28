@@ -394,11 +394,14 @@ function removeGroup(elem) {
 	var parent = elem.parentNode;
 	var groupid = parent.getAttribute('groupid');
 	var groupname = parent.getAttribute('groupname');
-	var command = "add";
+	var command = "remove";
 	console.log(groupid);
 	console.log(groupname);
-	var postParameters = {url : url, groupid : groupid, command : command}
-	$.post('/editgroups', )
+	var postParameters = {url : url, groupid : groupid, groupname : groupname, command :command}
+	$.post('/editgroups', postParameters, function(responseJSON) {
+		console.log("removed from group");
+		createGroups();
+	});
 }
 
 function newGroup() {

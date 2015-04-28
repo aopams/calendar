@@ -429,7 +429,7 @@ public class SparkHandler {
         QueryParamsMap qm = arg0.queryMap();
         int id = Integer.parseInt(qm.value("url").replace("#", ""));
         System.out.println(id);
-        ContactsThread ct = new ContactsThread(clients.get(id), null, null,
+        ContactsThread ct = new ContactsThread(clients.get(id), null, null, null,
             null, Commands.GET_NAME);
         Future<String> t = pool.submit(ct);
         String name;
@@ -501,7 +501,7 @@ public class SparkHandler {
         case "accept":
           try {
             System.out.println("in accept");
-            ct = new ContactsThread(clients.get(id), user2, null, null,
+            ct = new ContactsThread(clients.get(id), user2, null, null, null,
                 Commands.ACCEPT_FRIEND);
             Future<String> t = pool.submit(ct);
             t.get();
@@ -519,7 +519,7 @@ public class SparkHandler {
         case "remove":
           try {
             System.out.println("in remove");
-            ct = new ContactsThread(clients.get(id), user2, null, null,
+            ct = new ContactsThread(clients.get(id), user2, null, null, null,
                 Commands.REMOVE_FRIEND);
             Future<String> t = pool.submit(ct);
             t.get();
@@ -537,7 +537,7 @@ public class SparkHandler {
         case "add":
           try {
             System.out.println("in add");
-            ct = new ContactsThread(clients.get(id), user2, null, null,
+            ct = new ContactsThread(clients.get(id), user2, null, null, null,
                 Commands.ADD_FRIEND);
             Future<String> t = pool.submit(ct);
             String exists = t.get();
@@ -613,43 +613,45 @@ public class SparkHandler {
       Map<String, String> variables;
       QueryParamsMap qm = arg0.queryMap();
       int id = Integer.parseInt(qm.value("url").replace("#", ""));
+      String command = qm.value("command").replace("\"", "");
       String user1 = clients.get(id).user;
       String groupName = qm.value("groupname").replace("\"", "");
-      String users = qm.value("users").replace("\"", "");
-      String command = qm.value("command").replace("\"", "");
-      String[] tempUsersList = users.split(",");
-      List<String> usersList = new ArrayList<String>();
-      //add user himself
-      usersList.add(user1);
-      for (String s : tempUsersList) {
-        usersList.add(s.trim());
-      }
       String message = "";
       switch(command) {
         case "remove":
-//          try {
-//            System.out.println("in remove group");
-//            ct = new ContactsThread(clients.get(id),
-//                null, groupName, null, Commands.REMOVE_GROUP);
-//            Future<String> t = pool.submit(ct);
-//            t.get();
-//            message = "Friend removed!";
-//            variables = new ImmutableMap.Builder()
-//            .put("message", message).build();
-//            return GSON.toJson(variables);
-//          } catch (ExecutionException | InterruptedException e1) {
-//            message = "ERROR: Bug in SQL.";
-//            e1.printStackTrace();
-//            variables = new ImmutableMap.Builder()
-//            .put("message", message).build();
-//            return GSON.toJson(variables);
-//          }
-          break;
+          String gid = qm.value("groupid");
+          int groupID = Integer.parseInt(gid);
+          System.out.println(gid + " " + groupName);
+          try {
+            System.out.println("in remove group");
+            ct = new ContactsThread(clients.get(id),
+                null, groupName, groupID, null, Commands.REMOVE_GROUP);
+            Future<String> t = pool.submit(ct);
+            t.get();
+            message = "Friend removed!";
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          } catch (ExecutionException | InterruptedException e1) {
+            message = "ERROR: Bug in SQL.";
+            e1.printStackTrace();
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          }
         case "add":
+          String users = qm.value("users").replace("\"", "");
+          String[] tempUsersList = users.split(",");
+          List<String> usersList = new ArrayList<String>();
+          //add user himself
+          usersList.add(user1);
+          for (String s : tempUsersList) {
+            usersList.add(s.trim());
+          }
           try {
             System.out.println("in add group");
             ct = new ContactsThread(clients.get(id),
-                null, groupName, usersList, Commands.ADD_GROUP);
+                null, groupName, null, usersList, Commands.ADD_GROUP);
             Future<String> t = pool.submit(ct);
             t.get();
             

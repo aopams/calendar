@@ -14,16 +14,20 @@ public class ContactsThread implements Callable<String> {
   private DatabaseHandler myDBHandler;
   private String user2;
   private String groupName;
+  private int removeGroupID;
   private List<String> groupMembers;
   private Commands command;
 
   //ADD GROUP ID FOR CONSTRUCTOR TO BE ABLE TO REMOVE YOURSELF FROM A GROUP
-  public ContactsThread(ClientHandler client1, String client2, String groupName, List<String> memberNames, Commands command) {
+  public ContactsThread(ClientHandler client1, String client2, String groupName, Integer groupid, List<String> memberNames, Commands command) {
     this.client1 = client1;
     this.user2 = client2;
     this.groupName = groupName;
     groupMembers = memberNames;
     this.command = command;
+    if (groupid != null) {
+      removeGroupID = groupid;
+    }
     try {
       myDBHandler = new DatabaseHandler("calendar.sqlite3");
     } catch (SQLException | ClassNotFoundException e) {
@@ -65,7 +69,6 @@ public class ContactsThread implements Callable<String> {
             client1.acceptFriend(user2);
             myDBHandler.acceptFriendRequest(user1, user2);
             break;
-            
             //CHECK IF EACH USER IS VALID
         case ADD_GROUP :
           for (String user : groupMembers) {
@@ -82,8 +85,8 @@ public class ContactsThread implements Callable<String> {
           client1.addGroup(groupName, groupID);
           break;
         case REMOVE_GROUP :
-//          client1.removeGroup(groupName);
-//          myDBHandler.removeUserFromGroup(user1, groupId);
+          client1.removeGroup(removeGroupID);
+          myDBHandler.removeUserFromGroup(user1, removeGroupID);
           break;
       default:
         break;

@@ -185,8 +185,8 @@ public class ClientHandler {
 //    groups.put(maxGroupId, group);
 //  }
 
-  public void removeGroup(String group) {
-    groups.remove(group);
+  public void removeGroup(int groupID) {
+    groups.remove(groupID);
   }
 
   public void setAccessToken(String accessToken) {
