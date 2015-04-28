@@ -148,7 +148,7 @@ body {
     display: none;
 }
 
-#x-button, #check-button, #delete-button, #google-button, #new-event-button, #edit-button {
+#x-button, #check-button, #delete-button, #google-button, #new-event-button, #edit-button, #remove-button {
 	height: 24px;
 }
 

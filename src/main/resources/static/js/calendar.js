@@ -676,8 +676,9 @@ $(document).ready(function(e) {
 	/* owner wants to delete the entire event */
 	$(document).on('click','#delete-button', function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
-		console.log(id);
 		deleteEvent(id);
+	    var $dialog = $(this).parents('.ui-dialog-content');
+	    $dialog.dialog('destroy');
 		updateDisplayedEvents();
 	});
 	
