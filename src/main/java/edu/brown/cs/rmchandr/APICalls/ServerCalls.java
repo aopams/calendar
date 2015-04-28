@@ -329,7 +329,7 @@ public class ServerCalls {
 
       Date date = null;
       int duration = 0;
-      int startLoc = events[i].indexOf("start");
+      int startLoc = events[i].indexOf("\"start\":");
       int endLoc = events[i].indexOf("\"end\":");
       String start;
       if (events[i].contains("dateTime")) {
