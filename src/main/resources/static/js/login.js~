@@ -41,7 +41,7 @@ function login(postParameters) {
 	console.log(postParameters);
 	var url = $("#login-form").attr('action');
 	console.log('url is ' + url);
-	$.post(url, postParameters, function(responseJSON) {
+	/*$.post(url, postParameters, function(responseJSON) {
 			
-	});
+	}); */
 }
