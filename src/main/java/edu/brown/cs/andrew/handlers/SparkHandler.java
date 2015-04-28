@@ -233,7 +233,7 @@ public class SparkHandler {
         randomHolder = (int) (Math.random() * 1000000);
       }
 
-      String form = "<form method = \"POST\" action=\"/calendar/"
+      String form = "<form id=\"login-form\" method = \"POST\" action=\"/calendar/"
           + randomHolder + "\">";
       Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
           "message", "", "form", form);
@@ -713,15 +713,10 @@ public class SparkHandler {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      int randomNumber = 0;
-      while (clients.containsKey(randomHolder)) {
-        randomNumber = (int) (Math.random() * 1000000);
-      }
       Map<String, Object> variables = new ImmutableMap.Builder()
           .put("success", success)
           .put("user", user)
-          .put("pass", pass)
-          .put("randomID", randomNumber).build();
+          .put("pass", pass).build();
       return GSON.toJson(variables);
     }
   }

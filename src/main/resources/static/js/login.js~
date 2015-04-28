@@ -17,6 +17,7 @@ jQuery(document).ready(function($) {
 		var password = document.getElementById('pass').value;
 		var fullname = document.getElementById('regName').value;
 		var postParameters = {username : username, password : password, fullname : fullname};
+		register(postParameters);
 
 	})
 	
@@ -24,9 +25,23 @@ jQuery(document).ready(function($) {
 
 /* CHANGE */
 
-function register(postParameters) {
-	console.log('here');
+function register(postParameters, loginParam) {
 	$.post('/register', postParameters, function(responseJSON) {
+		var responseObject = JSON.parse(responseJSON);
+		console.log(responseObject.success);
+		if (responseObject.success == 1) {
+			var postParameters = {user : responseObject.user, pass : responseObject.pass};
+			console.log(postParameters);			
+			login(postParameters);
+		}
+	});
+}
+
+function login(postParameters) {
+	console.log(postParameters);
+	var url = $("#login-form").attr('action');
+	console.log('url is ' + url);
+	$.post(url, postParameters, function(responseJSON) {
 			
 	});
 }

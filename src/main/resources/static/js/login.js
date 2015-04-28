@@ -27,17 +27,21 @@ jQuery(document).ready(function($) {
 
 function register(postParameters, loginParam) {
 	$.post('/register', postParameters, function(responseJSON) {
-		if (responseJSON.success == 1) {
-			var postParameters = {user : responseJSON.user, pass : responseJSON.pass};
-			login(posParameters);
+		var responseObject = JSON.parse(responseJSON);
+		console.log(responseObject.success);
+		if (responseObject.success == 1) {
+			var postParameters = {user : responseObject.user, pass : responseObject.pass};
+			console.log(postParameters);			
+			login(postParameters);
 		}
 	});
 }
 
 function login(postParameters) {
+	console.log(postParameters);
 	var url = $("#login-form").attr('action');
-	console.log(url);
-	$.post(url, postParameters, function(responseJSON) {
+	console.log('url is ' + url);
+	/*$.post(url, postParameters, function(responseJSON) {
 			
-	});
+	}); */
 }
