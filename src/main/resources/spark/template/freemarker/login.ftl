@@ -32,6 +32,7 @@
     <!register page>
     <div class="registerpage">
     <h1>Register</h1><br>
+<<<<<<< HEAD
 <!-- 	  <form method = "POST" action="/register"> -->
 	    <input type="text" name="user" id="regUser" placeholder="Username">
 	    <input type="password" name="pass" id="pass" placeholder="Password">
@@ -39,6 +40,15 @@
 	    <input type="text" name="name" id="regName" placeholder="Full name">
 	    <input type="submit" name="register" class="btn btn-primary" id="register" value="Register">
 <!-- 	  </form> -->
+=======
+	  <form method = "POST" action="/register" onsubmit ="Window.close()">
+	    <input type="text" name="user" placeholder="Username">
+	    <input type="password" name="pass" placeholder="Password">
+	    <input type="password" name="pass" placeholder="Confirm password">
+	    <input type="text" name="name" placeholder="Full name">	    
+	    <input id = "kill" type="submit" name="register" class="btn btn-primary" value="Register">
+	  </form>
+>>>>>>> 7a392c35734392a6177071fa34205d0bb36fed66
 	  <input type="image" src="\img/leftarrow.png" class ="backbutton" name="backbutton">
     </div>
   </div>

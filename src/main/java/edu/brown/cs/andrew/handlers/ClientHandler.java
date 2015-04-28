@@ -172,9 +172,9 @@ public class ClientHandler {
     events.put(maxEventId, e);
 
   }
+  public void removeEvent(Event e) {
+    events.remove(e.getId());
 
-  public void removeEvent(int e) {
-    events.remove(e);
   }
   //edited groupid count, handled in database
   public void addGroup(String group, int groupID) {
