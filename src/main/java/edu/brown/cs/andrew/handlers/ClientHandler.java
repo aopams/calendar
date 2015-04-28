@@ -164,8 +164,8 @@ public class ClientHandler {
     e.setID(maxEventId);
     events.put(maxEventId, e);
   }
-  public void removeEvent(int e) {
-    events.remove(e);
+  public void removeEvent(Event e) {
+    events.remove(e.getId());
   }
   public void addGroup(String group) {
     maxGroupId++;

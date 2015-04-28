@@ -2,7 +2,10 @@ package edu.brown.cs.andrew.clientThreads;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.brown.cs.andrew.handlers.ClientHandler;
 import edu.brown.cs.andrew.handlers.Commands;
@@ -15,11 +18,13 @@ public class CalendarThread implements Callable<String>{
   private Commands command;
   private DatabaseHandler myDBHandler;
   private Event myEvent;
-  private int deleteEvent;
+  private Event deleteEvent;
+  private ConcurrentHashMap<Integer, ClientHandler> attendees;
   
-  public CalendarThread(ClientHandler client1, Commands command, Event e, int d) {
+  public CalendarThread(ClientHandler client1, Commands command, Event e, Event d, ConcurrentHashMap<Integer, ClientHandler> attendees) {
     this.client1 = client1;
     this.command = command;
+    this.attendees = attendees;
     myEvent = e;
     deleteEvent = d;
     try {
@@ -44,7 +49,13 @@ public class CalendarThread implements Callable<String>{
       }
       break;
     case DELETE_EVENT :
-      client1.removeEvent(deleteEvent);
+      List<String> attens = deleteEvent.getAttendees();
+      for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
+        if (attens.contains(e.getValue().getClient())) {
+          e.getValue().removeEvent(deleteEvent);
+        }
+      }
+      System.out.println("DB Delete");
       myDBHandler.removeEvent(deleteEvent);
       break;
     case EDIT_EVENT :

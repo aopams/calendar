@@ -105,10 +105,19 @@ public class SparkHandler {
     public Object handle(Request arg0, Response arg1) {
       System.out.println("hahaha");
       QueryParamsMap qm = arg0.queryMap();
+      int clientID = Integer.parseInt(qm.value("string").substring(10));
       int eventID = Integer.parseInt(qm.value("id"));
-      CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,  eventID);
+      Event e =  clients.get(clientID).getEvents().get(eventID);
+      CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,  e, clients);
       pool.submit(ct);
-      return null;
+      System.out.println("hahaha");
+      int status = 0;
+      String message = "accepted";
+      Map<String, Object> variables = new ImmutableMap.Builder()
+      .put("status", status)
+      .put("message", message).build();
+      System.out.println(GSON.toJson(variables));
+      return GSON.toJson(variables);
     }
     
   }
@@ -154,7 +163,7 @@ public class SparkHandler {
       String dayOfWeek = numbersToDay.get(dayWeek);
       Event e = new Event(date, title, dayOfWeek, attendees,
           group, duration, description, creator);
-      CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, 0);
+      CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null, null);
       Future<String> t = pool.submit(ct);
       try {
         t.get();
