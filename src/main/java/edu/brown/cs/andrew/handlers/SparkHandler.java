@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 
 import edu.brown.cs.andrew.clientThreads.CalendarThread;
 import edu.brown.cs.andrew.clientThreads.ContactsThread;
+import edu.brown.cs.andrew.clientThreads.UserThread;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
 
@@ -89,7 +90,7 @@ public class SparkHandler {
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
     Spark.post("/newevent", new CreateEventHandler());
-    Spark.post("/register", new RegisterHandler(), freeMarker);
+    Spark.post("/register", new RegisterHandler());
     Spark.post("/logout", new LogoutHandler());
     Spark.post("/editfriends", new ModifyFriendsHandler());
     Spark.post("/getusername", new GetNameHandler());
@@ -258,73 +259,37 @@ public class SparkHandler {
       System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
       System.out.println("ID: " + clientID);
       System.out.println("CODE: " + code);
-      if (code != null) {
-        ServerCalls sc = new ServerCalls();
-        HashMap<String, String> map = sc.authorize(code);
-        String accessToken = map.get("access_token");
-        String user = "9999";
-        ClientHandler client = new ClientHandler(database, user, true);
-        HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
-        HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList,
-            accessToken);
-        client.setEvents(new ConcurrentHashMap<Integer, Event>());
-        List<Event> events = sc.getAllEvents(eventsList);
-        System.out.println(client);
-        for (Event event : events) {
-          // System.out.println(event);
+   
+      String user = qm.value("user");
+      String pass = qm.value("pass");
+      int id = Integer.parseInt(req.params(":id"));
+      boolean found = false;
+      try {
+        DatabaseHandler myDBHandler = new DatabaseHandler(database);
+        found = myDBHandler.findUser(user, pass);
+        myDBHandler.closeConnection();
+      } catch (SQLException | ClassNotFoundException e) {
+        String form = getRandomForm();
+        String newMessage = "An Error Occurred while logging in, please try again.";
+        Map<String, Object> variables = ImmutableMap.of("title", "Login",
+            "message", newMessage, "form", form);
+        return new ModelAndView(variables, "login.ftl");
+      }
+      if (found) {
 
-          client.addEvent(event);
-        }
-
-        clients.put(120456778, client);
-        Date currentWeekStart = new Date();
-        List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
-        ConcurrentHashMap<Integer, Event> testEvents;
-        testEvents = client.getEventsByWeek(currentWeekStart);
-        List<String> toFrontEnd = new ArrayList<String>();
-        for (Entry<Integer, Event> e : testEvents.entrySet()) {
-          Event curr = e.getValue();
-          
-          toFrontEnd.add(GSON.toJson(curr));
-          System.out.println("GSON: " + GSON.toJson(curr));
-        }
-        Map<String, Object> variables = new ImmutableMap.Builder()
-            .put("events", toFrontEnd).put("week", currentWeek)
-            .put("form", getRandomForm()).build();
+        Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
+            "message", "");
+        ClientHandler newClient = new ClientHandler(database, user, true);
+        clients.put(id, newClient);
         return new ModelAndView(variables, "main.ftl");
       } else {
-        String user = qm.value("user");
-        String pass = qm.value("pass");
-        int id = Integer.parseInt(req.params(":id"));
-        boolean found = false;
-        try {
-          DatabaseHandler myDBHandler = new DatabaseHandler(database);
-          found = myDBHandler.findUser(user, pass);
-          myDBHandler.closeConnection();
-        } catch (SQLException | ClassNotFoundException e) {
-          String form = getRandomForm();
-          String newMessage = "An Error Occurred while logging in, please try again.";
-          Map<String, Object> variables = ImmutableMap.of("title", "Login",
-              "message", newMessage, "form", form);
-          return new ModelAndView(variables, "login.ftl");
-        }
-        if (found) {
-
-          Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
-              "message", "");
-          // ServerCalls sc = new ServerCalls();
-          // String html = sc.loginClicked();
-          ClientHandler newClient = new ClientHandler(database, user, true);
-          clients.put(id, newClient);
-          return new ModelAndView(variables, "main.ftl");
-        } else {
-          clients.remove(randomHolder);
-          String form = getRandomForm();
-          String newMessage = "The username or password entered was not found";
-          Map<String, Object> variables = ImmutableMap.of("title", "Login",
-              "message", newMessage, "form", form);
-          return new ModelAndView(variables, "login.ftl");
-        }
+        clients.remove(randomHolder);
+        String form = getRandomForm();
+        String newMessage = "The username or password entered was not found";
+        Map<String, Object> variables = ImmutableMap.of("title", "Login",
+            "message", newMessage, "form", form);
+        return new ModelAndView(variables, "login.ftl");
+        
       }
     }
   }
@@ -729,13 +694,29 @@ public class SparkHandler {
     }
   }
   
-  public static class RegisterHandler implements TemplateViewRoute {
+  public static class RegisterHandler implements Route {
     @Override
-    public ModelAndView handle(Request req, Response res) {
-      Map<String, Object> variables = ImmutableMap.of();
-      ServerCalls sc = new ServerCalls();
-      sc.openURLInBrowser("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com");
-      return new ModelAndView(variables, "load.ftl");
+    public Object handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      String user = qm.value("username");
+      String pass = qm.value("password");
+      String regName = qm.value("fullname");
+      UserThread ut = new UserThread(user, pass, regName);
+      Future<String> t = pool.submit(ut);
+      int success = 0;
+      try {
+        t.get();
+        success = 1;
+      } catch (InterruptedException | ExecutionException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      Map<String, Object> variables = new ImmutableMap.Builder()
+          .put("success", success)
+          .put("user", user)
+          .put("pass", pass).build();
+      
+      return GSON.toJson(variables);
     }
   }
   
