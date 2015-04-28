@@ -177,6 +177,10 @@ body {
 }
 
 /* dialog styling */
+#dialog-event-id {
+	display: none;
+}
+
 .ui-dialog {
 	z-index: 100000;
 }
