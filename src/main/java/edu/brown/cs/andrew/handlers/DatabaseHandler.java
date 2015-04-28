@@ -33,10 +33,9 @@ public class DatabaseHandler {
     stmt.executeUpdate("Drop Table if Exists User_Group");
     stmt.executeUpdate("Drop Table if Exists User_Event");
     stmt.executeUpdate("Drop Table if Exists Group_Event");
-    stmt.executeUpdate("Drop Table if Exists basic");
+    stmt.executeUpdate("Drop Table if Exists Events");
     stmt.executeUpdate("Drop Table if Exists Users");
     stmt.executeUpdate("Drop Table if Exists Groups");
-    stmt.executeUpdate("Drop Table if Exists Events");
     
     stmt.close();
     String userTable = "CREATE TABLE Users ("
@@ -140,7 +139,7 @@ public class DatabaseHandler {
     theStat.setString(1, user_name);
     theStat.setString(2, password);
     theStat.setString(3, name);
-    theStat.setString(5, user_name);
+    theStat.setString(4, user_name);
     System.out.println(theStat.executeUpdate());
     
   }

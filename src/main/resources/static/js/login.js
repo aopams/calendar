@@ -17,6 +17,7 @@ jQuery(document).ready(function($) {
 		var password = document.getElementById('pass').value;
 		var fullname = document.getElementById('regName').value;
 		var postParameters = {username : username, password : password, fullname : fullname};
+		register(postParameters);
 
 	})
 	

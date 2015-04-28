@@ -17,17 +17,12 @@ jQuery(document).ready(function($) {
 		var password = document.getElementById('pass').value;
 		var fullname = document.getElementById('regName').value;
 		var postParameters = {username : username, password : password, fullname : fullname};
-<<<<<<< HEAD
-		
-		$.post('/register', postParameters, function(responseJSON) {
-		
-		});
-=======
-		register(postParameters);
->>>>>>> 53c50d4826cd1e8759643aa131e6b5feb2853da9
+
 	})
 	
 });
+
+/* CHANGE */
 
 function register(postParameters) {
 	console.log('here');
