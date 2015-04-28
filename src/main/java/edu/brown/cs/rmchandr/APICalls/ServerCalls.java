@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -346,7 +347,12 @@ public class ServerCalls {
         try {
           date = simpleDateFormat.parse(start);
           Date endDate = simpleDateFormat.parse(end);
-          duration = endDate.getMinutes() - date.getMinutes();
+          Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+          calendar.setTime(date);   // assigns calendar to given date 
+          long dateMinutes = calendar.getTimeInMillis();
+          calendar.setTime(endDate);   // assigns calendar to given date 
+          long endDateMinutes = calendar.getTimeInMillis();
+          duration = (int)((endDateMinutes - dateMinutes)/60000);
           // System.out.println("date : " + simpleDateFormat.format(endDate));
         } catch (ParseException ex) {
           System.out.println("Exception " + ex);
