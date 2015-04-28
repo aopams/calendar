@@ -1,13 +1,8 @@
 friends = [];
 pendingFriends = [];
+groups = [];
+username = "";
 url = "";
-
-/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
-/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
-/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
-/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
-/** ASK ANDREW ABOUT CONTACT THREAD AND FINDING IF A FRIEND EXISTS!!!!! **/
-
 
 /** for groups: functionality is to be able to create groups where creation involves specifying users to add
 				and also be able to remove yourself from the group **/
@@ -15,7 +10,7 @@ url = "";
 $(document).ready(function(e) {
 	$('#calWrap').show(0);
 	$('#contacts').hide(0);
-	
+	$('#groupsWindow').hide(0);
 	$("#contactsbutton").bind('click', function(e) {
 		$('#calWrap').hide(0);
 		$('#contacts').show(0);
@@ -30,6 +25,18 @@ $(document).ready(function(e) {
 		$('#calendarbutton').removeClass("btn btn-default").addClass("btn btn-default btn-primary");
 	});
 	
+	$('#friendsTab').bind('click', function(e) {
+		$('#friendsTab').addClass("active");		
+		$('#groupsTab').removeClass("active");
+		$('#contactsWindow').show(0);
+		$('#groupsWindow').hide(0);
+	});
+	$('#groupsTab').bind('click', function(e) {
+		$('#groupsTab').addClass("active");		
+		$('#friendsTab').removeClass("active");
+		$('#contactsWindow').hide(0);
+		$('#groupsWindow').show(0);
+	});	
 	/* grabbing id for client */
 	
 	url = window.location.href;
@@ -44,12 +51,26 @@ $(document).ready(function(e) {
 		for (i = 0; i < temp.length; i++) {
 			if (temp[i][1] == "pending") {
 				pendingFriends.push(temp[i][0]);
-			} else {
+			} else if (temp[i][1] == "accepted") {
 				friends.push(temp[i][0]);
 			}
 		};
 		createFriends();
 	});
+	
+/*
+	//grabs groups from database and populates
+	var postParameters = {url: url};
+	$.post('/getgroups', postParameters, function(responseJSON) {
+		responseObject = JSON.parse(responseJSON);
+		temp = responseObject.groups;
+		
+		for (i = 0; i < temp.length; i++) {
+			
+		}
+		
+	})
+*/
 	
 	//button to add friend at top of contacts page
 	$("#sendInvite").bind('click', function(e) {
@@ -75,13 +96,28 @@ $(document).ready(function(e) {
 				for (i = 0; i < temp.length; i++) {
 					if (temp[i][1] == "pending") {
 						pendingFriends.push(temp[i][0]);
-					} else {
+					} else if (temp[i][1] == "accepted") {
 						friends.push(temp[i][0]);
 					}
 				};
 				createFriends();
 			});
 		});
+	});
+	
+	$("#makeGroup").bind('click', function(e) {
+		var groupName = $("#groupName").val();
+		
+		console.log(groupName);
+	});
+	
+	var postParameters = {url : url};
+	$.post('/getusername', postParameters, function(responseJSON) {
+		responseObject = JSON.parse(responseJSON);
+		username = responseObject.name;
+		if (username != '') {
+			$('#cal-owner').text(username + "'s Calendar");
+		}
 	});
 	
 });
@@ -169,19 +205,16 @@ function createFriends() {
 				name.style.marginRight='auto';
 				name.style.display='block';
 				name.innerHTML = friends[count];
-				
-				
 				var img = document.createElement('img');
 				img.src = getProfPic(friends[count]);
-				var refuse = document.createElement('img');
-				refuse.id = 'refuse';
-				refuse.src = '/img/x.png';
-				refuse.onclick=function() {removeFriend(this);};
-				refuse.style.marginRight='175px';
-				friend.appendChild(refuse);
+				var rem = document.createElement('img');
+				rem.id = 'rem';
+				rem.src = '/img/x.png';
+				rem.onclick=function() {removeFriend(this);};
+				rem.style.marginRight='175px';
+				friend.appendChild(rem);
 				friend.appendChild(img);
 				friend.appendChild(name);
-
 				row.appendChild(friend);
 				count++;
 				if (count == len) {
@@ -228,7 +261,7 @@ function acceptFriend(elem) {
 			for (i = 0; i < temp.length; i++) {
 				if (temp[i][1] == "pending") {
 					pendingFriends.push(temp[i][0]);
-				} else {
+				} else if (temp[i][1] == "accepted") {
 					friends.push(temp[i][0]);
 				}
 			};
@@ -268,13 +301,11 @@ function removeFriend(elem) {
 			for (i = 0; i < temp.length; i++) {
 				if (temp[i][1] == "pending") {
 					pendingFriends.push(temp[i][0]);
-				} else {
+				} else if (temp[i][1] == "accepted") {
 					friends.push(temp[i][0]);
 				}
 			};
 			createFriends();
 		});
 	});
-	
-	
 };
