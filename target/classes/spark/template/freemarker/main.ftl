@@ -26,6 +26,7 @@
 	<div class="row choices">
 		<a class="btn btn-default btn-primary" href="#" id="calendarbutton" role="button">Calendar</a>
 		<a class="btn btn-default" id="contactsbutton" href="#" role="button">Contacts</a>
+		<p id="cal-owner"> </p>
 		<a class="btn btn-default" id="logoutbutton" href="#" role="button" id="logout-btn">Log Out</a>
 	</div>
 	
@@ -36,22 +37,33 @@
 			</ul>
 		<div id="contactsWindow">
 			<div id="addFriendBar">
-<!-- 			CHANGE THIS FROM FORM TO A SUBMIT BUTTON -->
 				<div class="form-inline" id="send">
 					<div class="form-group">
 						<input type="text" class="form-control" id="addFriend" placeholder="@username">
 					</div>
-					<button type="submit" class="btn btn-default" id="sendInvite">Send invitation</button>
+					<button type="submit" class="btn btn-default" id="sendInvite">Send Invitation</button>
 				</div>
 			</div>
 			
-			
+			<!--populated through javascript-->
 			<div id="contactsGrid">
 
 			</div>
 		</div>
-		<div id="groupsWindow">
 		
+		<div id="groupsWindow">
+			<div id="makeGroupBar">
+				<div class="form-inline" id="send">
+					<div class="form-group">
+						<input type="text" class="form-control" id="groupName" placeholder="@groupname">
+					</div>
+					<button type="submit" class="btn btn-default" id="makeGroup">Make Group</button>
+				</div>
+			</div>
+			<!--populated through javascript-->
+			<div id="groupsGrid">
+
+			</div>
 		</div>
 	</div>
 	

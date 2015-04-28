@@ -50,7 +50,7 @@ function newEvent() {
 		time: time, duration: dur, description: descrip, attendees: atten,
 		group: group
 	};
-
+	console.log("new event");
 	$.post("/newevent", postParameters, function(responseJSON){
 /*
 	add code to handle messaging for ranking, etc

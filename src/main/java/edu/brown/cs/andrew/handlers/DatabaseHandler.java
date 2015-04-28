@@ -233,17 +233,28 @@ public class DatabaseHandler {
     }
     return toReturn;
   }
-  public void addGroup(String group_name) throws SQLException {
-    String query = "INSERT into Groups(group_name)"
-        + "Select ? where not exists ("
-        + "select * from Groups where group_name = ?);";
+  
+  public int getNewGroupID() throws SQLException {
+    String query = "SELECT COUNT(*) FROM Groups";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    ResultSet rs = theStat.executeQuery();
+    int count = 0;
+    if (rs.next()) {
+      count = rs.getInt(1);
+    }
+    count++;
+    return count;
+  }
+  
+  public void addGroup(String group_name, int group_id) throws SQLException {
+    String query = "INSERT into Groups (group_name, group_id)" 
+        + "VALUES (?, ?)";
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, group_name);
-    theStat.setString(2, group_name);
+    theStat.setInt(2, group_id);
     theStat.executeUpdate();
     theStat.close();
   }
-  
   public void addUserToGroup(String user_name, int group_id) throws SQLException {
     String query = "INSERT into User_Group(user_name, group_id)"
         + "Select ?, ? where not exists ("

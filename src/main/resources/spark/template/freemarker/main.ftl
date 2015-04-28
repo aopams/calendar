@@ -45,19 +45,24 @@
 				</div>
 			</div>
 			
-			
+			<!--populated through javascript-->
 			<div id="contactsGrid">
 
 			</div>
 		</div>
+		
 		<div id="groupsWindow">
-			<div id="addFriendBar">
+			<div id="makeGroupBar">
 				<div class="form-inline" id="send">
 					<div class="form-group">
 						<input type="text" class="form-control" id="groupName" placeholder="@groupname">
 					</div>
 					<button type="submit" class="btn btn-default" id="makeGroup">Make Group</button>
 				</div>
+			</div>
+			<!--populated through javascript-->
+			<div id="groupsGrid">
+
 			</div>
 		</div>
 	</div>

@@ -96,6 +96,8 @@ public class SparkHandler {
     Spark.post("/logout", new LogoutHandler());
     Spark.post("/editfriends", new ModifyFriendsHandler());
     Spark.post("/getusername", new GetNameHandler());
+    Spark.post("/getgroups", new GroupsHandler());
+    Spark.post("/editgroups", new ModifyGroupsHandler());
   }
   
   
@@ -379,7 +381,7 @@ public class SparkHandler {
     @Override
     public Object handle(Request arg0, Response arg1) {
       QueryParamsMap qm = arg0.queryMap();
-      int id = Integer.parseInt(qm.value("url").replace("#", ""));
+      int id = Integer.parseInt(qm.value("url").replace("[^A-Za-z0-9 ]", ""));
       System.out.println(id);
       Map<String, String> tempMap = clients.get(id).getFriends();
       List<String[]> myFriends = new ArrayList<String[]>();
@@ -406,7 +408,7 @@ public class SparkHandler {
       ContactsThread ct;
       Map<String, String> variables;
       QueryParamsMap qm = arg0.queryMap();
-      int id = Integer.parseInt(qm.value("url").replace("#", ""));
+      int id = Integer.parseInt(qm.value("url").replace("[^A-Za-z0-9 ]", ""));
       String user1 = clients.get(id).user;
       String user2 = qm.value("user").replaceAll("^\"|\"$", "");;
       String command = qm.value("command").replace("\"", "");
@@ -493,6 +495,8 @@ public class SparkHandler {
   /**
    * GroupsHandler grabs all the groups for a given user.
    * Used to load up contacts page and refresh groups list.
+   * Passes back to front end the unique integer key
+   * of a group and the group's name.
    * @author wtruong02151
    *
    */
@@ -500,20 +504,91 @@ public class SparkHandler {
     @Override
     public Object handle(Request arg0, Response arg1) {
       QueryParamsMap qm = arg0.queryMap();
-      int id = Integer.parseInt(qm.value("url").replace("#", ""));
+      int id = Integer.parseInt(qm.value("url").replace("[^A-Za-z0-9 ]", ""));
       System.out.println(id);
       Map<Integer, String> tempMap = clients.get(id).getGroups();
-      List<String> myGroups = new ArrayList<String>();
+      List<String[]> myGroups = new ArrayList<String[]>();
       for (Integer key : tempMap.keySet()) {
+        String keyString = Integer.toString(key);
         String groupName = tempMap.get(key);
-        System.out.println(groupName);;
-        myGroups.add(groupName);
+        System.out.println(groupName);
+        String[] toAdd = {keyString, groupName};
+        myGroups.add(toAdd);
       }
-      Map<String, List<String[]>> variables = new ImmutableMap.Builder()
+      Map<String, List<String>> variables = new ImmutableMap.Builder()
       .put("groups", myGroups).build();
       return GSON.toJson(variables);
     }
   }
+  /**
+   * ModifyFriendsHandler takes in a particular command and
+   * modifies a user's friend's list acoording to the command.
+   * @author wtruong02151
+   *
+   */
+  private static class ModifyGroupsHandler implements Route {
+    @Override
+    public Object handle(Request arg0, Response arg1) {
+      ContactsThread ct;
+      Map<String, String> variables;
+      QueryParamsMap qm = arg0.queryMap();
+      int id = Integer.parseInt(qm.value("url").replace("[^A-Za-z0-9 ]", ""));
+      String user1 = clients.get(id).user;
+      String groupName = qm.value("groupname").replace("\"", "");
+      String users = qm.value("users").replace("\"", "");
+      String command = qm.value("command").replace("\"", "");
+      String[] tempUsersList = users.split(",");
+      List<String> usersList = new ArrayList<String>();
+      //add user himself
+      usersList.add(user1);
+      for (String s : tempUsersList) {
+        usersList.add(s.trim());
+      }
+      String message = "";
+      switch(command) {
+        case "remove":
+//          try {
+//            System.out.println("in remove group");
+//            ct = new ContactsThread(clients.get(id),
+//                null, groupName, null, Commands.REMOVE_GROUP);
+//            Future<String> t = pool.submit(ct);
+//            t.get();
+//            message = "Friend removed!";
+//            variables = new ImmutableMap.Builder()
+//            .put("message", message).build();
+//            return GSON.toJson(variables);
+//          } catch (ExecutionException | InterruptedException e1) {
+//            message = "ERROR: Bug in SQL.";
+//            e1.printStackTrace();
+//            variables = new ImmutableMap.Builder()
+//            .put("message", message).build();
+//            return GSON.toJson(variables);
+//          }
+          break;
+        case "add":
+          try {
+            System.out.println("in add group");
+            ct = new ContactsThread(clients.get(id),
+                null, groupName, usersList, Commands.ADD_GROUP);
+            Future<String> t = pool.submit(ct);
+            t.get();
+            
+          } catch (InterruptedException | ExecutionException e2) {
+            System.out.println("caught");
+            message = "ERROR: Bug in SQL.";
+            e2.printStackTrace();
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          }
+      }
+      message = "ERROR: Bug has occured, try again.";
+      variables = new ImmutableMap.Builder()
+      .put("message", message).build();
+      return GSON.toJson(variables);
+    }
+  }
+  
   
   private static class CodeHandler implements TemplateViewRoute {
     @Override
