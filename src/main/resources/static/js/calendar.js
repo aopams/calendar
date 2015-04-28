@@ -593,4 +593,12 @@ $(document).ready(function(e) {
 	    $dialog.dialog('destroy');
 	    updateDisplayedEvents();
 	});
+	
+	$("#continue").bind('click', function(event) {
+		console.log("reached");
+		var postParameters = {code: document.getElementById("code")};
+		$.post("/calendar/?", postParameters, function(responseJSON){
+			parseData(responseJSON);
+		})
+	});
 });
