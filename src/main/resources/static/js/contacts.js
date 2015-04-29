@@ -447,6 +447,7 @@ function viewGroupMembers(elem) {
 				'<div class="input-group margin-group">' +
 			    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="Users to add"/>'+
 				'</div>' +
+				'<img id="new-group-button" src="\\img/check.png"/>' +
 			'</form>';
 		$(form).dialog({ modal: true, resizable: false});
 		for (i = 0; i < members.length; i++) {
