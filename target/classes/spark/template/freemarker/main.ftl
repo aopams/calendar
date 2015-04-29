@@ -27,6 +27,7 @@
 		<div class="col-md-4 col-sm-4 col-xs-4">
 			<a class="btn btn-default btn-primary" href="#" id="calendarbutton" role="button">Calendar</a>
 			<a class="btn btn-default" id="contactsbutton" href="#" role="button">Contacts</a>
+			<a class="btn btn-default" id="googlebutton" href="#" role="button">Google</a>
 		</div>
 		<div class="col-md-4 col-sm-4 col-xs-4" style="text-align: center">
 			<p id="cal-owner"> </p>
