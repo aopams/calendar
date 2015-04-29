@@ -63,33 +63,6 @@ function newEvent() {
 	})
 }
 
-/* user edits her own event. */
-function editEvent(id) {
-	var title = document.getElementById('title').value;
-	var date = document.getElementById('datepicker').value;
-	var time = document.getElementById('dialog-time').value;
-	var dur = document.getElementById('duration').value;
-	var descrip = document.getElementById('descrip').value;
-	var atten = document.getElementById('attendees').value + ",";
-	var group = document.getElementById('group').value;
-	var correctTime = getDBTime(date, time);
-	var postParameters = {string: window.location.pathname, id: id, title: title, date: correctTime,
-		time: time, duration: dur, description: descrip, attendees: atten,
-		group: group
-	};
-	console.log("edit event");
-	$.post("/editevent", postParameters, function(responseJSON){
-/*
-	add code to handle messaging for ranking, etc
-		if(responseJSON.status == 1) {
-			$dialog.dialog('destroy');
-		} else {
-			alert('ranking: ' + responseJSON.message);
-		}
-*/
-	})
-}
-
 /* delete event */
 function deleteEvent(id) {
 	var id = id;
@@ -197,7 +170,7 @@ function newEventDialog(date, time) {
 	    	'<div class="formatted">At </div>' +
 	    		'<input id="dialog-time" type="text" class="form-control" value="' + time + '">' +
 			'<div class="formatted">  for </div>' +
-				'<input id="duration" type="text" class="form-control" value="60"><div class="formatted"> min </div>' +
+				'<input id="duration" type="text" class="form-control"><div class="formatted"> min </div>' +
 	    '</div>' +
 	    '<div class="input-group margin-group">' +
 	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description..."></textarea>' +
@@ -213,12 +186,6 @@ function newEventDialog(date, time) {
 		'<img id="new-event-button" src="\\img/check.png"/>' +
 		'</div> </div> </form>';
 	$(form).dialog({ modal: true, resizable: false});
-}
-
-/* opens dialog window for message from backend */
-function messageDialog() {
-	form = '<p> test!!! </p>';
-	$(form).dialog({ modal: true, resizable: false });
 }
 
 /* opens calendar view selection */
@@ -633,12 +600,12 @@ $(document).ready(function(e) {
 		e.stopPropagation();
 		openDialog(e.target);
 	});
-
+	
 	$(document).on('click','.google-event', function(e) {
 		e.stopPropagation();
 	    openDialog(e.target, 1);
 	});
-
+	
 	$(document).on('click','.noncreator-event', function(e) {
 		e.stopPropagation();
 	    openDialog(e.target, 2);
@@ -648,55 +615,64 @@ $(document).ready(function(e) {
 	    var $dialog = $(this).parents('.ui-dialog-content');
 	    $dialog.dialog('destroy');
 	});
-
+	
 	$(document).on('click','#datepicker', function(e) {
 	    datePicker();
+	});
+	
+	$(document).on('keyup','#datepicker', function(e) {
+		date = $('#datepicker').val();
+		var res = dateRegex(date);
+		if (res) {
+			$('#datepicker').removeClass('has-error');
+			if ($('#new-event-button').length) {
+				document.getElementById("new-event-button").style.visibility = "visible";
+			} else {
+				document.getElementById("check-button").style.visibility = "visible";
+			}
+		} else {
+			$('#datepicker').addClass('has-error');
+			console.log($('#new-event-button').length);
+			if ($('#new-event-button').length) {
+				document.getElementById("new-event-button").style.visibility = "hidden";
+			} else {
+				document.getElementById("check-button").style.visibility = "hidden";
+			}
+		}
 	});
 
 	$(document).on('click','#dialog-time', function(e) {		    
 		timePicker();
 	});
 	
-	$(document).on('keyup', '#title, #dialog-time, #duration, #datepicker', function(e) {
-		date = $('#datepicker').val();
-		var res = dateRegex(date);
-		if (res) {
-			$('#datepicker').removeClass('has-error');
-		} else {
-			$('#datepicker').addClass('has-error');
-		}
-		var title = $('#title').val();
-		if (title != '') {
-			$('#title').addClass('has-error');
-		} else {
-			$('#title').removeClass('has-error');	
-		}
+	$(document).on('keyup','#dialog-time', function(e) {
 		var time = $('#dialog-time').val().match(/^(0?[1-9]|1[012])(:[0-5]\d) [APap][mM]$/i);
 		if (time) {
 			$('#dialog-time').removeClass('has-error');
-		} else {
-			$('#dialog-time').addClass('has-error');
-		}
-		var dur = $('#duration').val();
-		if (!isNaN(dur) && dur > 0 && dur < 1440) {
-			$('#duration').removeClass('has-error');
-		} else {
-			$('#duration').addClass('has-error');
-		}
-		if (!isNaN(dur) && dur > 0 && dur < 1440 && title != '' && time && res) {
 			if ($('#new-event-button').length) {
 				document.getElementById("new-event-button").style.visibility = "visible";
 			} else {
-				document.getElementById("edit-button").style.visibility = "visible";
+				document.getElementById("check-button").style.visibility = "visible";
 			}
 		} else {
+			$('#dialog-time').addClass('has-error');
 			if ($('#new-event-button').length) {
 				document.getElementById("new-event-button").style.visibility = "hidden";
 			} else {
-				document.getElementById("edit-button").style.visibility = "hidden";
+				document.getElementById("check-button").style.visibility = "hidden";
 			}
 		}
-		
+	});
+	
+	$(document).on('keyup','#duration', function(e) {
+		var dur = $('#duration').val();
+		if (!isNaN(dur) && dur > 0 && dur < 1440) {
+			$('#duration').removeClass('has-error');
+			document.getElementById("check-button").style.visibility = "visible";
+		} else {
+			$('#duration').addClass('has-error');
+			document.getElementById("check-button").style.visibility = "hidden";
+		}
 	});
 
 	$(document).on('click','#leftarrow', function(e) {
@@ -735,7 +711,8 @@ $(document).ready(function(e) {
 	/* owner wants to edit event */
 	$(document).on('click','#edit-button', function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
-		editEvent(id);
+		console.log(id);
+		//removeUserEvent(id);
 		updateDisplayedEvents();
 	});
 });

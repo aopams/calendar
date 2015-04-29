@@ -1,6 +1,7 @@
 package edu.brown.cs.andrew.clientThreads;
 
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -37,7 +38,6 @@ public class ContactsThread implements Callable<String> {
   @Override
   public String call() throws SQLException {
     String user1 = client1.getClient();
-//      int groupId = myDBHandler.findGroup(groupName);
       switch (command) {
         case GET_NAME:
           String name = myDBHandler.getName(user1);
@@ -71,10 +71,11 @@ public class ContactsThread implements Callable<String> {
             break;
             //CHECK IF EACH USER IS VALID
         case ADD_GROUP :
-          for (String user : groupMembers) {
+          for (Iterator<String> it = groupMembers.iterator(); it.hasNext();) {
             //user does not exist, remove from list
+            String user = it.next();
             if (myDBHandler.findUser(user) == null) {
-              groupMembers.remove(user);
+              it.remove();
             }
           }
           int groupID = myDBHandler.getNewGroupID();
@@ -87,7 +88,21 @@ public class ContactsThread implements Callable<String> {
         case REMOVE_GROUP :
           client1.removeGroup(removeGroupID);
           myDBHandler.removeUserFromGroup(user1, removeGroupID);
+          //if we just removed last member from the group, delete the group.
+          if (myDBHandler.getUsersFromGroup(removeGroupID).isEmpty()) {
+            System.out.println("Group is empty, remove it from db");
+            myDBHandler.removeGroup(removeGroupID);
+          }
           break;
+        case FIND_MEMBERS :
+          List<String> members = myDBHandler.getUsersFromGroup(removeGroupID);
+          StringBuilder toReturn = new StringBuilder();
+          for (Iterator<String> i = members.iterator(); i.hasNext();) {
+            String person = i.next();
+            toReturn.append(person);
+            toReturn.append(",");
+          }
+          return toReturn.toString();
       default:
         break;
       }

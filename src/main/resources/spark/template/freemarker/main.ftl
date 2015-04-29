@@ -49,6 +49,7 @@
 					</div>
 					<button type="submit" class="btn btn-default" id="sendInvite">Send Invitation</button>
 				</div>
+				<p id="friendMess"></p>
 			</div>
 			
 			<!--populated through javascript-->
@@ -65,6 +66,7 @@
 					</div>
 					<button type="submit" class="btn btn-default" id="makeGroup">Make Group</button>
 				</div>
+				<p id="message"></p>
 			</div>
 			<!--populated through javascript-->
 			<div id="groupsGrid">
