@@ -318,7 +318,7 @@ public class DatabaseHandler {
     theStat.close();
     e.setID(theRow);
     String eventToGroup = "";
-    if (group_name.equals("")) {
+
       eventToGroup = "INSERT into User_Event (user_name, event_id)"
           + "Values(?, ?);";
       PreparedStatement theStat2 = conn.prepareStatement(eventToGroup);
@@ -331,15 +331,15 @@ public class DatabaseHandler {
       conn.setAutoCommit(false);
       theStat2.executeBatch();
       conn.setAutoCommit(true);
-    } else {
+    if (!group_name.equals("")) {
       int group_id = findGroup(group_name);
       eventToGroup = "INSERT into Group_Event (group_id, event_id)"
           + "Values(?, ?);";
-      PreparedStatement theStat2 = conn.prepareStatement(eventToGroup);
-      theStat2.setInt(1, group_id);
-      theStat2.setInt(2, theRow);
-      theStat2.executeUpdate();
-      theStat2.close();
+      PreparedStatement theStat3 = conn.prepareStatement(eventToGroup);
+      theStat3.setInt(1, group_id);
+      theStat3.setInt(2, theRow);
+      theStat3.executeUpdate();
+      theStat3.close();
     }
   }
   public void removeEvent(Event e) throws SQLException, ParseException {

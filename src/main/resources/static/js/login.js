@@ -55,7 +55,27 @@ function login(postParameters) {
 	console.log(postParameters);
 	var url = $("#login-form").attr('action');
 	console.log('url is ' + url);
-	$.post(url, postParameters, function(responseJSON) {
-	
-	});
+	my_form=document.createElement('FORM');
+	my_form.name='myForm';
+	my_form.method='POST';
+	my_form.action= url;
+
+	my_tb=document.createElement('INPUT');
+	my_tb.type='TEXT';
+	my_tb.name='user';
+	my_tb.value=postParameters.user;
+	my_form.appendChild(my_tb);
+
+	my_tb=document.createElement('INPUT');
+	my_tb.type='Text';
+	my_tb.name='pass';
+	my_tb.value= postParameters.pass;
+	my_form.appendChild(my_tb);
+
+	document.body.appendChild(my_form);
+	console.log("submitting");
+	my_form.submit();
+	/*$.post(url, postParameters, function(responseJSON) {
+			
+	}); */
 }
