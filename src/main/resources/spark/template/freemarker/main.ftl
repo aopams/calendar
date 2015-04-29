@@ -32,7 +32,7 @@
 			<p id="cal-owner"> </p>
 		</div>
 		<div class="col-md-4 col-sm-4 col-xs-4">
-			<a class="btn btn-default" id="logoutbutton" href="#" role="button" id="logout-btn">Log Out</a>
+			<a class="btn btn-default" href="#" role="button" id="logout-btn">Log Out</a>
 		</div>
 	</div>
 	
