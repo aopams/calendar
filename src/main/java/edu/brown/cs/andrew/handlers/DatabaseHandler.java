@@ -258,6 +258,15 @@ public class DatabaseHandler {
     theStat.executeUpdate();
     theStat.close();
   }
+  
+  public void removeGroup(int group_id) throws SQLException {
+    String query = "DELETE FROM Groups WHERE group_id = ?";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setInt(1, group_id);
+    theStat.executeUpdate();
+    theStat.close(); 
+  }
+  
   public void addUserToGroup(String user_name, int group_id) throws SQLException {
     String query = "INSERT into User_Group(user_name, group_id)"
         + "Select ?, ? where not exists ("

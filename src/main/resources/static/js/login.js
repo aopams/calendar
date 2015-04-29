@@ -1,27 +1,40 @@
 jQuery(document).ready(function($) {
-	$(".registerpage").hide(0);	
+	$("#registerpage").hide(0);	
 	$("#registerbutton").bind('click', function(event) {
 		console.log("register");
-		$(".registerpage").show(0);
-		$(".logreg").hide(0);
+		$("#registerpage").show(0);
+		$("#logreg").hide(0);
 	});
 	$(".backbutton").bind('click', function(event) {
 		console.log("asdf");
-		$(".logreg").show(0);
-		$(".registerpage").hide(0);
+		$("#logreg").show(0);
+		$("#registerpage").hide(0);
 	});
 	
 	$("#register").bind('click', function(event) {
 		console.log("noice");
-		var username = document.getElementById('regUser').value;
 		var password = document.getElementById('pass').value;
+		var confpass = document.getElementById('pass2').value;
+		var username = document.getElementById('regUser').value;
 		var fullname = document.getElementById('regName').value;
-		var postParameters = {username : username, password : password, fullname : fullname};
-		register(postParameters);
 		
-
+		//check for valid fields
+		if (!password || !confpass || !username || !fullname) {
+			var message = document.createElement('p');
+			message.innerHTML = "Empty field, please fill in all fields.";
+			var parent = document.getElementById('registerpage');
+			parent.appendChild(message);
+/* 			alert("Empty field, please fill in all fields."); */
+		} else if (password != confpass) {
+/* 			alert("Passwords do not match, please try again."); */
+		} else if (!/^[a-zA-Z0-9- ]*$/.test(username) || !/^[a-zA-Z0-9- ]*$/.test(fullname)) {
+/* 			alert("Username or Name field contains a special characters. Please remove them."); */
+		} else {
+			console.log("shouldn't be here");
+			var postParameters = {username : username, password : password, fullname : fullname};
+			register(postParameters);	
+		}
 	})
-	
 });
 
 /* CHANGE */
@@ -42,7 +55,7 @@ function login(postParameters) {
 	console.log(postParameters);
 	var url = $("#login-form").attr('action');
 	console.log('url is ' + url);
-	/*$.post(url, postParameters, function(responseJSON) {
-			
-	}); */
+	$.post(url, postParameters, function(responseJSON) {
+	
+	});
 }

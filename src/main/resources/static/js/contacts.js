@@ -5,6 +5,15 @@ url = "";
 
 /** for groups: functionality is to be able to create groups where creation involves specifying users to add
 				and also be able to remove yourself from the group **/
+				
+/** CHECK FOR VALID GROUP NAME!!!! **/
+/** CHECK FOR VALID GROUP NAME!!!! **/
+/** CHECK FOR VALID GROUP NAME!!!! **/
+/** CHECK FOR VALID GROUP NAME!!!! **/
+/** CHECK FOR VALID GROUP NAME!!!! **/
+/** ADD CLICK GROUP FUNCTIONALITY TO DISPLAY MEMBERS OF GROUP!!!! **/
+
+/** MODIFY FRIENDS STUFF TO NOT DISPLAY ALERTS!!! **/
 
 $(document).ready(function(e) {
 	$('#calWrap').show(0);
@@ -95,7 +104,8 @@ $(document).ready(function(e) {
 	
 	$("#makeGroup").bind('click', function(e) {
 		var groupName = $("#groupName").val();
-		if (groupName) {
+		if (groupName && !/^[a-zA-Z0-9- ]*$/.test(groupName) == false) {
+			document.getElementById('message').innerHTML = "";
 			form =
 			'<form class="form-inline" id ="newEventForm">' +
 			'<div class="form-group dialog-form">' +
@@ -112,7 +122,9 @@ $(document).ready(function(e) {
 				'</div> </div> </form>';
 			$(form).dialog({ modal: true, resizable: false});	
 		} else {
-			alert("Please enter a group name.");
+			document.getElementById('message').innerHTML = "";
+			document.getElementById('message').innerHTML = "Group name is not valid."
+			document.getElementById('makeGroupBar').appendChild(message);
 		}
 	});
 	
@@ -184,7 +196,7 @@ function createFriends() {
 				var accept = document.createElement('img');
 				refuse.id = 'refuse';
 				accept.id = 'accept';
-				img.src = getProfPic(name);
+				img.src = getProfPic(pendingFriends[i]);
 				refuse.src = '/img/x.png';
 				refuse.onclick=function() {removeFriend(this);};
 				accept.src = '/img/check.png';
@@ -284,6 +296,7 @@ function createGroups() {
 					name.innerHTML = groups[count][1];
 					var img = document.createElement('img');
 					img.src = getProfPic(groups[count][1]);
+					img.onclick=function() {viewGroupMembers(this);};
 					var rem = document.createElement('img');
 					rem.id = 'rem';
 					rem.src = '/img/x.png';
@@ -414,3 +427,42 @@ function newGroup() {
 		createGroups();
 	});
 }
+
+function viewGroupMembers(elem) {
+	var parent = elem.parentNode;
+	var groupid = parent.getAttribute('groupid');
+	var groupname = parent.getAttribute('groupname');
+	var command = "members";
+	console.log(groupid);
+	var postParameters = {url : url, groupid : groupid, groupname : groupname, command :command}
+	$.post('/editgroups', postParameters, function(responseJSON) {
+		console.log("fetching members");
+		responseObject = JSON.parse(responseJSON);
+		var members = responseObject.members;
+		form =
+			'<form class="form-inline" id="membersForm">' +
+				'<div class="form-group dialog-form">' +
+					'<img id="x-button" src="/img/x.png"/>' +
+				'</div>' +
+				'<div class="input-group margin-group">' +
+			    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="Users to add"/>'+
+				'</div>' +
+			'</form>';
+		$(form).dialog({ modal: true, resizable: false});
+		for (i = 0; i < members.length; i++) {
+			var mem = document.createElement('div');
+			mem.className = 'members';
+			var name = document.createElement('div');
+			name.id = 'name';
+			name.style.marginLeft='auto';
+			name.style.marginRight='auto';
+			name.style.display='block';
+			name.innerHTML = members[i];
+			var img = document.createElement('img');
+			img.src = getProfPic(members[i]);
+			mem.appendChild(img);
+			mem.appendChild(name);
+			$("#membersForm").append(mem);
+		};
+	});
+};

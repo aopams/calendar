@@ -592,7 +592,6 @@ public class SparkHandler {
       for (Integer key : tempMap.keySet()) {
         String keyString = Integer.toString(key);
         String groupName = tempMap.get(key);
-        System.out.println(keyString + " " + groupName);
         String[] toAdd = {keyString, groupName};
         myGroups.add(toAdd);
       }
@@ -618,10 +617,36 @@ public class SparkHandler {
       String user1 = clients.get(id).user;
       String groupName = qm.value("groupname").replace("\"", "");
       String message = "";
+      String gid;
+      int groupID;
       switch(command) {
+        case "members":
+          gid = qm.value("groupid");
+          groupID = Integer.parseInt(gid);
+          try {
+            System.out.println("in members");
+            ct = new ContactsThread(clients.get(id),
+                null, null, groupID, null, Commands.FIND_MEMBERS);
+            Future<String> t = pool.submit(ct);
+            String[] members = t.get().split(",");
+            for (String s : members) {
+              System.out.println("members");
+              System.out.println(s);
+            }
+            message = "Members found!";
+            Map<String, String[]> variables2 = new ImmutableMap.Builder()
+            .put("members", members).build();
+            return GSON.toJson(variables2);
+          } catch (ExecutionException | InterruptedException e1) {
+            message = "ERROR: Bug in SQL.";
+            e1.printStackTrace();
+            variables = new ImmutableMap.Builder()
+            .put("message", message).build();
+            return GSON.toJson(variables);
+          }
         case "remove":
-          String gid = qm.value("groupid");
-          int groupID = Integer.parseInt(gid);
+          gid = qm.value("groupid");
+          groupID = Integer.parseInt(gid);
           System.out.println(gid + " " + groupName);
           try {
             System.out.println("in remove group");
@@ -646,7 +671,9 @@ public class SparkHandler {
           List<String> usersList = new ArrayList<String>();
           //add user himself
           usersList.add(user1);
+          System.out.println(user1);
           for (String s : tempUsersList) {
+            System.out.println(s);
             usersList.add(s.trim());
           }
           try {
@@ -655,7 +682,6 @@ public class SparkHandler {
                 null, groupName, null, usersList, Commands.ADD_GROUP);
             Future<String> t = pool.submit(ct);
             t.get();
-            
           } catch (InterruptedException | ExecutionException e2) {
             System.out.println("caught");
             message = "ERROR: Bug in SQL.";
