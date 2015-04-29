@@ -625,7 +625,7 @@ public class SparkHandler {
       for (Integer key : tempMap.keySet()) {
         String keyString = Integer.toString(key);
         String groupName = tempMap.get(key);
-        String[] toAdd = { keyString, groupName };
+        String[] toAdd = {keyString, groupName};
         myGroups.add(toAdd);
       }
       Map<String, List<String>> variables = new ImmutableMap.Builder().put(
@@ -652,7 +652,6 @@ public class SparkHandler {
       String user1 = clients.get(id).user;
       String groupName = qm.value("groupname").replace("\"", "");
       String message = "";
-<<<<<<< HEAD
       String gid;
       int groupID;
       switch(command) {
@@ -726,54 +725,6 @@ public class SparkHandler {
             .put("message", message).build();
             return GSON.toJson(variables);
           }
-=======
-      switch (command) {
-      case "remove":
-        String gid = qm.value("groupid");
-        int groupID = Integer.parseInt(gid);
-        System.out.println(gid + " " + groupName);
-        try {
-          System.out.println("in remove group");
-          ct = new ContactsThread(clients.get(id), null, groupName, groupID,
-              null, Commands.REMOVE_GROUP);
-          Future<String> t = pool.submit(ct);
-          t.get();
-          message = "Friend removed!";
-          variables = new ImmutableMap.Builder().put("message", message)
-              .build();
-          return GSON.toJson(variables);
-        } catch (ExecutionException | InterruptedException e1) {
-          message = "ERROR: Bug in SQL.";
-          e1.printStackTrace();
-          variables = new ImmutableMap.Builder().put("message", message)
-              .build();
-          return GSON.toJson(variables);
-        }
-      case "add":
-        String users = qm.value("users").replace("\"", "");
-        String[] tempUsersList = users.split(",");
-        List<String> usersList = new ArrayList<String>();
-        // add user himself
-        usersList.add(user1);
-        for (String s : tempUsersList) {
-          usersList.add(s.trim());
-        }
-        try {
-          System.out.println("in add group");
-          ct = new ContactsThread(clients.get(id), null, groupName, null,
-              usersList, Commands.ADD_GROUP);
-          Future<String> t = pool.submit(ct);
-          t.get();
-
-        } catch (InterruptedException | ExecutionException e2) {
-          System.out.println("caught");
-          message = "ERROR: Bug in SQL.";
-          e2.printStackTrace();
-          variables = new ImmutableMap.Builder().put("message", message)
-              .build();
-          return GSON.toJson(variables);
-        }
->>>>>>> 74da1bf9e26e73b611fc1e9e66daf580c3360fdf
       }
       message = "ERROR: Bug has occured, try again.";
       variables = new ImmutableMap.Builder().put("message", message).build();
