@@ -610,6 +610,33 @@ function dateRegex(date) {
 	}
 }
 
+function displayRanking() {
+	$('#newEventForm').html(
+	'<table class="table">' +
+	'<tbody>' +
+	    '<tr>' +
+	     ' <td class="no-border"> Everyone\'s free: </td>' +
+		   ' </tr>' +
+		   ' <tr class="active">' +
+		   '   <td><a onclick="">Apr 25, 2015 @ 12:00 PM</a></td>' +
+		  '  </tr>' +
+		  '  <tr>' +
+		  '    <td>Column content</td>' +
+		  '  </tr>' +
+		  '  <tr class="active">' +
+		  '    <td>Column content</td>' +
+		  '  </tr>' +
+		  '  <tr>' +
+		  '    <td> or... </td>' +
+		  '  </tr>' +
+		  '  <tr class="danger">' +
+		  '    <td> Override </td>' +
+		  '  </tr>' +
+		'</tbody>' +
+	'</table>');
+	
+}
+
 $(document).ready(function(e) {
 	$(".ui-state-default").hide()  
 	/* update the displayed events to get events on page */
@@ -709,6 +736,7 @@ $(document).ready(function(e) {
 	
 	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
+	    displayRanking();
 	    var $dialog = $(this).parents('.ui-dialog-content');
 	    $dialog.dialog('destroy');
 	    updateDisplayedEvents();
@@ -736,6 +764,8 @@ $(document).ready(function(e) {
 	$(document).on('click','#edit-button', function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
 		editEvent(id);
+	    var $dialog = $(this).parents('.ui-dialog-content');
+	    $dialog.dialog('destroy');
 		updateDisplayedEvents();
 	});
 });
