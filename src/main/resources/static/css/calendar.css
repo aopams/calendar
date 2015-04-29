@@ -320,7 +320,7 @@ body {
 	height:24px;
 	width:24px;
 	padding:0px;
-	margin-left: 55px;
+	margin-left: 62px;
 }
 
 #rem {
@@ -424,6 +424,23 @@ body {
 #membersForm {
 	max-height: 250px !important;
 	overflow: auto;
+}
+
+#new-members-button {
+	height: 24px;
+	float: left;
+	margin-top: 9px;
+	margin-left: 3px;
+}
+
+.addMembersWrap {
+	width: 252px;
+	height: 40px;
+}
+
+#membersToAdd {
+	float: left;
+	width: 224px;
 }
 /*dialog inner styling */
 #duration {

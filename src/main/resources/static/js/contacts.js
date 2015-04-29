@@ -128,6 +128,7 @@ $(document).ready(function(e) {
 		}
 	});
 	
+	//new group button
 	$(document).on('click','#new-group-button', function(e) {
 	    newGroup();
 	    var $dialog = $(this).parents('.ui-dialog-content');
@@ -156,17 +157,6 @@ function createFriends() {
 	$('.pending').remove();
 	$('.scrollRow').remove();
 	$('.contacts-row').remove();
-	
-/*
-	console.log("pending friends");
-	for (i = 0; i < pendingFriends.length; i++) {
-		console.log(pendingFriends[i]);
-	}
-	console.log("friends");
-	for (i = 0; i < friends.length; i++) {
-		console.log(friends[i]);
-	}
-*/
 		
 	//loop through pending friends list to show on contacts page
 	if (pendingFriends.length > 0) {
@@ -444,12 +434,31 @@ function viewGroupMembers(elem) {
 				'<div class="form-group dialog-form">' +
 					'<img id="x-button" src="/img/x.png"/>' +
 				'</div>' +
-				'<div class="input-group margin-group">' +
-			    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="Users to add"/>'+
+				'<div class="addMembersWrap">' +
+					'<div class="input-group margin-group" id="membersToAdd">' +
+				    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="Users to add"/>'+
+					'</div>' +
+					'<img id="new-members-button" src="\\img/check.png"/>' +
 				'</div>' +
-				'<img id="new-group-button" src="\\img/check.png"/>' +
 			'</form>';
 		$(form).dialog({ modal: true, resizable: false});
+		
+		//adding memebers to group
+		$(document).on('click','#new-members-button', function(e) {
+			var users = document.getElementById('attendees').value;
+			if (users) {
+				console.log("members to add");
+				console.log(users);				
+			}
+			
+/*
+		    var $dialog = $(this).parents('.ui-dialog-content');
+		    $dialog.dialog('destroy');
+*/
+		    
+		});
+		
+		
 		for (i = 0; i < members.length; i++) {
 			var mem = document.createElement('div');
 			mem.className = 'members';
