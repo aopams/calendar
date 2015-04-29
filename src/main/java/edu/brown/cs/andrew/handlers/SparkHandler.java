@@ -625,12 +625,7 @@ public class SparkHandler {
       for (Integer key : tempMap.keySet()) {
         String keyString = Integer.toString(key);
         String groupName = tempMap.get(key);
-<<<<<<< HEAD
-        String[] toAdd = {keyString, groupName};
-=======
-        System.out.println(keyString + " " + groupName);
         String[] toAdd = { keyString, groupName };
->>>>>>> 74da1bf9e26e73b611fc1e9e66daf580c3360fdf
         myGroups.add(toAdd);
       }
       Map<String, List<String>> variables = new ImmutableMap.Builder().put(
