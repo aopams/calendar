@@ -155,6 +155,7 @@ public class SparkHandler {
       }
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       ClientHandler cli = clients.get(clientID);
+      int override = Integer.parseInt(qm.value("override"));
       String title = qm.value("title");
       boolean noon = qm.value("date").contains(" 12:");
       System.out.println(noon);
@@ -197,7 +198,7 @@ public class SparkHandler {
       } catch (ParseException e2) {
         e2.printStackTrace();
       }
-      if (conflict) {
+      if (conflict || override == 1) {
         CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null,
             null);
         if (eventID != -1) {
@@ -293,13 +294,6 @@ public class SparkHandler {
     @Override
     public ModelAndView handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
-      String code = qm.value("code");
-      int clientID = Integer.parseInt(req.params(":id"));
-      System.out
-          .println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-      System.out.println("ID: " + clientID);
-      System.out.println("CODE: " + code);
-
       String user = qm.value("user");
       String pass = qm.value("pass");
       System.out.println("");
