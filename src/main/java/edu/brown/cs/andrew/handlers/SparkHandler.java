@@ -92,7 +92,7 @@ public class SparkHandler {
     Spark.post("/rightarrow", new BTFEventHandler());
     Spark.post("/newevent", new CreateEventHandler());
     Spark.post("/register", new RegisterHandler());
-    Spark.post("/logout", new LogoutHandler());
+    Spark.post("/logout", new LogoutHandler(), freeMarker);
     Spark.post("/editfriends", new ModifyFriendsHandler());
     Spark.post("/getusername", new GetNameHandler());
     Spark.post("/getgroups", new GroupsHandler());
@@ -223,12 +223,13 @@ public class SparkHandler {
       List<String> toFrontEnd = new ArrayList<String>(); 
       rank.checkAllConflicts(date);
       Integer[] bestTimes = rank.getBestTimes(3, date);
+      Gson gson = new Gson();
       for (int i = 0; i < 3; i++) {
         c.set(Calendar.HOUR_OF_DAY, bestTimes[i]);
         Event newE = new Event(c.getTime(), title, dayOfWeek, attendees, group, duration, description, creator);
-        toFrontEnd.add(GSON.toJson(newE));
+        toFrontEnd.add(gson.toJson(newE));
       }
-      toFrontEnd.add(GSON.toJson(e));
+      toFrontEnd.add(gson.toJson(e));
       int status = 0;
       String message = "conflict";
       Map<String, Object> variables = new ImmutableMap.Builder()
@@ -241,13 +242,14 @@ public class SparkHandler {
     }
   }
 
-  private static class LogoutHandler implements Route {
+  private static class LogoutHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
+      System.out.println("logging out");
       QueryParamsMap qm = req.queryMap();
-      String idUnparsed = qm.value("url");
-      int id = Integer.parseInt(qm.value("url").substring(0,
-          idUnparsed.length() - 1));
+      String idUnparsed = qm.value("string");
+      idUnparsed.replaceAll("#","");
+      int id = Integer.parseInt(idUnparsed.substring(10));
       clients.remove(id);
       while (clients.containsKey(randomHolder)) {
         randomHolder = (int) (Math.random() * 1000000);
@@ -256,6 +258,7 @@ public class SparkHandler {
           + randomHolder + "\">";
       Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
           "message", "", "form", form);
+      System.out.println("logging out final");
       return new ModelAndView(variables, "login.ftl");
     }
   }
@@ -269,12 +272,8 @@ public class SparkHandler {
         int id = Integer.parseInt(qm.value("url"));
         clients.remove(id);
       }
-      while (clients.containsKey(randomHolder)) {
-        randomHolder = (int) (Math.random() * 1000000);
-      }
 
-      String form = "<form id=\"login-form\" method = \"POST\" action=\"/calendar/"
-          + randomHolder + "\">";
+      String form = getRandomForm();
       Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
           "message", "", "form", form);
       return new ModelAndView(variables, "login.ftl");
