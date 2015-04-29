@@ -155,10 +155,13 @@ public class DatabaseHandler {
   
 
   public void addFriendRequest(String user_name1, String user_name2) throws SQLException {
+    if (user_name1.equals(user_name2)){
+      return;
+    }
     String query = "INSERT into Friends (user_name1, user_name2, status)"
         + "Select ?, ?, \'pending\' Where NOT EXISTS("
         + "Select * from Friends where (user_name1 = ? and user_name2 = ?)"
-        + "or (user_name1 = ? and user_name2 = ?));";
+        + "or (user_name1 = ? and user_name2 = ? ));";
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, user_name1);
     theStat.setString(2, user_name2);
@@ -358,6 +361,7 @@ public class DatabaseHandler {
       conn.setAutoCommit(true);
     if (!group_name.equals("")) {
       int group_id = findGroup(group_name);
+      System.out.println(group_id);
       eventToGroup = "INSERT into Group_Event (group_id, event_id)"
           + "Values(?, ?);";
       PreparedStatement theStat3 = conn.prepareStatement(eventToGroup);

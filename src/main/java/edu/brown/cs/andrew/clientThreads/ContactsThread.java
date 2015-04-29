@@ -87,8 +87,10 @@ public class ContactsThread implements Callable<String> {
             
           }
           int groupID = myDBHandler.getNewGroupID();
+          System.out.println(groupID);
           myDBHandler.addGroup(groupName, groupID);
           for (int i = 0; i < groupMembers.size(); i++) {
+            System.out.println(groupMembers.get(i));
             myDBHandler.addUserToGroup(groupMembers.get(i), groupID);
           }
           client1.addGroup(groupName, groupID);

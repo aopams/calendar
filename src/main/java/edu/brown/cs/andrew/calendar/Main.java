@@ -25,19 +25,19 @@ public class Main {
     System.out.println(System.currentTimeMillis() / 1000);
     try {
       myDBHandler = new DatabaseHandler("calendar.sqlite3");
-//      myDBHandler.createTablesForCalendar();
-//      myDBHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy");
-//      myDBHandler.deleteUser("Harsha");
-//      myDBHandler.deleteUser("Harsha2");
-//      myDBHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy");
-//      myDBHandler.insertUser("Harsha2", "meow", "Harsha Yeddanapudy");
-//      myDBHandler.insertUser("Rohan", "6969", "Rohan Chandra");
-//      myDBHandler.insertUser("Dylan", "dg", "Dylan Gattey");
-//      myDBHandler.insertUser("Will", "Nagasaki", "William Truong");
-//      myDBHandler.insertUser("Andrew", "dino", "Andrew Osgood");
-//      myDBHandler.insertUser("Will2", "Nagasaki", "William Truong");
-//      myDBHandler.insertUser("Will3", "Nagasaki", "William Truong");
-//      myDBHandler.insertUser("Will4", "Nagasaki", "William Truong");
+      // myDBHandler.createTablesForCalendar();
+   //  myDBHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy");
+    // myDBHandler.deleteUser("Harsha");
+    //  myDBHandler.deleteUser("Harsha2");
+    //  myDBHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy");
+    //  myDBHandler.insertUser("Harsha2", "meow", "Harsha Yeddanapudy");
+    //  myDBHandler.insertUser("Rohan", "6969", "Rohan Chandra");
+    //  myDBHandler.insertUser("Dylan", "dg", "Dylan Gattey");
+    //  myDBHandler.insertUser("Will", "Nagasaki", "William Truong");
+    //   myDBHandler.insertUser("Andrew", "dino", "Andrew Osgood");
+    //  myDBHandler.insertUser("Will2", "Nagasaki", "William Truong");
+   //   myDBHandler.insertUser("Will3", "Nagasaki", "William Truong");
+   //   myDBHandler.insertUser("Will4", "Nagasaki", "William Truong");
 //      myDBHandler.addFriendRequest("Rohan", "Harsha2");
 //      myDBHandler.addFriendRequest("Rohan", "Harsha");
 //      myDBHandler.addFriendRequest("Rohan", "Will");
@@ -72,9 +72,9 @@ public class Main {
           "Harsha and Rohan going stealth-mode",
           "Rohan");
       System.out.println(myDBHandler.findGroup("Harsha Squad"));
-      myDBHandler.addEvent(e);
-      myDBHandler.addEvent(e2);
-      myDBHandler.addEvent(e3); 
+     // myDBHandler.addEvent(e);
+     // myDBHandler.addEvent(e2);
+     // myDBHandler.addEvent(e3); 
       List<String> hGroup1 = new ArrayList<String>();
       hGroup1.add("Harsha");
       Date myDate1 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("13/4/2015 13:00");

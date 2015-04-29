@@ -54,19 +54,20 @@ public class Ranker {
       System.out.println("attendees : " + attendees.entrySet().size());
       ClientHandler curr = e.getValue();
       ConcurrentHashMap<Integer, Event> daysEvents = curr.getEventsByDay(d);
-      System.out.println(d);
-      System.out.println("Events number " + daysEvents.size());
       for (Entry<Integer, Event> event : daysEvents.entrySet()) {
         Date eventTime;
         try {
           eventTime = event.getValue().getDate();
-          System.out.println(d + " VERSUS " + eventTime);
+          System.out.println(d + " START VERSUS " + eventTime);
           Calendar innerCal = Calendar.getInstance();
           innerCal.setTime(eventTime);
-          c.add(Calendar.MINUTE, event.getValue().getDuration());
-          Date endTime = c.getTime();
+          System.out.println(event.getValue().getDuration());
+          innerCal.add(Calendar.MINUTE, event.getValue().getDuration());
+          Date endTime = innerCal.getTime();
+          System.out.println(end + " End VERSUS " + endTime);
           toReturn = !((d.after(eventTime) && d.before(endTime)) || (end
               .after(eventTime) && end.before(endTime)));
+          System.out.println(toReturn);
         } catch (ParseException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();

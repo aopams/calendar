@@ -155,7 +155,11 @@ public class SparkHandler {
       }
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       ClientHandler cli = clients.get(clientID);
-      int override = Integer.parseInt(qm.value("override"));
+      String toOverride = qm.value("override");
+      int override = -1;
+      if (toOverride != null) {
+        override = Integer.parseInt(qm.value("override"));
+      }
       String title = qm.value("title");
       boolean noon = qm.value("date").contains(" 12:");
       System.out.println(noon);
@@ -194,6 +198,7 @@ public class SparkHandler {
       Ranker rank = new Ranker(e);
       boolean conflict = false;
       try {
+        System.out.println("Event Date " + e.getDate());
         conflict = rank.checkConflict(e.getDate());
       } catch (ParseException e2) {
         e2.printStackTrace();
