@@ -18,6 +18,14 @@ function updateDisplayedEvents() {
 	})
 }
 
+/* logout action */
+function logoutAction() {
+	var postParameters = {string: window.location.pathname};
+	$.post("/logout", postParameters, function(responseJSON){
+		parseData(responseJSON);
+	})
+}
+
 /* switch to previous week */
 function leftArrow() {
 	var daydetails = weekInfo[0].day  + "-" + weekInfo[0].month + "-" + weekInfo[0].year;
