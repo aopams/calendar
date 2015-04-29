@@ -85,6 +85,10 @@ function newEvent() {
 	    if(responseObject.status != 1) {
 		    console.log('conflict');
 			displayRanking(responseObject);
+		} else {
+			var $dialog = $('.ui-dialog-content');
+		    $dialog.dialog('destroy');
+		    updateDisplayedEvents();
 		}
 	})
 }
@@ -104,7 +108,15 @@ function editEvent(id) {
 		group: group
 	};
 	$.post("/newevent", postParameters, function(responseJSON){
-
+		var responseObject = JSON.parse(responseJSON);
+		console.log(responseObject);
+	    if(responseObject.status != 1) {
+			displayRanking(responseObject);
+		} else {
+			var $dialog = $('.ui-dialog-content');
+		    $dialog.dialog('destroy');
+		    updateDisplayedEvents();
+		}
 	})
 }
 
@@ -120,7 +132,9 @@ function rankedEvent(index) {
 	postParameters.attendees = postParameters.attendees + ',';
 	delete postParameters.id;
 	$.post("/newevent", postParameters, function(responseJSON){
-
+		var $dialog = $('.ui-dialog-content');
+	    $dialog.dialog('destroy');
+	    updateDisplayedEvents();
 	})
 }
 
@@ -764,8 +778,6 @@ $(document).ready(function(e) {
 	
 	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
-	    var $dialog = $(this).parents('.ui-dialog-content');
-	    $dialog.dialog('destroy');
 	    updateDisplayedEvents();
 	});
 	
