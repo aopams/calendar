@@ -742,6 +742,10 @@ $(document).ready(function(e) {
 	    rightArrow();
 	});
 	
+	$(document).on('click','#logout-btn', function(e) {
+	    logoutAction();
+	});
+	
 	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
 	    displayRanking();
