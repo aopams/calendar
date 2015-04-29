@@ -95,9 +95,19 @@ public class Ranker {
           if (startHour <= endHour) {
             for (int j = startHour; j <= endHour; j++) {
               int val = bestHoursTable.get(j);
-              int newVal = val - (100 / attendees.size());
+              int newVal = val - (200 / attendees.size());
               bestHoursTable.put(j, newVal);
             }
+          }
+          if (startHour != 0) {
+            int val = bestHoursTable.get(startHour - 1);
+            int newVal = val + (200 / attendees.size());
+            bestHoursTable.put(startHour - 1, newVal);
+          }
+          if (endHour != 23) {
+            int val = bestHoursTable.get(endHour + 1);
+            int newVal = val + (200 / attendees.size());
+            bestHoursTable.put(endHour + 1, newVal);
           }
         } catch (ParseException e1) {
           // TODO Auto-generated catch block
