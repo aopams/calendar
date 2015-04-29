@@ -5,8 +5,13 @@ var eventMap = {};
 //global array to hold information about the week we are displaying.
 var weekInfo = [];
 
+var newWindow;
+
 //colors that we assign to event boxes
 var eventColors = ["#FF9393", "#98FB98", "#FFFF99", "#c0aee0", "#e0d9ae", "#A9D8B6", "lightgoldenrodyellow"]
+
+//ranking suggestions array
+var events = [];
 /* END GLOBAL VARIABLES */
 
 /* POST HANDLERS */
@@ -20,9 +25,10 @@ function updateDisplayedEvents() {
 
 /* logout action */
 function logoutAction() {
+	console.log("logout button");
 	var postParameters = {string: window.location.pathname};
 	$.post("/logout", postParameters, function(responseJSON){
-		
+	
 	})
 }
 
@@ -45,15 +51,28 @@ function rightArrow() {
 }
 
 function googleEvents() {
-	window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=" + window.location.pathname + "&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com", "popupWindow", "width=600,height=600,scrollbars=yes");
+
+	newWindow = window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com", "popupWindow", "width=600,height=600,scrollbars=yes");
+	var idPathname = window.location.pathname;
+	
+	setTimeout(function() {
+		var codePathname = newWindow.location.href;
+		var code = codePathname.substring(28);
+		var postParameters = {string: idPathname, code: code};
+		$.post("/getGoogleEvents", postParameters, function(responseJSON){
+			parseData(responseJSON);
+		})
+		
+		
+		
+	}, 5000);
+
+
 }
 
 function googleEvents2() {
-	var postParameters = {string: window.location.pathname};
-	$.post("/getGoogleEvents", postParameters, function(responseJSON){
-		parseData(responseJSON);
-	})
-	window.close();
+	
+	self.close();
 }
 
 /* create new event */
@@ -70,20 +89,22 @@ function newEvent() {
 	if (atten === '') {
 		override = 1;
 	}
+
 	var postParameters = {string: window.location.pathname, title: title, date: correctTime,
-		time: time, duration: dur, description: descrip, attendees: atten,
+		duration: dur, description: descrip, attendees: atten,
 		group: group, override: override
 	};
-	console.log("new event");
+
 	$.post("/newevent", postParameters, function(responseJSON){
-		responseObject = JSON.parse(responseJSON);
-		console.log(responseObject.status);
+		var responseObject = JSON.parse(responseJSON);
 		console.log(responseObject);
-		if(responseObject.status == 1) {
-			$dialog.dialog('destroy');
+	    if(responseObject.status != 1) {
+		    console.log('conflict');
+			displayRanking(responseObject);
 		} else {
-			alert('ranking: ');
-			displayRanking();
+			var $dialog = $('.ui-dialog-content');
+		    $dialog.dialog('destroy');
+		    updateDisplayedEvents();
 		}
 	})
 }
@@ -102,16 +123,34 @@ function editEvent(id) {
 		time: time, duration: dur, description: descrip, attendees: atten,
 		group: group
 	};
-	console.log("edit event");
 	$.post("/newevent", postParameters, function(responseJSON){
-/*
-	add code to handle messaging for ranking, etc
-		if(responseJSON.status == 1) {
-			$dialog.dialog('destroy');
+		var responseObject = JSON.parse(responseJSON);
+		console.log(responseObject);
+	    if(responseObject.status != 1) {
+			displayRanking(responseObject);
 		} else {
-			alert('ranking: ' + responseJSON.message);
+			var $dialog = $('.ui-dialog-content');
+		    $dialog.dialog('destroy');
+		    updateDisplayedEvents();
 		}
-*/
+	})
+}
+
+/* create ranked event suggestion */
+function rankedEvent(index) {
+	var postParameters = events[index];
+	var givenDate = postParameters.date.split(" ");
+	var correctTime = getDBTime(givenDate[0] + " " + givenDate[1] + " " + givenDate[2],
+	 					givenDate[3] + " " + givenDate[4]);
+	postParameters.override = 1;
+	postParameters.string = window.location.pathname;
+	postParameters.date = correctTime;
+	postParameters.attendees = postParameters.attendees + ',';
+	delete postParameters.id;
+	$.post("/newevent", postParameters, function(responseJSON){
+		var $dialog = $('.ui-dialog-content');
+	    $dialog.dialog('destroy');
+	    updateDisplayedEvents();
 	})
 }
 
@@ -121,14 +160,7 @@ function deleteEvent(id) {
 	var postParameters = {string: window.location.pathname, id: id};
 
 	$.post("/removeevent", postParameters, function(responseJSON){
-/*
-	add code to handle messaging for ranking, etc
-		if(responseJSON.status == 1) {
-			$dialog.dialog('destroy');
-		} else {
-			alert('ranking: ' + responseJSON.message);
-		}
-*/
+
 	})
 }
 
@@ -137,14 +169,7 @@ function removeUserEvent(id) {
 	var postParameters = {string: window.location.pathname, id: id};
 
 	$.post("/removeuserevent", postParameters, function(responseJSON){
-/*
-	add code to handle messaging for ranking, etc
-		if(responseJSON.status == 1) {
-			$dialog.dialog('destroy');
-		} else {
-			alert('ranking: ' + responseJSON.message);
-		}
-*/
+
 	})
 }
 
@@ -186,14 +211,14 @@ function openDialog(key, google) {
 	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description..."'+ ds +'>'+ value.description + '</textarea>' +
 	    '</div>' +
 	    '<div class="input-group margin-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'"'+ ds +'/>' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+ value.attendees +'"'+ ds +'/>' +
 		'</div>' +
 	  	'<div class="input-group margin-group">' +
 		    '<div class="input-group-addon">@</div>' +
 		    '<input type="text" class="form-control" id="group" placeholder="Group" value="'+ value.group +'"'+ ds +'/>' +
 		'</div>' +
 		'<div class="margin-group-xl">';
-		
+
 	if (google == 1) {
 		form = form + '<img id="google-button" src="\\img/google.png"/>';
 	} else if (google == 2) {
@@ -238,12 +263,6 @@ function newEventDialog(date, time) {
 		'<img id="new-event-button" src="\\img/check.png"/>' +
 		'</div> </div> </form>';
 	$(form).dialog({ modal: true, resizable: false});
-}
-
-/* opens dialog window for message from backend */
-function messageDialog() {
-	form = '<p> test!!! </p>';
-	$(form).dialog({ modal: true, resizable: false });
 }
 
 /* opens calendar view selection */
@@ -635,28 +654,29 @@ function dateRegex(date) {
 	}
 }
 
-function displayRanking() {
+function displayRanking(obj) {
+	events = obj.events;
 	$('#newEventForm').html(
 	'<table class="table">' +
 	'<tbody>' +
 	    '<tr>' +
 	     ' <td class="no-border"> Everyone\'s free: </td>' +
-		   ' </tr>' +
-		   ' <tr class="active">' +
-		   '   <td><a onclick="">Apr 25, 2015 @ 12:00 PM</a></td>' +
-		  '  </tr>' +
-		  '  <tr>' +
-		  '    <td>Column content</td>' +
-		  '  </tr>' +
-		  '  <tr class="active">' +
-		  '    <td>Column content</td>' +
-		  '  </tr>' +
-		  '  <tr>' +
-		  '    <td> or... </td>' +
-		  '  </tr>' +
-		  '  <tr class="danger">' +
-		  '    <td> Override </td>' +
-		  '  </tr>' +
+		    '</tr>' +
+		    '<tr class="active">' +
+		      '<td><a onclick="rankedEvent(0)">' + obj.events[0].date + '</a></td>' +
+		    '</tr>' +
+		    '<tr>' +
+		      '<td><a onclick="rankedEvent(1)">' + obj.events[1].date + '</a></td>' +
+		    '</tr>' +
+		    '<tr class="active">' +
+		      '<td><a onclick="rankedEvent(2)">' + obj.events[2].date + '</a></td>' +
+		    '</tr>' +
+		    '<tr>' +
+		      '<td> or... </td>' +
+		    '</tr>' +
+		    '<tr class="danger">' +
+		      '<td><a onclick="rankedEvent(3)"> Override </a></td>' +
+		    '</tr>' +
 		'</tbody>' +
 	'</table>');
 	
@@ -668,9 +688,9 @@ $(document).ready(function(e) {
 	updateDisplayedEvents();
 	
 	/* update calendar every 5 seconds */
-	/*window.setInterval(function() { 
+	window.setInterval(function() { 
 		updateDisplayedEvents();
-	}, 5000); */
+	}, 5000); 
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {
@@ -774,9 +794,6 @@ $(document).ready(function(e) {
 	
 	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
-	    displayRanking();
-	    var $dialog = $(this).parents('.ui-dialog-content');
-	    $dialog.dialog('destroy');
 	    updateDisplayedEvents();
 	});
 	

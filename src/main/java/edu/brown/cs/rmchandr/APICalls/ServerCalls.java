@@ -410,6 +410,7 @@ public class ServerCalls {
 
       Event toPut = new Event(date, title, dayOfWeek, attendees, group,
           duration, description, "google");
+      toPut.setID(id);
       toReturn.add(toPut);
     }
 

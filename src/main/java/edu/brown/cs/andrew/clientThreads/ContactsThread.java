@@ -3,6 +3,7 @@ package edu.brown.cs.andrew.clientThreads;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import edu.brown.cs.andrew.handlers.ClientHandler;
@@ -71,12 +72,19 @@ public class ContactsThread implements Callable<String> {
             break;
             //CHECK IF EACH USER IS VALID
         case ADD_GROUP :
+          Set<String> acceptedFriends = myDBHandler.getAcceptedFriends(user1);
           for (Iterator<String> it = groupMembers.iterator(); it.hasNext();) {
             //user does not exist, remove from list
             String user = it.next();
             if (myDBHandler.findUser(user) == null) {
               it.remove();
+            } else if (!acceptedFriends.contains(user) && !user.equals(user1)) {
+              System.out.println("not friends with " + user);
+              it.remove();
             }
+            //user list includes user logged in, so must make sure to not accidentally
+            //remove the user him/herself
+            
           }
           int groupID = myDBHandler.getNewGroupID();
           myDBHandler.addGroup(groupName, groupID);
@@ -103,6 +111,24 @@ public class ContactsThread implements Callable<String> {
             toReturn.append(",");
           }
           return toReturn.toString();
+        case NEW_MEMBERS :
+          Set<String> acceptedFriends2 = myDBHandler.getAcceptedFriends(user1);
+          for (Iterator<String> it = groupMembers.iterator(); it.hasNext();) {
+            //user does not exist, remove from list
+            String user = it.next();
+            if (myDBHandler.findUser(user) == null) {
+              it.remove();
+            } else if (!acceptedFriends2.contains(user)) {
+              System.out.println("not friends with " + user);
+              it.remove();
+            }
+            //if the user is not friends with the person they want to add, don't add them
+            
+          }
+          for (int i = 0; i < groupMembers.size(); i++) {
+            myDBHandler.addUserToGroup(groupMembers.get(i), removeGroupID);
+          }
+          break;
       default:
         break;
       }
