@@ -49,9 +49,10 @@ function googleEvents() {
 		$.post("/getGoogleEvents", postParameters, function(responseJSON){
 			parseData(responseJSON);
 		})
+		self.close();
 		
 		
-	}, 5000);
+	}, 10000);
 
 	
 }

@@ -65,16 +65,9 @@ function googleEvents() {
 	
 }
 
-function testfunc() {
-	console.log(newWindow.location.href);
-}
-
 function googleEvents2() {
-	var postParameters = {string: window.location.pathname};
-	$.post("/getGoogleEvents", postParameters, function(responseJSON){
-		parseData(responseJSON);
-	})
-	window.close();
+	
+	self.close();
 }
 
 /* create new event */

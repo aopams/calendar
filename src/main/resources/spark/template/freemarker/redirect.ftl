@@ -16,10 +16,7 @@
 </head>
 
 <body>
-	${form}
-	<input type="hidden" name="string" value=${string} />
-	<input type="submit" id="continue" class="btn btn-primary" value="Continue to Calendar">
-	  </form>
+	<button type="button" id="continue">Continue to Calendar</button>
 </body>
 
 </html>

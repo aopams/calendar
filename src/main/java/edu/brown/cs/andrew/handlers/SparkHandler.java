@@ -81,7 +81,7 @@ public class SparkHandler {
     FreeMarkerEngine freeMarker = createEngine();
     // Setup Spark Routes
 
-    Spark.get("/d", new CodeHandler(), freeMarker);
+    Spark.get("/", new CodeHandler(), freeMarker);
     // Spark.get("/calendar", new FrontHandler(), freeMarker);
     Spark.get("/login", new LoginHandler(), freeMarker);
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
