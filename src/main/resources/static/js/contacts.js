@@ -135,6 +135,14 @@ $(document).ready(function(e) {
 	    $dialog.dialog('destroy');
 	});
 	
+	//close dialog box on escape
+	$(document).keyup(function(e) {
+		if(e.keyCode === 27) {
+			var $dialog = $('.ui-dialog-content');
+			$dialog.dialog('destroy');
+		}
+	});
+	
 	var postParameters = {url : url};
 	$.post('/getusername', postParameters, function(responseJSON) {
 		responseObject = JSON.parse(responseJSON);

@@ -54,19 +54,20 @@ public class Ranker {
       System.out.println("attendees : " + attendees.entrySet().size());
       ClientHandler curr = e.getValue();
       ConcurrentHashMap<Integer, Event> daysEvents = curr.getEventsByDay(d);
-      System.out.println(d);
-      System.out.println("Events number " + daysEvents.size());
       for (Entry<Integer, Event> event : daysEvents.entrySet()) {
         Date eventTime;
         try {
           eventTime = event.getValue().getDate();
-          System.out.println(d + " VERSUS " + eventTime);
+          System.out.println(d + " START VERSUS " + eventTime);
           Calendar innerCal = Calendar.getInstance();
           innerCal.setTime(eventTime);
-          c.add(Calendar.MINUTE, event.getValue().getDuration());
-          Date endTime = c.getTime();
+          System.out.println(event.getValue().getDuration());
+          innerCal.add(Calendar.MINUTE, event.getValue().getDuration());
+          Date endTime = innerCal.getTime();
+          System.out.println(end + " End VERSUS " + endTime);
           toReturn = !((d.after(eventTime) && d.before(endTime)) || (end
               .after(eventTime) && end.before(endTime)));
+          System.out.println(toReturn);
         } catch (ParseException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
@@ -95,9 +96,19 @@ public class Ranker {
           if (startHour <= endHour) {
             for (int j = startHour; j <= endHour; j++) {
               int val = bestHoursTable.get(j);
-              int newVal = val - (100 / attendees.size());
+              int newVal = val - (200 / attendees.size());
               bestHoursTable.put(j, newVal);
             }
+          }
+          if (startHour != 0) {
+            int val = bestHoursTable.get(startHour - 1);
+            int newVal = val + (200 / attendees.size());
+            bestHoursTable.put(startHour - 1, newVal);
+          }
+          if (endHour != 23) {
+            int val = bestHoursTable.get(endHour + 1);
+            int newVal = val + (200 / attendees.size());
+            bestHoursTable.put(endHour + 1, newVal);
           }
         } catch (ParseException e1) {
           // TODO Auto-generated catch block

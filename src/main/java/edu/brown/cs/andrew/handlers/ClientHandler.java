@@ -75,7 +75,6 @@ public class ClientHandler {
         c.setTime(start);
         c.add(Calendar.DATE, 1);
         Date endDate = c.getTime();
-        System.out.println(eventDate);
         if (eventDate.after(start) && eventDate.before(endDate)) {
           toReturn.put(e.getKey(), e.getValue());
         }

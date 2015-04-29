@@ -51,6 +51,7 @@ function rightArrow() {
 }
 
 function googleEvents() {
+
 	newWindow = window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com", "popupWindow", "width=600,height=600,scrollbars=yes");
 	var idPathname = window.location.pathname;
 	
@@ -63,9 +64,10 @@ function googleEvents() {
 		})
 		
 		
+		
 	}, 5000);
 
-	
+
 }
 
 function googleEvents2() {

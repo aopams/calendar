@@ -155,7 +155,11 @@ public class SparkHandler {
       }
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       ClientHandler cli = clients.get(clientID);
-      int override = Integer.parseInt(qm.value("override"));
+      String toOverride = qm.value("override");
+      int override = -1;
+      if (toOverride != null) {
+        override = Integer.parseInt(qm.value("override"));
+      }
       String title = qm.value("title");
       boolean noon = qm.value("date").contains(" 12:");
       System.out.println(noon);
@@ -198,6 +202,7 @@ public class SparkHandler {
       Ranker rank = new Ranker(e);
       boolean conflict = false;
       try {
+        System.out.println("Event Date " + e.getDate());
         conflict = rank.checkConflict(e.getDate());
       } catch (ParseException e2) {
         e2.printStackTrace();
@@ -384,6 +389,7 @@ public class SparkHandler {
       c.setTime(date);
       QueryParamsMap qm = req.queryMap();
       int week = c.get(Calendar.WEEK_OF_YEAR);
+      System.out.println("CLIENT ID " + qm.value("string"));
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
@@ -772,7 +778,6 @@ public class SparkHandler {
       HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
       HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList,
           accessToken);
-      ch.setEvents(new ConcurrentHashMap<Integer, Event>());
       List<Event> events = sc.getAllEvents(eventsList);
       System.out.println(ch);
       for (Event event : events) {

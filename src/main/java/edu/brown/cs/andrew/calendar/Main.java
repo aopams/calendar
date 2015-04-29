@@ -72,9 +72,9 @@ public class Main {
           "Harsha and Rohan going stealth-mode",
           "Rohan");
       System.out.println(myDBHandler.findGroup("Harsha Squad"));
-      myDBHandler.addEvent(e);
-      myDBHandler.addEvent(e2);
-      myDBHandler.addEvent(e3); 
+     // myDBHandler.addEvent(e);
+     // myDBHandler.addEvent(e2);
+     // myDBHandler.addEvent(e3); 
       List<String> hGroup1 = new ArrayList<String>();
       hGroup1.add("Harsha");
       Date myDate1 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("13/4/2015 13:00");
