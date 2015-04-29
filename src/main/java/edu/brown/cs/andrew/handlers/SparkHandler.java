@@ -220,16 +220,15 @@ public class SparkHandler {
         System.out.println(GSON.toJson(variables));
         return GSON.toJson(variables);
     } else {
-      List<String> toFrontEnd = new ArrayList<String>(); 
+      List<Event> toFrontEnd = new ArrayList<Event>(); 
       rank.checkAllConflicts(date);
       Integer[] bestTimes = rank.getBestTimes(3, date);
-      Gson gson = new Gson();
       for (int i = 0; i < 3; i++) {
         c.set(Calendar.HOUR_OF_DAY, bestTimes[i]);
         Event newE = new Event(c.getTime(), title, dayOfWeek, attendees, group, duration, description, creator);
-        toFrontEnd.add(gson.toJson(newE));
+        toFrontEnd.add(newE);
       }
-      toFrontEnd.add(gson.toJson(e));
+      toFrontEnd.add(e);
       int status = 0;
       String message = "conflict";
       Map<String, Object> variables = new ImmutableMap.Builder()
