@@ -736,6 +736,8 @@ $(document).ready(function(e) {
 	$(document).on('click','#edit-button', function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
 		editEvent(id);
+	    var $dialog = $(this).parents('.ui-dialog-content');
+	    $dialog.dialog('destroy');
 		updateDisplayedEvents();
 	});
 });
