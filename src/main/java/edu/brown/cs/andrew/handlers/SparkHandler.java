@@ -244,20 +244,19 @@ public class SparkHandler {
   private static class LogoutHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request req, Response res) {
-      System.out.println("logging out");
       QueryParamsMap qm = req.queryMap();
       String idUnparsed = qm.value("string");
       idUnparsed.replaceAll("#", "");
       int id = Integer.parseInt(idUnparsed.substring(10));
+      System.out.println(id);
       clients.remove(id);
       while (clients.containsKey(randomHolder)) {
         randomHolder = (int) (Math.random() * 1000000);
       }
-      String form = "<form method = \"POST\" action=\"/calendar/"
-          + randomHolder + "\">";
-      Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
+      String form = "<form method = \"POST\" action=\"/calendar/" + randomHolder
+          + "\">";
+      Map<String, Object> variables = ImmutableMap.of("title", "Login",
           "message", "", "form", form);
-      System.out.println("logging out final");
       return new ModelAndView(variables, "login.ftl");
     }
   }
@@ -310,7 +309,6 @@ public class SparkHandler {
         return new ModelAndView(variables, "login.ftl");
       }
       if (found) {
-
         Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
             "message", "");
         ClientHandler newClient = new ClientHandler(database, user, true);
@@ -461,7 +459,6 @@ public class SparkHandler {
     public Object handle(Request arg0, Response arg1) {
       QueryParamsMap qm = arg0.queryMap();
       int id = Integer.parseInt(qm.value("url").replace("#", ""));
-      System.out.println(id);
       ContactsThread ct = new ContactsThread(clients.get(id), null, null, null,
           null, Commands.GET_NAME);
       Future<String> t = pool.submit(ct);
@@ -493,12 +490,10 @@ public class SparkHandler {
     public Object handle(Request arg0, Response arg1) {
       QueryParamsMap qm = arg0.queryMap();
       int id = Integer.parseInt(qm.value("url").replace("#", ""));
-      System.out.println(id);
       Map<String, String> tempMap = clients.get(id).getFriends();
       List<String[]> myFriends = new ArrayList<String[]>();
       for (String key : tempMap.keySet()) {
         String status = tempMap.get(key);
-        System.out.println(key + " " + status);
         String[] toAdd = { key, status };
         myFriends.add(toAdd);
       }
@@ -526,13 +521,9 @@ public class SparkHandler {
       String user2 = qm.value("user").replaceAll("^\"|\"$", "");
       String command = qm.value("command").replace("\"", "");
       String message = "";
-      System.out.println(user1);
-      System.out.println(user2);
-      System.out.println(command);
       switch (command) {
       case "accept":
         try {
-          System.out.println("in accept");
           ct = new ContactsThread(clients.get(id), user2, null, null, null,
               Commands.ACCEPT_FRIEND);
           Future<String> t = pool.submit(ct);
@@ -550,7 +541,6 @@ public class SparkHandler {
         }
       case "remove":
         try {
-          System.out.println("in remove");
           ct = new ContactsThread(clients.get(id), user2, null, null, null,
               Commands.REMOVE_FRIEND);
           Future<String> t = pool.submit(ct);
@@ -568,7 +558,6 @@ public class SparkHandler {
         }
       case "add":
         try {
-          System.out.println("in add");
           ct = new ContactsThread(clients.get(id), user2, null, null, null,
               Commands.ADD_FRIEND);
           Future<String> t = pool.submit(ct);
@@ -617,7 +606,6 @@ public class SparkHandler {
     public Object handle(Request arg0, Response arg1) {
       QueryParamsMap qm = arg0.queryMap();
       int id = Integer.parseInt(qm.value("url").replace("#", ""));
-      System.out.println(id);
       Map<Integer, String> tempMap = clients.get(id).getGroups();
       List<String[]> myGroups = new ArrayList<String[]>();
       for (Integer key : tempMap.keySet()) {
@@ -680,7 +668,6 @@ public class SparkHandler {
       case "remove":
         gid = qm.value("groupid");
         groupID = Integer.parseInt(gid);
-        System.out.println(gid + " " + groupName);
         try {
           System.out.println("in remove group");
           ct = new ContactsThread(clients.get(id), null, groupName, groupID,
@@ -704,9 +691,7 @@ public class SparkHandler {
         List<String> usersList = new ArrayList<String>();
         // add user himself
         usersList.add(user1);
-        System.out.println(user1);
         for (String s : tempUsersList) {
-          System.out.println(s);
           usersList.add(s.trim());
         }
         try {
