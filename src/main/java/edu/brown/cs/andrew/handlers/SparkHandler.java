@@ -169,16 +169,20 @@ public class SparkHandler {
       String description = qm.value("description");
       String creator = cli.user;
       String group = qm.value("group");
+      System.out.println(group);
       int duration = Integer.parseInt(qm.value("duration"));
       String users = qm.value("attendees");
+      String[] usersBuffer = users.split(",");
       List<String> attendees = new ArrayList<String>();
       attendees.add(cli.getClient());
-      while (users.contains(",")) {
-        String friend = users.substring(0, users.indexOf(","));
+      //check for valid friends
+      for (String friend : usersBuffer) {
+        friend = friend.trim();
         if (cli.getFriends().containsKey(friend)) {
-          attendees.add(friend);
+          if (cli.getFriends().get(friend).equals("accepted")) {
+            attendees.add(friend);
+          }
         }
-        users = users.substring(users.indexOf(",") + 1);
       }
       Calendar c = Calendar.getInstance();
 
@@ -240,7 +244,6 @@ public class SparkHandler {
       System.out.println(GSON.toJson(variables));
       return GSON.toJson(variables);
     }
-      
     }
   }
 
@@ -380,7 +383,6 @@ public class SparkHandler {
       Calendar c = Calendar.getInstance();
       c.setTime(date);
       QueryParamsMap qm = req.queryMap();
-
       int week = c.get(Calendar.WEEK_OF_YEAR);
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       c.set(Calendar.WEEK_OF_YEAR, week);
@@ -409,7 +411,6 @@ public class SparkHandler {
           currentWeekStart = c.getTime();
           currentWeeks.put(clientID, c.getTime());
         }
-
         Gson gson = new Gson();
         System.out.println(currentWeekStart);
         List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
@@ -444,7 +445,6 @@ public class SparkHandler {
         }
         toFrontEnd.add(eventList);
       }
-
       Map<String, Object> variables = new ImmutableMap.Builder()
           .put("events", toFrontEnd).put("week", currentWeek).build();
       System.out.println(GSON.toJson(variables));
@@ -655,10 +655,6 @@ public class SparkHandler {
               Commands.FIND_MEMBERS);
           Future<String> t = pool.submit(ct);
           String[] members = t.get().split(",");
-          for (String s : members) {
-            System.out.println("members");
-            System.out.println(s);
-          }
           message = "Members found!";
           Map<String, String[]> variables2 = new ImmutableMap.Builder().put(
               "members", members).build();
@@ -691,6 +687,7 @@ public class SparkHandler {
           return GSON.toJson(variables);
         }
       case "add":
+        System.out.println("in add");
         String users = qm.value("users").replace("\"", "");
         String[] tempUsersList = users.split(",");
         List<String> usersList = new ArrayList<String>();

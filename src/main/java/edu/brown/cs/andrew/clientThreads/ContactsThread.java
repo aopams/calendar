@@ -73,6 +73,10 @@ public class ContactsThread implements Callable<String> {
             //CHECK IF EACH USER IS VALID
         case ADD_GROUP :
           Set<String> acceptedFriends = myDBHandler.getAcceptedFriends(user1);
+          for (Iterator<String> i = acceptedFriends.iterator(); i.hasNext();) {
+            String friend = i.next();
+            System.out.println("accepted friends = " + friend);
+          }
           for (Iterator<String> it = groupMembers.iterator(); it.hasNext();) {
             //user does not exist, remove from list
             String user = it.next();
@@ -89,6 +93,7 @@ public class ContactsThread implements Callable<String> {
           int groupID = myDBHandler.getNewGroupID();
           myDBHandler.addGroup(groupName, groupID);
           for (int i = 0; i < groupMembers.size(); i++) {
+            System.out.println("member to add = " + groupMembers.get(i));
             myDBHandler.addUserToGroup(groupMembers.get(i), groupID);
           }
           client1.addGroup(groupName, groupID);
