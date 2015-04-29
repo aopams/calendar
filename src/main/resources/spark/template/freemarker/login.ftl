@@ -17,7 +17,7 @@
 
 <body>
   <div class="login-card">
-  	<div class="logreg">
+  	<div id="logreg">
   		<img src="\img/logo.png" id ="logo"><br>
 <!--  		<form method = "POST" action="/calendar/?" onclick = "(Math.floor(Math.random() * 10000000))"> -->
 		${form}
@@ -30,10 +30,10 @@
   	</div>
     
     <!register page>
-    <div class="registerpage">
+    <div id="registerpage">
     <h1>Register</h1><br>
 <!-- 	  <form> -->
-		${form}
+		<form id="registerForm">
 	    <input type="text" name="user" id="regUser" placeholder="Username">
 	    <input type="password" name="pass" id="pass" placeholder="Password">
 	    <input type="password" name="pass" id="pass2" placeholder="Confirm password">
