@@ -7,6 +7,9 @@ var weekInfo = [];
 
 //colors that we assign to event boxes
 var eventColors = ["#FF9393", "#98FB98", "#FFFF99", "#c0aee0", "#e0d9ae", "#A9D8B6", "lightgoldenrodyellow"]
+
+//ranking suggestions array
+var events = [];
 /* END GLOBAL VARIABLES */
 
 /* POST HANDLERS */
@@ -70,19 +73,17 @@ function newEvent() {
 	if (atten === '') {
 		override = 1;
 	}
+
 	var postParameters = {string: window.location.pathname, title: title, date: correctTime,
-		time: time, duration: dur, description: descrip, attendees: atten,
+		duration: dur, description: descrip, attendees: atten,
 		group: group, override: override
 	};
-	console.log("new event");
+
 	$.post("/newevent", postParameters, function(responseJSON){
 		var responseObject = JSON.parse(responseJSON);
 		console.log(responseObject);
-	    if(responseObject.status == 1) {
-		    var $dialog = $(this).parents('.ui-dialog-content');
-		    $dialog.dialog('destroy');
-		} else {
-			alert('ranking: ');
+	    if(responseObject.status != 1) {
+		    console.log('conflict');
 			displayRanking(responseObject);
 		}
 	})
@@ -102,16 +103,24 @@ function editEvent(id) {
 		time: time, duration: dur, description: descrip, attendees: atten,
 		group: group
 	};
-	console.log("edit event");
 	$.post("/newevent", postParameters, function(responseJSON){
-/*
-	add code to handle messaging for ranking, etc
-		if(responseJSON.status == 1) {
-			$dialog.dialog('destroy');
-		} else {
-			alert('ranking: ' + responseJSON.message);
-		}
-*/
+
+	})
+}
+
+/* create ranked event suggestion */
+function rankedEvent(index) {
+	var postParameters = events[index];
+	var givenDate = postParameters.date.split(" ");
+	var correctTime = getDBTime(givenDate[0] + " " + givenDate[1] + " " + givenDate[2],
+	 					givenDate[3] + " " + givenDate[4]);
+	postParameters.override = 1;
+	postParameters.string = window.location.pathname;
+	postParameters.date = correctTime;
+	postParameters.attendees = postParameters.attendees + ',';
+	delete postParameters.id;
+	$.post("/newevent", postParameters, function(responseJSON){
+
 	})
 }
 
@@ -121,14 +130,7 @@ function deleteEvent(id) {
 	var postParameters = {string: window.location.pathname, id: id};
 
 	$.post("/removeevent", postParameters, function(responseJSON){
-/*
-	add code to handle messaging for ranking, etc
-		if(responseJSON.status == 1) {
-			$dialog.dialog('destroy');
-		} else {
-			alert('ranking: ' + responseJSON.message);
-		}
-*/
+
 	})
 }
 
@@ -137,14 +139,7 @@ function removeUserEvent(id) {
 	var postParameters = {string: window.location.pathname, id: id};
 
 	$.post("/removeuserevent", postParameters, function(responseJSON){
-/*
-	add code to handle messaging for ranking, etc
-		if(responseJSON.status == 1) {
-			$dialog.dialog('destroy');
-		} else {
-			alert('ranking: ' + responseJSON.message);
-		}
-*/
+
 	})
 }
 
@@ -186,14 +181,14 @@ function openDialog(key, google) {
 	    	'<textarea type="text" class="form-control" id="descrip" placeholder="description..."'+ ds +'>'+ value.description + '</textarea>' +
 	    '</div>' +
 	    '<div class="input-group margin-group">' +
-	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+value.attendees +'"'+ ds +'/>' +
+	    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="People" value="' 	 				+ value.attendees +'"'+ ds +'/>' +
 		'</div>' +
 	  	'<div class="input-group margin-group">' +
 		    '<div class="input-group-addon">@</div>' +
 		    '<input type="text" class="form-control" id="group" placeholder="Group" value="'+ value.group +'"'+ ds +'/>' +
 		'</div>' +
 		'<div class="margin-group-xl">';
-		
+
 	if (google == 1) {
 		form = form + '<img id="google-button" src="\\img/google.png"/>';
 	} else if (google == 2) {
@@ -630,7 +625,7 @@ function dateRegex(date) {
 }
 
 function displayRanking(obj) {
-	console.log('arr is ' + obj.events[0][date]);
+	events = obj.events;
 	$('#newEventForm').html(
 	'<table class="table">' +
 	'<tbody>' +
@@ -638,19 +633,19 @@ function displayRanking(obj) {
 	     ' <td class="no-border"> Everyone\'s free: </td>' +
 		    '</tr>' +
 		    '<tr class="active">' +
-		      '<td><a onclick="">' + obj.events[0].date + '</a></td>' +
+		      '<td><a onclick="rankedEvent(0)">' + obj.events[0].date + '</a></td>' +
 		    '</tr>' +
 		    '<tr>' +
-		      '<td><a onclick="">' + obj.events[1].datee + '</a></td>' +
+		      '<td><a onclick="rankedEvent(1)">' + obj.events[1].date + '</a></td>' +
 		    '</tr>' +
 		    '<tr class="active">' +
-		      '<td><a onclick="">' + obj.events[2].date + '</a></td>' +
+		      '<td><a onclick="rankedEvent(2)">' + obj.events[2].date + '</a></td>' +
 		    '</tr>' +
 		    '<tr>' +
 		      '<td> or... </td>' +
 		    '</tr>' +
 		    '<tr class="danger">' +
-		      '<td> Override </td>' +
+		      '<td><a onclick="rankedEvent(3)"> Override </a></td>' +
 		    '</tr>' +
 		'</tbody>' +
 	'</table>');
@@ -769,6 +764,8 @@ $(document).ready(function(e) {
 	
 	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
+	    var $dialog = $(this).parents('.ui-dialog-content');
+	    $dialog.dialog('destroy');
 	    updateDisplayedEvents();
 	});
 	

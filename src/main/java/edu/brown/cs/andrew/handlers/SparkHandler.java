@@ -199,6 +199,9 @@ public class SparkHandler {
         e2.printStackTrace();
       }
       if (conflict || override == 1) {
+        
+        
+        
         CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e,
             null, null);
         if (eventID != -1) {
