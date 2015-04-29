@@ -718,6 +718,7 @@ public class SparkHandler {
               usersList, Commands.ADD_GROUP);
           Future<String> t = pool.submit(ct);
           t.get();
+          break;
         } catch (InterruptedException | ExecutionException e2) {
           System.out.println("caught");
           message = "ERROR: Bug in SQL.";
@@ -726,6 +727,31 @@ public class SparkHandler {
               .build();
           return GSON.toJson(variables);
         }
+      case "newmembers":
+        System.out.println("in add members");
+        String users2 = qm.value("users").replace("\"", "");
+        String[] tempUsersList2 = users2.split(",");
+        List<String> usersList2 = new ArrayList<String>();
+        for (String s : tempUsersList2) {
+          System.out.println(s);
+          usersList2.add(s.trim());
+        }
+        gid = qm.value("groupid");
+        groupID = Integer.parseInt(gid);
+        try {
+          ct = new ContactsThread(clients.get(id),
+              null, null, groupID, usersList2, Commands.NEW_MEMBERS);
+          Future<String> t = pool.submit(ct);
+          t.get();
+        } catch (InterruptedException | ExecutionException e2) {
+          System.out.println("caught");
+          message = "ERROR: Bug in SQL.";
+          e2.printStackTrace();
+          variables = new ImmutableMap.Builder()
+          .put("message", message).build();
+          return GSON.toJson(variables);
+        }
+        break;
       }
       message = "ERROR: Bug has occured, try again.";
       variables = new ImmutableMap.Builder().put("message", message).build();
