@@ -166,10 +166,14 @@ public class ClientHandler {
   }
 
   public void addEvent(Event e) {
-    maxEventId += 1;
-    e.setID(maxEventId);
-    System.out.println(events);
+    if (e.getId()>=0) {
+      maxEventId += 1;
+      e.setID(maxEventId);
+      System.out.println(events);
+    }
     events.put(maxEventId, e);
+    System.out.println("EVENT ID: " + e.getId());
+    
 
   }
   public void removeEvent(Event e) {
