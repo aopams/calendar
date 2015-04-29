@@ -382,6 +382,7 @@ public class SparkHandler {
       QueryParamsMap qm = req.queryMap();
 
       int week = c.get(Calendar.WEEK_OF_YEAR);
+      System.out.println("CLIENT ID " + qm.value("string"));
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
@@ -775,7 +776,6 @@ public class SparkHandler {
       HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
       HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList,
           accessToken);
-      ch.setEvents(new ConcurrentHashMap<Integer, Event>());
       List<Event> events = sc.getAllEvents(eventsList);
       System.out.println(ch);
       for (Event event : events) {
