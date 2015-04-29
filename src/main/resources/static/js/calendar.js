@@ -57,10 +57,12 @@ function newEvent() {
 	console.log("new event");
 	$.post("/newevent", postParameters, function(responseJSON){
 		responseObject = responseJSON.parse();
+		console.log(responseObject.status);
 		if(responseObject.status == 1) {
 			$dialog.dialog('destroy');
 		} else {
 			alert('ranking: ');
+			displayRanking();
 		}
 	})
 }
