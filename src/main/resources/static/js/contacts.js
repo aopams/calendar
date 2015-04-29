@@ -423,12 +423,13 @@ function viewGroupMembers(elem) {
 	var groupid = parent.getAttribute('groupid');
 	var groupname = parent.getAttribute('groupname');
 	var command = "members";
+	var members;
 	console.log(groupid);
 	var postParameters = {url : url, groupid : groupid, groupname : groupname, command :command}
 	$.post('/editgroups', postParameters, function(responseJSON) {
 		console.log("fetching members");
 		responseObject = JSON.parse(responseJSON);
-		var members = responseObject.members;
+		members = responseObject.members;
 		form =
 			'<form class="form-inline" id="membersForm">' +
 				'<div class="form-group dialog-form">' +
@@ -443,22 +444,40 @@ function viewGroupMembers(elem) {
 			'</form>';
 		$(form).dialog({ modal: true, resizable: false});
 		
-		//adding memebers to group
+		//adding members to group
 		$(document).on('click','#new-members-button', function(e) {
 			var users = document.getElementById('attendees').value;
-			if (users) {
-				console.log("members to add");
-				console.log(users);				
+			if (users) {				$(".members").remove();
+				var command = "newmembers";
+				var postParameters = {url : url, groupid : groupid, groupname : groupname, command : command, users : users};
+				$.post('/editgroups', postParameters, function(responseJSON) {
+					console.log("adding members");
+					command = "members";
+					var postParameters = {url : url, groupid : groupid, groupname : groupname, command : command, users : users};
+					//view members again
+					$.post('/editgroups', postParameters, function(responseJSON) {
+						$(".members").remove();
+						responseObject = JSON.parse(responseJSON);
+						members = responseObject.members;
+						for (i = 0; i < members.length; i++) {
+							var mem = document.createElement('div');
+							mem.className = 'members';
+							var name = document.createElement('div');
+							name.id = 'name';
+							name.style.marginLeft='auto';
+							name.style.marginRight='auto';
+							name.style.display='block';
+							name.innerHTML = members[i];
+							var img = document.createElement('img');
+							img.src = getProfPic(members[i]);
+							mem.appendChild(img);
+							mem.appendChild(name);
+							$("#membersForm").append(mem);
+						};
+					});	
+				});
 			}
-			
-/*
-		    var $dialog = $(this).parents('.ui-dialog-content');
-		    $dialog.dialog('destroy');
-*/
-		    
 		});
-		
-		
 		for (i = 0; i < members.length; i++) {
 			var mem = document.createElement('div');
 			mem.className = 'members';
