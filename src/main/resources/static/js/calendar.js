@@ -22,7 +22,7 @@ function updateDisplayedEvents() {
 function logoutAction() {
 	var postParameters = {string: window.location.pathname};
 	$.post("/logout", postParameters, function(responseJSON){
-		parseData(responseJSON);
+		
 	})
 }
 
