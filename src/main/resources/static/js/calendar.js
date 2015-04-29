@@ -46,20 +46,22 @@ function newEvent() {
 	var atten = document.getElementById('attendees').value + ",";
 	var group = document.getElementById('group').value;
 	var correctTime = getDBTime(date, time);
+	var override = 0;
+	if (atten === '') {
+		override = 1;
+	}
 	var postParameters = {string: window.location.pathname, title: title, date: correctTime,
 		time: time, duration: dur, description: descrip, attendees: atten,
-		group: group
+		group: group, override: override
 	};
 	console.log("new event");
 	$.post("/newevent", postParameters, function(responseJSON){
-/*
-	add code to handle messaging for ranking, etc
-		if(responseJSON.status == 1) {
+		responseObject = responseJSON.parse();
+		if(responseObject.status == 1) {
 			$dialog.dialog('destroy');
 		} else {
-			alert('ranking: ' + responseJSON.message);
+			alert('ranking: ');
 		}
-*/
 	})
 }
 
