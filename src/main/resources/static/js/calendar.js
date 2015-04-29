@@ -5,6 +5,8 @@ var eventMap = {};
 //global array to hold information about the week we are displaying.
 var weekInfo = [];
 
+var newWindow;
+
 //colors that we assign to event boxes
 var eventColors = ["#FF9393", "#98FB98", "#FFFF99", "#c0aee0", "#e0d9ae", "#A9D8B6", "lightgoldenrodyellow"]
 
@@ -49,15 +51,26 @@ function rightArrow() {
 }
 
 function googleEvents() {
-	window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com", "popupWindow", "width=600,height=600,scrollbars=yes");
+	newWindow = window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com", "popupWindow", "width=600,height=600,scrollbars=yes");
+	var idPathname = window.location.pathname;
+	
+	setTimeout(function() {
+		var codePathname = newWindow.location.href;
+		var code = codePathname.substring(28);
+		var postParameters = {string: idPathname, code: code};
+		$.post("/getGoogleEvents", postParameters, function(responseJSON){
+			parseData(responseJSON);
+		})
+		
+		
+	}, 5000);
+
+	
 }
 
 function googleEvents2() {
-	var postParameters = {string: window.location.pathname};
-	$.post("/getGoogleEvents", postParameters, function(responseJSON){
-		parseData(responseJSON);
-	})
-	window.close();
+	
+	self.close();
 }
 
 /* create new event */
@@ -673,9 +686,9 @@ $(document).ready(function(e) {
 	updateDisplayedEvents();
 	
 	/* update calendar every 5 seconds */
-	/*window.setInterval(function() { 
+	window.setInterval(function() { 
 		updateDisplayedEvents();
-	}, 5000); */
+	}, 5000); 
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {

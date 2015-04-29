@@ -5,6 +5,8 @@ var eventMap = {};
 //global array to hold information about the week we are displaying.
 var weekInfo = [];
 
+var newWindow;
+
 //colors that we assign to event boxes
 var eventColors = ["#FF9393", "#98FB98", "#FFFF99", "#c0aee0", "#e0d9ae", "#A9D8B6", "lightgoldenrodyellow"]
 /* END GLOBAL VARIABLES */
@@ -34,6 +36,25 @@ function rightArrow() {
 	$.post("/rightarrow", postParameters, function(responseJSON){
 		parseData(responseJSON);
 	})
+}
+
+function googleEvents() {
+	newWindow = window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com", "popupWindow", "width=600,height=600,scrollbars=yes");
+	var idPathname = window.location.pathname;
+	
+	setTimeout(function() {
+		var codePathname = newWindow.location.href;
+		var code = codePathname.substring(28);
+		var postParameters = {string: idPathname, code: code};
+		$.post("/getGoogleEvents", postParameters, function(responseJSON){
+			parseData(responseJSON);
+		})
+		self.close();
+		
+		
+	}, 10000);
+
+	
 }
 
 /* create new event */
@@ -683,6 +704,12 @@ $(document).ready(function(e) {
 	    rightArrow();
 	});
 	
+
+	$(document).on('click','#googlebutton', function(e) {
+		googleEvents();
+	});
+	
+
 	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
 	    var $dialog = $(this).parents('.ui-dialog-content');
