@@ -64,14 +64,14 @@ function newEvent() {
 	};
 	console.log("new event");
 	$.post("/newevent", postParameters, function(responseJSON){
-		responseObject = JSON.parse(responseJSON);
-		console.log(responseObject.status);
+		var responseObject = JSON.parse(responseJSON);
 		console.log(responseObject);
-		if(responseObject.status == 1) {
-			$dialog.dialog('destroy');
+	    if(responseObject.status == 1) {
+		    var $dialog = $(this).parents('.ui-dialog-content');
+		    $dialog.dialog('destroy');
 		} else {
 			alert('ranking: ');
-			displayRanking();
+			displayRanking(responseObject);
 		}
 	})
 }
@@ -226,12 +226,6 @@ function newEventDialog(date, time) {
 		'<img id="new-event-button" src="\\img/check.png"/>' +
 		'</div> </div> </form>';
 	$(form).dialog({ modal: true, resizable: false});
-}
-
-/* opens dialog window for message from backend */
-function messageDialog() {
-	form = '<p> test!!! </p>';
-	$(form).dialog({ modal: true, resizable: false });
 }
 
 /* opens calendar view selection */
@@ -623,28 +617,29 @@ function dateRegex(date) {
 	}
 }
 
-function displayRanking() {
+function displayRanking(obj) {
+	console.log('arr is ' + obj.events[0][date]);
 	$('#newEventForm').html(
 	'<table class="table">' +
 	'<tbody>' +
 	    '<tr>' +
 	     ' <td class="no-border"> Everyone\'s free: </td>' +
-		   ' </tr>' +
-		   ' <tr class="active">' +
-		   '   <td><a onclick="">Apr 25, 2015 @ 12:00 PM</a></td>' +
-		  '  </tr>' +
-		  '  <tr>' +
-		  '    <td>Column content</td>' +
-		  '  </tr>' +
-		  '  <tr class="active">' +
-		  '    <td>Column content</td>' +
-		  '  </tr>' +
-		  '  <tr>' +
-		  '    <td> or... </td>' +
-		  '  </tr>' +
-		  '  <tr class="danger">' +
-		  '    <td> Override </td>' +
-		  '  </tr>' +
+		    '</tr>' +
+		    '<tr class="active">' +
+		      '<td><a onclick="">' + obj.events[0].date + '</a></td>' +
+		    '</tr>' +
+		    '<tr>' +
+		      '<td><a onclick="">' + obj.events[1].datee + '</a></td>' +
+		    '</tr>' +
+		    '<tr class="active">' +
+		      '<td><a onclick="">' + obj.events[2].date + '</a></td>' +
+		    '</tr>' +
+		    '<tr>' +
+		      '<td> or... </td>' +
+		    '</tr>' +
+		    '<tr class="danger">' +
+		      '<td> Override </td>' +
+		    '</tr>' +
 		'</tbody>' +
 	'</table>');
 	
@@ -749,9 +744,6 @@ $(document).ready(function(e) {
 	
 	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
-	    displayRanking();
-	    var $dialog = $(this).parents('.ui-dialog-content');
-	    $dialog.dialog('destroy');
 	    updateDisplayedEvents();
 	});
 	
