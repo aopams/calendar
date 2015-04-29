@@ -140,9 +140,9 @@ public class Ranker {
   private Comparator<Integer> hourComp = new Comparator<Integer>() {
     @Override
     public int compare(Integer i1, Integer i2) {
-      if (bestHoursTable.get(i1) > bestHoursTable.get(i2)) {
+      if (bestHoursTable.get(i1) < bestHoursTable.get(i2)) {
         return 1;
-      } else if (bestHoursTable.get(i1) < bestHoursTable.get(i2)) {
+      } else if (bestHoursTable.get(i1) > bestHoursTable.get(i2)) {
         return -1;
       } else {
         return 0;
