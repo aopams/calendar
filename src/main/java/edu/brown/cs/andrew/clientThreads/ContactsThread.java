@@ -103,6 +103,18 @@ public class ContactsThread implements Callable<String> {
             toReturn.append(",");
           }
           return toReturn.toString();
+        case NEW_MEMBERS :
+          for (Iterator<String> it = groupMembers.iterator(); it.hasNext();) {
+            //user does not exist, remove from list
+            String user = it.next();
+            if (myDBHandler.findUser(user) == null) {
+              it.remove();
+            }
+          }
+          for (int i = 0; i < groupMembers.size(); i++) {
+            myDBHandler.addUserToGroup(groupMembers.get(i), removeGroupID);
+          }
+          break;
       default:
         break;
       }
