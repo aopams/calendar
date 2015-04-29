@@ -11,7 +11,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -206,7 +209,7 @@ public class DatabaseHandler {
     ResultSet rs2 = theStat2.executeQuery();
     while (rs2.next()) {
       if (rs2.getString(2).equals("Pending")) {
-        toReturn.put(rs.getString(1), "Sent");
+        toReturn.put(rs2.getString(1), "Sent");
       } else {
         toReturn.put(rs2.getString(1), rs2.getString(2));
       }
@@ -214,6 +217,28 @@ public class DatabaseHandler {
     rs2.close();
     return toReturn;
   }
+  //returns set of accepted friends only
+  public Set<String> getAcceptedFriends(String user_name) throws SQLException {
+    Set<String> toReturn = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+    String query = "SELECT user_name1 FROM Friends WHERE user_name2 = ? AND status = 'accepted'";
+    PreparedStatement theStat = conn.prepareStatement(query);
+    theStat.setString(1, user_name);
+    ResultSet rs = theStat.executeQuery();
+    while (rs.next()) {
+      toReturn.add(rs.getString(1));
+    }
+    rs.close();
+    String query2 = "SELECT user_name2 FROM Friends WHERE user_name1 = ? AND status = 'accepted'";
+    PreparedStatement theStat2 = conn.prepareStatement(query2);
+    theStat2.setString(1, user_name);
+    ResultSet rs2 = theStat2.executeQuery();
+    while (rs2.next()) {
+      toReturn.add(rs2.getString(1));
+    }
+    rs2.close();
+    return toReturn;
+  }
+
   public int findGroup(String group_name) throws SQLException {
     String query = "select group_id from Groups where group_name = ?";
     PreparedStatement theStat = conn.prepareStatement(query);
