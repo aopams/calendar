@@ -190,28 +190,54 @@ public class SparkHandler {
       String dayOfWeek = numbersToDay.get(dayWeek);
       Event e = new Event(date, title, dayOfWeek, attendees, group, duration,
           description, creator);
-      CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null,
-          null);
-      if (eventID != -1) {
-        Event d = cli.getEvents().get(eventID);
-        ct = new CalendarThread(cli, Commands.EDIT_EVENT, e, d, clients);
-      }
-      Future<String> t = pool.submit(ct);
+      Ranker rank = new Ranker(e);
+      boolean conflict = false;
       try {
-        t.get();
-      } catch (InterruptedException | ExecutionException e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
+         conflict = rank.checkConflict(e.getDate());
+      } catch (ParseException e2) {
+        e2.printStackTrace();
       }
-      clients.put(clientID, cli);
+      if (conflict) {
+        CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e, null,
+            null);
+        if (eventID != -1) {
+          Event d = cli.getEvents().get(eventID);
+          ct = new CalendarThread(cli, Commands.EDIT_EVENT, e, d, clients);
+        }
+        Future<String> t = pool.submit(ct);
+        try {
+          t.get();
+        } catch (InterruptedException | ExecutionException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
+        clients.put(clientID, cli);
+        int status = 1;
+        String message = "accepted";
+        Map<String, Object> variables = new ImmutableMap.Builder()
+            .put("status", status).put("message", message).build();
+        System.out.println(GSON.toJson(variables));
+        return GSON.toJson(variables);
+    } else {
+      List<String> toFrontEnd = new ArrayList<String>(); 
+      rank.checkAllConflicts(date);
+      Integer[] bestTimes = rank.getBestTimes(3, date);
+      for (int i = 0; i < 3; i++) {
+        c.set(Calendar.HOUR_OF_DAY, bestTimes[i]);
+        Event newE = new Event(c.getTime(), title, dayOfWeek, attendees, group, duration, description, creator);
+        toFrontEnd.add(GSON.toJson(newE));
+      }
+      toFrontEnd.add(GSON.toJson(e));
       int status = 0;
-      String message = "accepted";
+      String message = "conflict";
       Map<String, Object> variables = new ImmutableMap.Builder()
-          .put("status", status).put("message", message).build();
+          .put("status", status).put("message", message)
+          .put("events", toFrontEnd).build();
       System.out.println(GSON.toJson(variables));
       return GSON.toJson(variables);
     }
-
+      
+    }
   }
 
   private static class LogoutHandler implements Route {
