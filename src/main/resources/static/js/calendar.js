@@ -44,6 +44,18 @@ function rightArrow() {
 	})
 }
 
+function googleEvents() {
+	window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com", "popupWindow", "width=600,height=600,scrollbars=yes");
+}
+
+function googleEvents2() {
+	var postParameters = {string: window.location.pathname};
+	$.post("/getGoogleEvents", postParameters, function(responseJSON){
+		parseData(responseJSON);
+	})
+	window.close();
+}
+
 /* create new event */
 function newEvent() {
 	var title = document.getElementById('title').value;
@@ -750,6 +762,15 @@ $(document).ready(function(e) {
 	$(document).on('click','#logout-btn', function(e) {
 	    logoutAction();
 	});
+	
+	$(document).on('click','#googlebutton', function(e) {
+		googleEvents();
+	});
+	
+	$(document).on('click','#continue', function(e) {
+		googleEvents2();
+	});
+	
 	
 	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
