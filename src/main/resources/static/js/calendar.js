@@ -23,9 +23,10 @@ function updateDisplayedEvents() {
 
 /* logout action */
 function logoutAction() {
+	console.log("logout button");
 	var postParameters = {string: window.location.pathname};
 	$.post("/logout", postParameters, function(responseJSON){
-		
+	
 	})
 }
 
