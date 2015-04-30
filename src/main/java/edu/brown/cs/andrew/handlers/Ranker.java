@@ -66,7 +66,9 @@ public class Ranker {
           Date endTime = innerCal.getTime();
           System.out.println(end + " End VERSUS " + endTime);
           toReturn = !((d.after(eventTime) && d.before(endTime)) || (end
-              .after(eventTime) && end.before(endTime)));
+              .after(eventTime) && end.before(endTime)
+              || (eventTime.after(d) && eventTime.before(end))
+              || (endTime.after(d) && endTime.before(end))));
           System.out.println(toReturn);
         } catch (ParseException e1) {
           // TODO Auto-generated catch block
