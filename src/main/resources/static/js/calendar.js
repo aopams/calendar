@@ -100,7 +100,7 @@ function newEvent() {
 		console.log(responseObject);
 	    if(responseObject.status != 1) {
 		    console.log('conflict');
-			displayRanking(responseObject);
+			displayRanking(responseObject, 0);
 		} else {
 			var $dialog = $('.ui-dialog-content');
 		    $dialog.dialog('destroy');
@@ -127,7 +127,8 @@ function editEvent(id) {
 		var responseObject = JSON.parse(responseJSON);
 		console.log(responseObject);
 	    if(responseObject.status != 1) {
-			displayRanking(responseObject);
+	    	console.log('going to ranking functions');
+			displayRanking(responseObject, id);
 		} else {
 			var $dialog = $('.ui-dialog-content');
 		    $dialog.dialog('destroy');
@@ -137,7 +138,7 @@ function editEvent(id) {
 }
 
 /* create ranked event suggestion */
-function rankedEvent(index) {
+function rankedEvent(index, type) {
 	var postParameters = events[index];
 	var givenDate = postParameters.date.split(" ");
 	var correctTime = getDBTime(givenDate[0] + " " + givenDate[1] + " " + givenDate[2],
@@ -146,7 +147,14 @@ function rankedEvent(index) {
 	postParameters.string = window.location.pathname;
 	postParameters.date = correctTime;
 	postParameters.attendees = postParameters.attendees + ',';
-	delete postParameters.id;
+	console.log('type is' + type);
+	if (type === 0) {
+		console.log('type is 0, deleting id...');
+		delete postParameters.id;
+	} else {
+	
+	}
+	console.log(postParameters);
 	$.post("/newevent", postParameters, function(responseJSON){
 		var $dialog = $('.ui-dialog-content');
 	    $dialog.dialog('destroy');
@@ -654,28 +662,32 @@ function dateRegex(date) {
 	}
 }
 
-function displayRanking(obj) {
+function displayRanking(obj, type) {
 	events = obj.events;
 	$('#newEventForm').html(
 	'<table class="table">' +
 	'<tbody>' +
+	
+	    '<tr>' +
+	     ' <td class="no-border"> oh no conflict! </td>' +
+		    '</tr>' +
 	    '<tr>' +
 	     ' <td class="no-border"> Everyone\'s free: </td>' +
 		    '</tr>' +
 		    '<tr class="active">' +
-		      '<td><a onclick="rankedEvent(0)">' + obj.events[0].date + '</a></td>' +
+		      '<td><a onclick="rankedEvent(0, ' + type + ')">' + obj.events[0].date + '</a></td>' +
 		    '</tr>' +
 		    '<tr>' +
-		      '<td><a onclick="rankedEvent(1)">' + obj.events[1].date + '</a></td>' +
+		      '<td><a onclick="rankedEvent(1, ' + type + ')">' + obj.events[1].date + '</a></td>' +
 		    '</tr>' +
 		    '<tr class="active">' +
-		      '<td><a onclick="rankedEvent(2)">' + obj.events[2].date + '</a></td>' +
+		      '<td><a onclick="rankedEvent(2, ' + type + ')">' + obj.events[2].date + '</a></td>' +
 		    '</tr>' +
 		    '<tr>' +
 		      '<td> or... </td>' +
 		    '</tr>' +
 		    '<tr class="danger">' +
-		      '<td><a onclick="rankedEvent(3)"> Override </a></td>' +
+		      '<td><a onclick="rankedEvent(3, ' + type + ')"> Override </a></td>' +
 		    '</tr>' +
 		'</tbody>' +
 	'</table>');
@@ -819,8 +831,6 @@ $(document).ready(function(e) {
 	$(document).on('click','#edit-button', function(e) {
 		var id = document.getElementById("dialog-event-id").innerHTML;
 		editEvent(id);
-	    var $dialog = $(this).parents('.ui-dialog-content');
-	    $dialog.dialog('destroy');
 		updateDisplayedEvents();
 	});
 });

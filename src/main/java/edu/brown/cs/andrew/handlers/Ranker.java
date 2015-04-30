@@ -23,7 +23,6 @@ public class Ranker {
   public Ranker(Event e) {
     this.setBestHours();
     List<String> attendeeList = e.getAttendees();
-    System.out.println(attendeeList.get(0));
     for (int i = 0; i < attendeeList.size(); i++) {
       ClientHandler currHandler = new ClientHandler("calendar.sqlite3",
           attendeeList.get(i), false);
@@ -55,6 +54,9 @@ public class Ranker {
       ClientHandler curr = e.getValue();
       ConcurrentHashMap<Integer, Event> daysEvents = curr.getEventsByDay(d);
       for (Entry<Integer, Event> event : daysEvents.entrySet()) {
+        if (!toReturn) {
+          return false;
+        }
         Date eventTime;
         try {
           eventTime = event.getValue().getDate();
@@ -65,10 +67,11 @@ public class Ranker {
           innerCal.add(Calendar.MINUTE, event.getValue().getDuration());
           Date endTime = innerCal.getTime();
           System.out.println(end + " End VERSUS " + endTime);
-          toReturn = !((d.after(eventTime) && d.before(endTime)) || (end
-              .after(eventTime) && end.before(endTime)
+          toReturn = !((d.after(eventTime) && d.before(endTime)) || 
+              (end.after(eventTime) && end.before(endTime))
               || (eventTime.after(d) && eventTime.before(end))
-              || (endTime.after(d) && endTime.before(end))));
+              || (endTime.after(d) && endTime.before(end))
+              || (d.compareTo(eventTime) == 0 || end.compareTo(endTime) == 0));
           System.out.println(toReturn);
         } catch (ParseException e1) {
           // TODO Auto-generated catch block

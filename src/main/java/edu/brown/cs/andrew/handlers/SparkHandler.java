@@ -174,11 +174,17 @@ public class SparkHandler {
       String creator = cli.user;
       String group = qm.value("group");
       System.out.println(group);
+      if (group != null && !cli.getFriends().containsKey(group)) {
+        group = null;
+      }
       int duration = Integer.parseInt(qm.value("duration"));
       String users = qm.value("attendees");
       String[] usersBuffer = users.split(",");
       List<String> attendees = new ArrayList<String>();
-      attendees.add(cli.getClient());
+      if (group == null) {
+        attendees.add(cli.getClient());
+        group = "";
+      }
       //check for valid friends
       for (String friend : usersBuffer) {
         friend = friend.trim();
@@ -210,7 +216,6 @@ public class SparkHandler {
       if (conflict || override == 1) {
         
         
-        
         CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e,
             null, null);
         if (eventID != -1) {
@@ -238,6 +243,9 @@ public class SparkHandler {
       for (int i = 0; i < 3; i++) {
         c.set(Calendar.HOUR_OF_DAY, bestTimes[i]);
         Event newE = new Event(c.getTime(), title, dayOfWeek, attendees, group, duration, description, creator);
+        if (eventID != -1) { 
+          newE.setID(eventID);
+        }
         toFrontEnd.add(newE);
       }
       toFrontEnd.add(e);
