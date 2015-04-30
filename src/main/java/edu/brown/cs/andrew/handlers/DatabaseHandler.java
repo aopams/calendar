@@ -475,7 +475,9 @@ public class DatabaseHandler {
     while (rs.next()) {
       theStat2.setInt(1, rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
-      if (rs2.isClosed()) {
+      System.out.println("should enter if check");
+      if (rs2.next()) {
+        System.out.println("adding to group events to return");
         Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")), rs2.getString("title"), rs2.getString("day_of_week"),
             users, group_name, rs2.getInt("duration"), rs2.getString("description"),  rs2.getString("creator"));
         toAdd.setID(rs2.getInt("event_id"));
@@ -511,6 +513,8 @@ public class DatabaseHandler {
     eventList.addAll(getPersonnalEventsFromUser(user_name));
     List<Integer> groups = getGroupsIDFromUser(user_name);
     for (int i = 0; i < groups.size(); i++) {
+      System.out.println("groups ids " + groups.get(i));
+      System.out.println("events size of this group = " + getEventsFromGroup(groups.get(i)).size());
       eventList.addAll(getEventsFromGroup(groups.get(i)));
     }
     ConcurrentHashMap<Integer, Event> actualReturn = new ConcurrentHashMap<Integer, Event>();

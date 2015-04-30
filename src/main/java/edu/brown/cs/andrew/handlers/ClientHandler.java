@@ -172,8 +172,6 @@ public class ClientHandler {
     }
     events.put(maxEventId, e);
     System.out.println("EVENT ID: " + e.getId());
-    
-
   }
   public void removeEvent(Event e) {
     events.remove(e.getId());

@@ -2,12 +2,14 @@ package edu.brown.cs.andrew.clientThreads;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.brown.cs.andrew.handlers.ClientHandler;
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
+import edu.brown.cs.andrew.handlers.Event;
 public class HeartBeatThread implements Callable<String>{
   private ConcurrentHashMap<Integer, ClientHandler> clients;
   String typeHeartBeat;
@@ -25,7 +27,7 @@ public class HeartBeatThread implements Callable<String>{
       try {
         String user = client.getClient();
         client.setFriends(myDBHandler.getFriendsFromUser(user));
-        client.setGroups(myDBHandler.getGroupsNameFromUser(user));  
+        client.setGroups(myDBHandler.getGroupsNameFromUser(user));
         client.setEvents(myDBHandler.getAllEventsFromUser(user));
 //        client.setMaxGroupId(myDBHandler.getMaxGroupID());
         client.setMaxEventId(myDBHandler.getMaxEventID());
