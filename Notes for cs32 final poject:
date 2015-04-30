@@ -1,0 +1,10 @@
+Notes for cs32 final poject:
+-- cleansing register input with special characters
+-- editing events but not changing time notes conflict: BAD
+-- override button not working
+-- redirect to login not calendar/:id
+-- google calendar taking time, deleting all other events
+-- changing google button so it's not the same
+-- finish google synching
+-- pending friends issue
+-- make demo interactive with JJ

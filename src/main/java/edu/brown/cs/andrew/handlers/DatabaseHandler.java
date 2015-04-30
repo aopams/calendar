@@ -373,7 +373,7 @@ public class DatabaseHandler {
   }
   public void removeEvent(Event e) throws SQLException, ParseException {
     int eventID = e.getId();
-
+    System.out.println("deleting group_event");
       String query3 = "Delete From Group_Event where event_id = ?";
       PreparedStatement stat3 = conn.prepareStatement(query3);
       stat3.setInt(1, eventID);
@@ -452,6 +452,7 @@ public class DatabaseHandler {
     String query2 = "select * from Events where event_id = ?";
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     while (rs.next()) {
+      System.out.println("should enter if check");
       theStat2.setInt(1, rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
       Event toAdd = new Event(rs2.getDate("date"), rs2.getString("title"), rs2.getString("day_of_week"),
@@ -460,7 +461,7 @@ public class DatabaseHandler {
       groupEvents.add(toAdd);
     }
     return groupEvents;
-  }
+  }  
   
   public List<Event> getEventsFromGroup(int group_id) throws SQLException, ParseException {
     String group_name = findGroup(group_id);

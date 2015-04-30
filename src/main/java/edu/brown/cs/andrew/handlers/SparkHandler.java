@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 
 import edu.brown.cs.andrew.clientThreads.CalendarThread;
 import edu.brown.cs.andrew.clientThreads.ContactsThread;
+import edu.brown.cs.andrew.clientThreads.GroupRetrievalThread;
 import edu.brown.cs.andrew.clientThreads.UserThread;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
@@ -174,13 +175,24 @@ public class SparkHandler {
       String creator = cli.user;
       String group = qm.value("group");
       System.out.println(group);
-      if (group != null && !cli.getFriends().containsKey(group)) {
+      if (group != null && !cli.getGroups().contains(group)) {
         group = null;
       }
       int duration = Integer.parseInt(qm.value("duration"));
       String users = qm.value("attendees");
+      System.out.println("USERS: " + users);
       String[] usersBuffer = users.split(",");
-      List<String> attendees = new ArrayList<String>();
+      List<String> groupAttendees = new ArrayList<String>();
+      if (group != null && users.equals(",")) {
+        GroupRetrievalThread grt = new GroupRetrievalThread(group);
+        try {
+          Future<List<String>> t = pool.submit(grt);
+          groupAttendees = t.get();
+        } catch (InterruptedException | ExecutionException e1) {
+
+        }
+      }
+      List<String> attendees = groupAttendees;
       if (group == null) {
         attendees.add(cli.getClient());
         group = "";
@@ -225,7 +237,6 @@ public class SparkHandler {
         try {
           t.get();
         } catch (InterruptedException | ExecutionException e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         }
         clients.put(clientID, cli);
