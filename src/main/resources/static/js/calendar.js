@@ -123,6 +123,9 @@ function editEvent(id) {
 		time: time, duration: dur, description: descrip, attendees: atten,
 		group: group
 	};
+	if (atten === '') {
+		override = 1;
+	}
 	$.post("/newevent", postParameters, function(responseJSON){
 		var responseObject = JSON.parse(responseJSON);
 		console.log(responseObject);
@@ -151,8 +154,6 @@ function rankedEvent(index, type) {
 	if (type === 0) {
 		console.log('type is 0, deleting id...');
 		delete postParameters.id;
-	} else {
-	
 	}
 	console.log(postParameters);
 	$.post("/newevent", postParameters, function(responseJSON){
@@ -699,7 +700,7 @@ $(document).ready(function(e) {
 	/* update the displayed events to get events on page */
 	updateDisplayedEvents();
 	
-	/* update calendar every 5 seconds */
+	/* update calendar every 3 seconds */
 	window.setInterval(function() { 
 		updateDisplayedEvents();
 	}, 3000); 
@@ -741,7 +742,7 @@ $(document).ready(function(e) {
 		timePicker();
 	});
 	
-	$(document).on('keyup', '#title, #dialog-time, #duration, #datepicker', function(e) {
+	$(document).on('keyup', '#title, #dialog-time, #duration, #datepicker, #attendees, #group, #descrip', function(e) {
 		date = $('#datepicker').val();
 		var res = dateRegex(date);
 		if (res) {
