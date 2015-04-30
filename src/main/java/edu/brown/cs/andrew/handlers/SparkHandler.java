@@ -390,6 +390,7 @@ public class SparkHandler {
       QueryParamsMap qm = req.queryMap();
       int week = c.get(Calendar.WEEK_OF_YEAR);
       System.out.println("CLIENT ID " + qm.value("string"));
+      System.out.println("");
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
@@ -419,6 +420,7 @@ public class SparkHandler {
         }
         Gson gson = new Gson();
         System.out.println(currentWeekStart);
+        System.out.println("");
         List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
         ConcurrentHashMap<Integer, Event> testEvents;
         testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
@@ -452,8 +454,9 @@ public class SparkHandler {
         toFrontEnd.add(eventList);
       }
       Map<String, Object> variables = new ImmutableMap.Builder()
-          .put("events", toFrontEnd).put("week", currentWeek).build();
-      System.out.println(GSON.toJson(variables));
+          .put("events", toFrontEnd)
+          .put("week", currentWeek).build();
+//      System.out.println(GSON.toJson(variables));
       return GSON.toJson(variables);
     }
   }
