@@ -390,19 +390,24 @@ public class SparkHandler {
       int week = c.get(Calendar.WEEK_OF_YEAR);
       System.out.println("CLIENT ID " + qm.value("string"));
       int clientID = Integer.parseInt(qm.value("string").substring(10));
+      System.out.println("TOKEN: " + clients.get(clientID).getAccessToken());
       if (clients.get(clientID).getAccessToken() != null) {
+        
         ServerCalls sc = new ServerCalls();
         String accessToken = clients.get(clientID).getAccessToken();
         HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
         HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList,
             accessToken);
         List<Event> events = sc.getAllEvents(eventsList);
+        ClientHandler ch = clients.get(clientID);
         for (Event event : events) {
           // System.out.println(event);
 
-          clients.get(clientID).addEvent(event);
+          ch.addEvent(event);
+          
           System.out.println(event.getTitle());
         }
+        clients.put(clientID, ch);
       }
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
@@ -797,6 +802,9 @@ public class SparkHandler {
         ch.addEvent(event);
         System.out.println(event.getTitle());
       }
+      clients.remove(clientID);
+      clients.put(clientID, ch);
+      System.out.println("GOOGLE TOKEN: " + ch.getAccessToken());
       // try {
       // System.out.println(events.get(0).getDate());
       // } catch (ParseException e1) {
