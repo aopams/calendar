@@ -396,10 +396,7 @@ public class SparkHandler {
       c.setTime(date);
       QueryParamsMap qm = req.queryMap();
       int week = c.get(Calendar.WEEK_OF_YEAR);
-      System.out.println("CLIENT ID " + qm.value("string"));
-      System.out.println("");
       int clientID = Integer.parseInt(qm.value("string").substring(10));
-      System.out.println("TOKEN: " + clients.get(clientID).getAccessToken());
       if (clients.get(clientID).getAccessToken() != null) {
         
         ServerCalls sc = new ServerCalls();
