@@ -54,7 +54,7 @@ function googleEvents() {
 
 	newWindow = window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com", "popupWindow", "width=600,height=600,scrollbars=yes");
 	var idPathname = window.location.pathname;
-	
+	console.log(idPathname);
 	setTimeout(function() {
 		var codePathname = newWindow.location.href;
 		var code = codePathname.substring(28);
@@ -702,7 +702,7 @@ $(document).ready(function(e) {
 	/* update calendar every 5 seconds */
 	window.setInterval(function() { 
 		updateDisplayedEvents();
-	}, 5000); 
+	}, 3000); 
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {

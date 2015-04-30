@@ -258,6 +258,7 @@ public class SparkHandler {
         }
         toFrontEnd.add(newE);
       }
+      toFrontEnd.add(e);
         int status = 0;
         String message = "conflict";
         Map<String, Object> variables = new ImmutableMap.Builder()
@@ -407,7 +408,9 @@ public class SparkHandler {
       c.setTime(date);
       QueryParamsMap qm = req.queryMap();
       int week = c.get(Calendar.WEEK_OF_YEAR);
-      int clientID = Integer.parseInt(qm.value("string").substring(10));
+      String unparsedID = qm.value("string").replace("#", "");
+      System.out.println("unparsed ID: " + unparsedID);
+      int clientID = Integer.parseInt(unparsedID.substring(10));
       if (clients.get(clientID).getAccessToken() != null) {
         
         ServerCalls sc = new ServerCalls();
@@ -421,7 +424,6 @@ public class SparkHandler {
           // System.out.println(event);
 
           ch.addEvent(event);
-          
           System.out.println(event.getTitle());
         }
         clients.put(clientID, ch);
@@ -820,9 +822,7 @@ public class SparkHandler {
 
         ch.addEvent(event);
         System.out.println(event.getTitle());
-      }
-      clients.remove(clientID);
-      clients.put(clientID, ch);
+      };
       System.out.println("GOOGLE TOKEN: " + ch.getAccessToken());
       // try {
       // System.out.println(events.get(0).getDate());
