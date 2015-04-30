@@ -173,8 +173,8 @@ public class SparkHandler {
       String description = qm.value("description");
       String creator = cli.user;
       String group = qm.value("group");
-      System.out.println(group);
-      if (group != null && !cli.getFriends().containsKey(group)) {
+      System.out.println("group name = " + group);
+      if (group != null && !cli.getGroups().containsValue(group)) {
         group = null;
       }
       int duration = Integer.parseInt(qm.value("duration"));
@@ -397,6 +397,7 @@ public class SparkHandler {
       QueryParamsMap qm = req.queryMap();
       int week = c.get(Calendar.WEEK_OF_YEAR);
       int clientID = Integer.parseInt(qm.value("string").substring(10));
+      System.out.println("clientID = " + clientID);
       if (clients.get(clientID).getAccessToken() != null) {
         
         ServerCalls sc = new ServerCalls();
@@ -407,11 +408,10 @@ public class SparkHandler {
         List<Event> events = sc.getAllEvents(eventsList);
         ClientHandler ch = clients.get(clientID);
         for (Event event : events) {
-          // System.out.println(event);
-
+          System.out.println(event.getTitle());
           ch.addEvent(event);
           
-          System.out.println(event.getTitle());
+          
         }
         clients.put(clientID, ch);
       }
