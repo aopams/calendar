@@ -67,7 +67,7 @@ function googleEvents() {
 		
 		
 	}, 5000);
-
+	
 
 }
 
@@ -801,9 +801,6 @@ $(document).ready(function(e) {
 		googleEvents();
 	});
 	
-	$(document).on('click','#continue', function(e) {
-		googleEvents2();
-	});
 	
 	
 	$(document).on('click','#new-event-button', function(e) {
