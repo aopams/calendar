@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 
 import edu.brown.cs.andrew.clientThreads.CalendarThread;
 import edu.brown.cs.andrew.clientThreads.ContactsThread;
+import edu.brown.cs.andrew.clientThreads.GroupRetrievalThread;
 import edu.brown.cs.andrew.clientThreads.UserThread;
 import edu.brown.cs.rmchandr.APICalls.ServerCalls;
 import freemarker.template.Configuration;
@@ -84,6 +85,7 @@ public class SparkHandler {
     Spark.get("/", new CodeHandler(), freeMarker);
     // Spark.get("/calendar", new FrontHandler(), freeMarker);
     Spark.get("/login", new LoginHandler(), freeMarker);
+    Spark.post("/validate", new ValidateLoginHandler());
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
     Spark.post("/getGoogleEvents", new GoogleEventsHandler());
@@ -173,14 +175,25 @@ public class SparkHandler {
       String description = qm.value("description");
       String creator = cli.user;
       String group = qm.value("group");
-      System.out.println("group name = " + group);
-      if (group != null && !cli.getGroups().containsValue(group)) {
+      System.out.println(group);
+      if (group != null && !cli.getGroups().contains(group)) {
         group = null;
       }
       int duration = Integer.parseInt(qm.value("duration"));
       String users = qm.value("attendees");
+      System.out.println("USERS: " + users);
       String[] usersBuffer = users.split(",");
-      List<String> attendees = new ArrayList<String>();
+      List<String> groupAttendees = new ArrayList<String>();
+      if (group != null && users.equals(",")) {
+        GroupRetrievalThread grt = new GroupRetrievalThread(group);
+        try {
+          Future<List<String>> t = pool.submit(grt);
+          groupAttendees = t.get();
+        } catch (InterruptedException | ExecutionException e1) {
+
+        }
+      }
+      List<String> attendees = groupAttendees;
       if (group == null) {
         attendees.add(cli.getClient());
         group = "";
@@ -225,7 +238,6 @@ public class SparkHandler {
         try {
           t.get();
         } catch (InterruptedException | ExecutionException e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         }
         clients.put(clientID, cli);
@@ -271,7 +283,7 @@ public class SparkHandler {
       while (clients.containsKey(randomHolder)) {
         randomHolder = (int) (Math.random() * 1000000);
       }
-      String form = "<form method = \"POST\" action=\"/calendar/"
+      String form = "<form id =\"loginForm\" method = \"POST\" action=\"/calendar/"
           + randomHolder + "\">";
       Map<String, Object> variables = ImmutableMap.of("title", "Login",
           "message", "", "form", form);
@@ -300,9 +312,47 @@ public class SparkHandler {
     while (clients.containsKey(randomHolder)) {
       randomHolder = (int) (Math.random() * 1000000);
     }
-    String form = "<form method = \"POST\" action=\"/calendar/" + randomHolder
+    String form = "<form id =\"loginForm\" method = \"POST\" action=\"/calendar/" + randomHolder
         + "\">";
     return form;
+  }
+
+  private static class ValidateLoginHandler implements Route {
+    @Override
+    public Object handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      String user = qm.value("username");
+      String pass = qm.value("password");
+      boolean found = false;
+      try {
+        DatabaseHandler myDBHandler = new DatabaseHandler(database);
+        found = myDBHandler.findUser(user, pass);
+        System.out.println(found);
+        myDBHandler.closeConnection();
+      } catch (SQLException | ClassNotFoundException e) {
+        String message = "An Error Occurred while logging in, please try again.";
+        String status = "error";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("status", status)
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      }
+      if (found) {
+        String message = "";
+        String status = "success";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("status", status)
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      } else {
+        String message = "The username or password entered was not found.";
+        String status = "failure";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("status", status)
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      }
+    }
   }
 
   private static class LoginEventHandler implements TemplateViewRoute {

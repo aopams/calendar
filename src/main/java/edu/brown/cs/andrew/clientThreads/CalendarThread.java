@@ -62,7 +62,6 @@ public class CalendarThread implements Callable<String>{
       myDBHandler.removeUserFromEvent(client1.getClient(), deleteEvent.getId());
       break;
     case EDIT_EVENT :
-      System.out.println("event being edited");
       System.out.println(myEvent.getDescription());
       List<String> attends = deleteEvent.getAttendees();
       for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {

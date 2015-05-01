@@ -19,14 +19,13 @@
   <div class="login-card">
   	<div id="logreg">
   		<img src="\img/logo.png" id ="logo"><br>
-<!--  		<form method = "POST" action="/calendar/?" onclick = "(Math.floor(Math.random() * 10000000))"> -->
 		${form}
-	    <input type="text" name="user" placeholder="Username">
-	    <input type="password" name="pass" placeholder="Password">
-	    <input type="submit" name="login" class="btn btn-primary" value="Login">
+	    <input type="text" name="user" id="loginUser" placeholder="Username" required>
+	    <input type="password" name="pass" id="loginPass" placeholder="Password" required>
+	    <input type="submit" name="login" id="loginbutton" class="btn btn-primary" value="Login">
 	  </form>
 	    <button type="button" class="btn btn-primary" id ="registerbutton" name="registerbutton">Register</button>
-	   <div class="Result">${message}<br></p></div>
+	   <div class="Result">${message}</p></div>
   	</div>
     
     <!register page>
@@ -34,12 +33,12 @@
     <h1>Register</h1><br>
 <!-- 	  <form> -->
 		<form id="registerForm">
-	    <input type="text" name="user" id="regUser" placeholder="Username">
-	    <input type="password" name="pass" id="pass" placeholder="Password">
-	    <input type="password" name="pass" id="pass2" placeholder="Confirm password">
-	    <input type="text" name="name" id="regName" placeholder="Full name">	    
-	    <input id = "register" type="submit" name="register" class="btn btn-primary" value="Register">
- 	  </form>
+		    <input type="text" name="user" id="regUser" placeholder="Username" required>
+		    <input type="password" name="pass" id="pass" placeholder="Password" required>
+		    <input type="password" name="pass" id="pass2" placeholder="Confirm password" required>
+		    <input type="text" name="name" id="regName" placeholder="Full name" required>	    
+		    <input id = "register" type="submit" name="register" class="btn btn-primary" value="Register">
+		</form>
 	  <input type="image" src="\img/leftarrow.png" class ="backbutton" name="backbutton">
     </div>
   </div>

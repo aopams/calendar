@@ -11,8 +11,39 @@ jQuery(document).ready(function($) {
 		$("#registerpage").hide(0);
 	});
 	
+
+	$('form').submit(function() {
+		var username = $('#loginUser').val();
+		var password = $('#loginPass').val();
+		var postParameters = {username : username, password : password};
+		var boolean = false;
+		var response = true;
+		$.post('/validate', postParameters, function(responseJSON) {
+			responseObject = JSON.parse(responseJSON);
+			status = responseObject.status;
+			message = responseObject.message;
+			if (status == "error") {
+				console.log("error");
+				$('.Result p').css("text-align", "center");
+				$('.Result p').text(message);
+			} else if (status == "failure") {
+				console.log("failureeee");
+				$('.Result p').css("text-align", "center");
+				$('.Result p').text(message);
+			} else {
+				console.log("set to true");
+				console.log(boolean);
+				boolean = true;
+				console.log(boolean);
+				//call function, that does what you want
+			}
+		});
+		return boolean;
+	});
+	
 	$("#register").bind('click', function(event) {
 		console.log("noice");
+		$("p").remove();
 		var password = document.getElementById('pass').value;
 		var confpass = document.getElementById('pass2').value;
 		var username = document.getElementById('regUser').value;
@@ -21,14 +52,22 @@ jQuery(document).ready(function($) {
 		//check for valid fields
 		if (!password || !confpass || !username || !fullname) {
 			var message = document.createElement('p');
-			message.innerHTML = "Empty field, please fill in all fields.";
-			var parent = document.getElementById('registerpage');
-			parent.appendChild(message);
-/* 			alert("Empty field, please fill in all fields."); */
+			message.style.textAlign = "center";
+			message.style.color = "red";
+			message.appendChild(document.createTextNode("Please fill out all fields."));
+			$("#registerForm").append(message);
 		} else if (password != confpass) {
-/* 			alert("Passwords do not match, please try again."); */
+			var message = document.createElement('p');
+			message.style.textAlign = "center";
+			message.style.color = "red";
+			message.appendChild(document.createTextNode("Passwords do not match, please try again."));
+			$("#registerForm").append(message);
 		} else if (!/^[a-zA-Z0-9- ]*$/.test(username) || !/^[a-zA-Z0-9- ]*$/.test(fullname)) {
-/* 			alert("Username or Name field contains a special characters. Please remove them."); */
+			var message = document.createElement('p');
+			message.style.textAlign = "center";
+			message.style.color = "red";
+			message.appendChild(document.createTextNode("Passwords do not match, please try again."));
+			$("#registerForm").append(message);
 		} else {
 			console.log("shouldn't be here");
 			var postParameters = {username : username, password : password, fullname : fullname};
@@ -52,8 +91,9 @@ function register(postParameters, loginParam) {
 }
 
 function login(postParameters) {
+	console.log("HEREEE");
 	console.log(postParameters);
-	var url = $("#login-form").attr('action');
+	var url = $("#loginForm").attr('action');
 	console.log('url is ' + url);
 	my_form=document.createElement('FORM');
 	my_form.name='myForm';
