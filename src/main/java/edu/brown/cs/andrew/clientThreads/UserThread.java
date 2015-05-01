@@ -23,7 +23,9 @@ public class UserThread implements Callable<String>{
   }
   @Override
   public String call() throws Exception {
-    //will sucks D for a living
+    if (myDBHandler.findUser(user) == null) {
+      return "taken";
+    }
     myDBHandler.insertUser(user, pass, name);
     myDBHandler.closeConnection();
     return null;

@@ -410,7 +410,7 @@ public class SparkHandler {
       String unparsedID = qm.value("string").replace("#", "");
       System.out.println("unparsed ID: " + unparsedID);
       int clientID = Integer.parseInt(unparsedID.substring(10));
-      if (clients.get(clientID).getAccessToken() != null) {
+     /** if (clients.get(clientID).getAccessToken() != null) {
         
         ServerCalls sc = new ServerCalls();
         String accessToken = clients.get(clientID).getAccessToken();
@@ -425,8 +425,7 @@ public class SparkHandler {
           ch.addEvent(event);
           System.out.println(event.getTitle());
         }
-        clients.put(clientID, ch);
-      }
+      } **/
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
       Date currentWeekStart = currentWeeks.get(clientID);
@@ -880,8 +879,9 @@ public class SparkHandler {
       Future<String> t = pool.submit(ut);
       int success = 0;
       try {
-        t.get();
-        success = 1;
+        if (t.get().equals("taken")) {
+          success = 1;
+        }
       } catch (InterruptedException | ExecutionException e) {
         e.printStackTrace();
       }

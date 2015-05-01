@@ -66,15 +66,12 @@ function googleEvents() {
 		
 		
 		
-	}, 5000);
+	}, 4000);
 	
 
 }
 
-function googleEvents2() {
-	
-	self.close();
-}
+
 
 /* create new event */
 function newEvent() {
