@@ -342,7 +342,9 @@ public class SparkHandler {
         Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
             "message", "");
         ClientHandler newClient = new ClientHandler(database, user, true);
-        clients.put(id, newClient);
+        if (!clients.containsKey(id)) {
+          clients.put(id, newClient);
+        }
         return new ModelAndView(variables, "main.ftl");
       } else {
         clients.remove(randomHolder);
@@ -455,7 +457,6 @@ public class SparkHandler {
         Gson gson = new Gson();
         System.out.println(currentWeekStart);
         System.out.println("");
-        List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
         ConcurrentHashMap<Integer, Event> testEvents;
         testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
         System.out.println(testEvents.size());

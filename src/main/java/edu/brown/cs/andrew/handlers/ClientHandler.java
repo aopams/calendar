@@ -46,6 +46,7 @@ public class ClientHandler {
   public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date startTimed) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
     Date start = SparkHandler.setTimeToMidnight(startTimed);
+    System.out.println("events size: " + events.size());
     for (Entry<Integer, Event> e : events.entrySet()) {
       try {
         Date eventDate = e.getValue().getDate();
