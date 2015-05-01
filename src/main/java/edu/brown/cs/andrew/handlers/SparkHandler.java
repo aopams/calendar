@@ -382,7 +382,6 @@ public class SparkHandler {
 
   public static Date setTimeToMidnight(Date date) {
     Calendar calendar = Calendar.getInstance();
-
     calendar.setTime(date);
     calendar.set(Calendar.HOUR_OF_DAY, 0);
     calendar.set(Calendar.MINUTE, 0);
@@ -802,7 +801,9 @@ public class SparkHandler {
     @Override
     public ModelAndView handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
-      int clientID = Integer.parseInt(qm.value("string").substring(10));
+      String unparsed = qm.value("string");
+      unparsed = unparsed.replace("#", "");
+      int clientID = Integer.parseInt(unparsed.substring(10));
       String code = qm.value("code");
       // String form = getRandomForm();
       ServerCalls sc = new ServerCalls();

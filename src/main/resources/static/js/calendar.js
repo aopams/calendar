@@ -18,6 +18,7 @@ var events = [];
 /* updates all the events on the caledar at the given moment. */
 function updateDisplayedEvents() {
 	var postParameters = {string: window.location.pathname};
+	console.log(postParameters);
 	$.post("/getevents", postParameters, function(responseJSON){
 		parseData(responseJSON);
 	})
