@@ -88,6 +88,7 @@ public class SparkHandler {
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
     Spark.post("/getGoogleEvents", new GoogleEventsHandler());
+    Spark.get("/hasAccessToken", new HasAccessTokenHandler());
     Spark.post("/getfriends", new FriendsHandler());
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
@@ -794,24 +795,54 @@ public class SparkHandler {
     }
   }
 
+  public static class HasAccessTokenHandler implements Route {
+    @Override
+    public Object handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      String unparsed = qm.value("string");
+      int clientID = Integer.parseInt(unparsed.substring(10));
+      boolean toReturn;
+      toReturn = (clients.get(clientID).getAccessToken() != null);
+      Map<String, Object> variables = new ImmutableMap.Builder().put(
+          "hasAccessToken", toReturn).build();
+      System.out.println(GSON.toJson(variables));
+      return GSON.toJson(variables);
+    }
+  }
+
   public static class GoogleEventsHandler implements Route {
     @Override
     public ModelAndView handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
+      boolean hasAccessToken = Boolean.parseBoolean(qm.value("hasAccessToken"));
       String unparsed = qm.value("string");
+      System.out.println("STRING: " + unparsed);
       unparsed = unparsed.replace("#", "");
       int clientID = Integer.parseInt(unparsed.substring(10));
-      String code = qm.value("code");
-      // String form = getRandomForm();
-      ServerCalls sc = new ServerCalls();
-      HashMap<String, String> map = sc.authorize(code);
-      String accessToken = map.get("access_token");
-      String refreshToken = map.get("refresh_token");
       ClientHandler ch = clients.get(clientID);
+      ServerCalls sc = new ServerCalls();
+      String accessToken;
+      if (!hasAccessToken) {
+        String code = qm.value("code");
+        // String form = getRandomForm();
+
+        HashMap<String, String> map = sc.authorize(code);
+        accessToken = map.get("access_token");
+        String refreshToken = map.get("refresh_token");
+        ch.setAccessToken(accessToken);
+        ch.setRefreshToken(refreshToken);
+      } else {
+        accessToken = ch.getAccessToken();
+        for (Entry<Integer, Event> e : ch.getEvents().entrySet()) {
+          if (e.getKey() < 0) {
+            ch.removeEvent(e.getValue());
+          }
+        }
+      }
+
       System.out.println("CLIENT ID: " + clientID);
       System.out.println("CLIENT NAME: " + ch.getClient());
-      ch.setAccessToken(accessToken);
-      ch.setRefreshToken(refreshToken);
+
       HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
       HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList,
           accessToken);

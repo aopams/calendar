@@ -52,21 +52,33 @@ function rightArrow() {
 }
 
 function googleEvents() {
+	
+	var getParameters = {string: window.location.pathname};
+	
+	$.get("/hasAccessToken", getParameters,function(responseJSON){
+		var responseObject = JSON.parse(responseJSON);
+		var hasAccessToken = responseObject.hasAccessToken;
+		if (!hasAccessToken) {
+			newWindow = window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com&access_type=offline", "popupWindow", "width=600,height=600,scrollbars=yes");
+			setTimeout(function() {
+				var codePathname = newWindow.location.href;
+				var code = codePathname.substring(28);
+				var postParameters = {string: window.location.pathname, code: code, hasAccessToken: hasAccessToken};
+				$.post("/getGoogleEvents", postParameters, function(responseJSON){
+					parseData(responseJSON);
+				})
+			}, 4000);
+		} else {
+			setTimeout(function() {
+				var postParameters = {string: window.location.pathname, hasAccessToken: hasAccessToken};
+				$.post("/getGoogleEvents", postParameters, function(responseJSON){
+					parseData(responseJSON);
+				})
+			}, 4000);
+		}
+	});
 
-	newWindow = window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com&access_type=offline", "popupWindow", "width=600,height=600,scrollbars=yes");
-	var idPathname = window.location.pathname;
-	console.log(idPathname);
-	setTimeout(function() {
-		var codePathname = newWindow.location.href;
-		var code = codePathname.substring(28);
-		var postParameters = {string: idPathname, code: code};
-		$.post("/getGoogleEvents", postParameters, function(responseJSON){
-			parseData(responseJSON);
-		})
-		
-		
-		
-	}, 4000);
+	
 	
 
 }
