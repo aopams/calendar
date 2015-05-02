@@ -1,7 +1,4 @@
-	$(document).on('click','#continue', function(e) {
-		googleEvents2();
-	});
-function googleEvents2() {
-	
-	self.close();
-}
+console.log("HERE " + window.location.href);
+
+setTimeout(function() { self.close(); }, 5000);
+

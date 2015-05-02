@@ -48,6 +48,7 @@ public class ClientHandler {
     Date start = SparkHandler.setTimeToMidnight(startTimed);
     System.out.println("events size: " + events.size());
     for (Entry<Integer, Event> e : events.entrySet()) {
+      System.out.println(e.getValue().getTitle());
       try {
         Date eventDate = e.getValue().getDate();
         Calendar c = Calendar.getInstance();
@@ -97,10 +98,11 @@ public class ClientHandler {
 
   public synchronized void setEvents(ConcurrentHashMap<Integer, Event> events) {
     this.events = events;
-  } 
-//  public synchronized void setMaxGroupId(int maxID) {
-//    this.maxGroupId = maxID;
-//  }
+  }
+
+  // public synchronized void setMaxGroupId(int maxID) {
+  // this.maxGroupId = maxID;
+  // }
 
   public synchronized void setMaxEventId(int maxID) {
     this.maxEventId = maxID;
@@ -166,28 +168,33 @@ public class ClientHandler {
   }
 
   public void addEvent(Event e) {
-    if (e.getId()>=0) {
+    if (e.getId() >= 0) {
       maxEventId += 1;
       e.setID(maxEventId);
       System.out.println(events);
       events.put(maxEventId, e);
     } else {
+      maxEventId += 1;
+      e.setID(maxEventId * -1);
       events.put((maxEventId * -1), e);
     }
     System.out.println("EVENT ID: " + e.getId());
   }
+
   public void removeEvent(Event e) {
     events.remove(e.getId());
 
   }
-  //edited groupid count, handled in database
+
+  // edited groupid count, handled in database
   public void addGroup(String group, int groupID) {
     groups.put(groupID, group);
   }
-//  public void addGroup(String group) {
-//    maxGroupId++;
-//    groups.put(maxGroupId, group);
-//  }
+
+  // public void addGroup(String group) {
+  // maxGroupId++;
+  // groups.put(maxGroupId, group);
+  // }
 
   public void removeGroup(int groupID) {
     groups.remove(groupID);
@@ -199,5 +206,13 @@ public class ClientHandler {
 
   public String getAccessToken() {
     return accessToken;
+  }
+
+  public void setRefreshToken(String refreshToken) {
+    this.refreshToken = refreshToken;
+  }
+
+  public String getRefreshToken() {
+    return refreshToken;
   }
 }

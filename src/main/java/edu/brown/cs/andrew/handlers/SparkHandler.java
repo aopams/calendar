@@ -247,19 +247,20 @@ public class SparkHandler {
             .put("status", status).put("message", message).build();
         System.out.println(GSON.toJson(variables));
         return GSON.toJson(variables);
-    } else {
-      List<Event> toFrontEnd = new ArrayList<Event>(); 
-      rank.checkAllConflicts(date);
-      Integer[] bestTimes = rank.getBestTimes(3, date);
-      for (int i = 0; i < 3; i++) {
-        c.set(Calendar.HOUR_OF_DAY, bestTimes[i]);
-        Event newE = new Event(c.getTime(), title, dayOfWeek, attendees, group, duration, description, creator);
-        if (eventID != -1) { 
-          newE.setID(eventID);
+      } else {
+        List<Event> toFrontEnd = new ArrayList<Event>();
+        rank.checkAllConflicts(date);
+        Integer[] bestTimes = rank.getBestTimes(3, date);
+        for (int i = 0; i < 3; i++) {
+          c.set(Calendar.HOUR_OF_DAY, bestTimes[i]);
+          Event newE = new Event(c.getTime(), title, dayOfWeek, attendees,
+              group, duration, description, creator);
+          if (eventID != -1) {
+            newE.setID(eventID);
+          }
+          toFrontEnd.add(newE);
         }
-        toFrontEnd.add(newE);
-      }
-      toFrontEnd.add(e);
+        toFrontEnd.add(e);
         int status = 0;
         String message = "conflict";
         Map<String, Object> variables = new ImmutableMap.Builder()
@@ -269,8 +270,8 @@ public class SparkHandler {
         return GSON.toJson(variables);
       }
     }
-  
- }
+
+  }
 
   private static class LogoutHandler implements TemplateViewRoute {
     @Override
@@ -467,6 +468,19 @@ public class SparkHandler {
           System.out.println(event.getTitle());
         }
       } **/
+      /**
+       * if (clients.get(clientID).getAccessToken() != null) {
+       *
+       * ServerCalls sc = new ServerCalls(); String accessToken =
+       * clients.get(clientID).getAccessToken(); HashMap<String, String>
+       * calendarList = sc.getCalendarList(accessToken); HashMap<String, String>
+       * eventsList = sc.getAllEventsMap(calendarList, accessToken); List<Event>
+       * events = sc.getAllEvents(eventsList); ClientHandler ch =
+       * clients.get(clientID); for (Event event : events) { //
+       * System.out.println(event);
+       *
+       * ch.addEvent(event); System.out.println(event.getTitle()); } }
+       **/
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
       Date currentWeekStart = currentWeeks.get(clientID);
@@ -528,9 +542,8 @@ public class SparkHandler {
         toFrontEnd.add(eventList);
       }
       Map<String, Object> variables = new ImmutableMap.Builder()
-          .put("events", toFrontEnd)
-          .put("week", currentWeek).build();
-//      System.out.println(GSON.toJson(variables));
+          .put("events", toFrontEnd).put("week", currentWeek).build();
+      // System.out.println(GSON.toJson(variables));
       return GSON.toJson(variables);
     }
   }
@@ -854,21 +867,28 @@ public class SparkHandler {
       ServerCalls sc = new ServerCalls();
       HashMap<String, String> map = sc.authorize(code);
       String accessToken = map.get("access_token");
+      String refreshToken = map.get("refresh_token");
       ClientHandler ch = clients.get(clientID);
       System.out.println("CLIENT ID: " + clientID);
       System.out.println("CLIENT NAME: " + ch.getClient());
       ch.setAccessToken(accessToken);
+      ch.setRefreshToken(refreshToken);
       HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
       HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList,
           accessToken);
       List<Event> events = sc.getAllEvents(eventsList);
-      System.out.println(ch);
+      System.out.println(events.size());
       for (Event event : events) {
         // System.out.println(event);
 
         ch.addEvent(event);
         System.out.println(event.getTitle());
-      };
+      }
+      ;
+      System.out.println("EVENTS: " + ch.getEvents().size());
+      // System.out.println("EVENTS: " + ch.getEventsByWeek(startTimed));
+      clients.remove(clientID);
+      clients.put(clientID, ch);
       System.out.println("GOOGLE TOKEN: " + ch.getAccessToken());
       // try {
       // System.out.println(events.get(0).getDate());

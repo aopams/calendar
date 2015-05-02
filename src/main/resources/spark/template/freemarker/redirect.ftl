@@ -17,7 +17,7 @@
 </head>
 
 <body>
-	<button type="button" id="continue">Continue to Calendar</button>
+	Loading (This Window Will Close Automatically Upon Redirect Completion)
 </body>
 
 </html>
