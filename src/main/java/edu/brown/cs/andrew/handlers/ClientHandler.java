@@ -46,6 +46,7 @@ public class ClientHandler {
   public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date startTimed) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
     Date start = SparkHandler.setTimeToMidnight(startTimed);
+    System.out.println("events size: " + events.size());
     for (Entry<Integer, Event> e : events.entrySet()) {
       try {
         Date eventDate = e.getValue().getDate();
@@ -169,8 +170,10 @@ public class ClientHandler {
       maxEventId += 1;
       e.setID(maxEventId);
       System.out.println(events);
+      events.put(maxEventId, e);
+    } else {
+      events.put((maxEventId * -1), e);
     }
-    events.put(maxEventId, e);
     System.out.println("EVENT ID: " + e.getId());
   }
   public void removeEvent(Event e) {

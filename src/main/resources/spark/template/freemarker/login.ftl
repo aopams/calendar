@@ -22,22 +22,24 @@
 		${form}
 	    <input type="text" name="user" id="loginUser" placeholder="Username" required>
 	    <input type="password" name="pass" id="loginPass" placeholder="Password" required>
-	    <input type="submit" name="login" id="loginbutton" class="btn btn-primary" value="Login">
+<!-- 	    changed from type submit to type button -->
+	    <input type="button" name="login" id="loginbutton" class="btn btn-primary" value="Login">
 	  </form>
 	    <button type="button" class="btn btn-primary" id ="registerbutton" name="registerbutton">Register</button>
-	   <div class="Result">${message}</p></div>
+	   <div class="Result">${message}</div>
   	</div>
     
     <!register page>
     <div id="registerpage">
     <h1>Register</h1><br>
-<!-- 	  <form> -->
+<!--     	direct to login page -->
 		<form id="registerForm">
 		    <input type="text" name="user" id="regUser" placeholder="Username" required>
 		    <input type="password" name="pass" id="pass" placeholder="Password" required>
 		    <input type="password" name="pass" id="pass2" placeholder="Confirm password" required>
-		    <input type="text" name="name" id="regName" placeholder="Full name" required>	    
-		    <input id = "register" type="submit" name="register" class="btn btn-primary" value="Register">
+		    <input type="text" name="name" id="regName" placeholder="Full name" required>
+<!-- 		    change from type submit to type button -->
+		    <input id = "register" type="button" name="register" class="btn btn-primary" value="Register">
 		</form>
 	  <input type="image" src="\img/leftarrow.png" class ="backbutton" name="backbutton">
     </div>

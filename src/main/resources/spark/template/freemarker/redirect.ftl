@@ -11,7 +11,8 @@
   <link rel="stylesheet" type="text/css" href="\css/calendar.css">
   <link rel="stylesheet" type="text/css" href="\css/login.css">
   <script src="\js/jquery-2.1.1.js"></script>
-  <script src="\js/calendar.js"></script>
+ <!-- <script src="\js/calendar.js"></script> --!>
+ <script src="\js/redirect.js"></script>
 
 </head>
 

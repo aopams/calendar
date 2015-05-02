@@ -18,6 +18,7 @@ var events = [];
 /* updates all the events on the caledar at the given moment. */
 function updateDisplayedEvents() {
 	var postParameters = {string: window.location.pathname};
+	console.log(postParameters);
 	$.post("/getevents", postParameters, function(responseJSON){
 		parseData(responseJSON);
 	})
@@ -54,7 +55,7 @@ function googleEvents() {
 
 	newWindow = window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com", "popupWindow", "width=600,height=600,scrollbars=yes");
 	var idPathname = window.location.pathname;
-	
+	console.log(idPathname);
 	setTimeout(function() {
 		var codePathname = newWindow.location.href;
 		var code = codePathname.substring(28);
@@ -65,15 +66,12 @@ function googleEvents() {
 		
 		
 		
-	}, 5000);
-
-
-}
-
-function googleEvents2() {
+	}, 4000);
 	
-	self.close();
+
 }
+
+
 
 /* create new event */
 function newEvent() {
@@ -123,6 +121,9 @@ function editEvent(id) {
 		time: time, duration: dur, description: descrip, attendees: atten,
 		group: group
 	};
+	if (atten === '') {
+		override = 1;
+	}
 	$.post("/newevent", postParameters, function(responseJSON){
 		var responseObject = JSON.parse(responseJSON);
 		console.log(responseObject);
@@ -151,8 +152,6 @@ function rankedEvent(index, type) {
 	if (type === 0) {
 		console.log('type is 0, deleting id...');
 		delete postParameters.id;
-	} else {
-	
 	}
 	console.log(postParameters);
 	$.post("/newevent", postParameters, function(responseJSON){
@@ -699,10 +698,10 @@ $(document).ready(function(e) {
 	/* update the displayed events to get events on page */
 	updateDisplayedEvents();
 	
-	/* update calendar every 5 seconds */
+	/* update calendar every 3 seconds */
 	window.setInterval(function() { 
 		updateDisplayedEvents();
-	}, 5000); 
+	}, 3000); 
 
 	/* create new event when they click eventSlot */
 	$(document).on('click','.eventSlot', function(e) {
@@ -741,7 +740,7 @@ $(document).ready(function(e) {
 		timePicker();
 	});
 	
-	$(document).on('keyup', '#title, #dialog-time, #duration, #datepicker', function(e) {
+	$(document).on('keyup', '#title, #dialog-time, #duration, #datepicker, #attendees, #group, #descrip', function(e) {
 		date = $('#datepicker').val();
 		var res = dateRegex(date);
 		if (res) {
@@ -799,9 +798,6 @@ $(document).ready(function(e) {
 		googleEvents();
 	});
 	
-	$(document).on('click','#continue', function(e) {
-		googleEvents2();
-	});
 	
 	
 	$(document).on('click','#new-event-button', function(e) {

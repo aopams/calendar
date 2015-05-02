@@ -116,10 +116,12 @@ public class DatabaseHandler {
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, user_name);
     ResultSet rs = theStat.executeQuery();
-    String toReturn = null;
+    String toReturn = "";
     if (rs.next()) {
       toReturn = rs.getString(1);
+      System.out.println("user found");
     }
+    
     rs.close();
     return toReturn;
   }

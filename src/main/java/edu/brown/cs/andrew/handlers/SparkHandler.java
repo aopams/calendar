@@ -259,6 +259,7 @@ public class SparkHandler {
         }
         toFrontEnd.add(newE);
       }
+      toFrontEnd.add(e);
         int status = 0;
         String message = "conflict";
         Map<String, Object> variables = new ImmutableMap.Builder()
@@ -380,14 +381,18 @@ public class SparkHandler {
         Map<String, Object> variables = ImmutableMap.of("title", "Calendar",
             "message", "");
         ClientHandler newClient = new ClientHandler(database, user, true);
-        clients.put(id, newClient);
+        if (!clients.containsKey(id)) {
+          clients.put(id, newClient);
+        }
         return new ModelAndView(variables, "main.ftl");
       } else {
+        
         clients.remove(randomHolder);
         String form = getRandomForm();
         String newMessage = "The username or password entered was not found";
         Map<String, Object> variables = ImmutableMap.of("title", "Login",
             "message", newMessage, "form", form);
+        //changed from 6.tl**
         return new ModelAndView(variables, "login.ftl");
 
       }
@@ -420,7 +425,6 @@ public class SparkHandler {
 
   public static Date setTimeToMidnight(Date date) {
     Calendar calendar = Calendar.getInstance();
-
     calendar.setTime(date);
     calendar.set(Calendar.HOUR_OF_DAY, 0);
     calendar.set(Calendar.MINUTE, 0);
@@ -446,10 +450,10 @@ public class SparkHandler {
       c.setTime(date);
       QueryParamsMap qm = req.queryMap();
       int week = c.get(Calendar.WEEK_OF_YEAR);
-      int clientID = Integer.parseInt(qm.value("string").substring(10));
-      System.out.println("clientID = " + clientID);
-      if (clients.get(clientID).getAccessToken() != null) {
-        
+      String unparsedID = qm.value("string").replace("#", "");
+      System.out.println("unparsed ID: " + unparsedID);
+      int clientID = Integer.parseInt(unparsedID.substring(10));
+     /** if (clients.get(clientID).getAccessToken() != null) {
         ServerCalls sc = new ServerCalls();
         String accessToken = clients.get(clientID).getAccessToken();
         HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
@@ -460,11 +464,9 @@ public class SparkHandler {
         for (Event event : events) {
           System.out.println(event.getTitle());
           ch.addEvent(event);
-          
-          
+          System.out.println(event.getTitle());
         }
-        clients.put(clientID, ch);
-      }
+      } **/
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
       Date currentWeekStart = currentWeeks.get(clientID);
@@ -494,7 +496,6 @@ public class SparkHandler {
         Gson gson = new Gson();
         System.out.println(currentWeekStart);
         System.out.println("");
-        List<DateHandler> currentWeek = getCurrentWeek(currentWeekStart);
         ConcurrentHashMap<Integer, Event> testEvents;
         testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
         System.out.println(testEvents.size());
@@ -783,11 +784,17 @@ public class SparkHandler {
           ct = new ContactsThread(clients.get(id), null, groupName, null,
               usersList, Commands.ADD_GROUP);
           Future<String> t = pool.submit(ct);
-          t.get();
-          break;
+          String exists = t.get();
+          if (exists.equals("failure")) {
+            message = "failure";
+          } else {
+            message = exists;
+          }
+          variables = new ImmutableMap.Builder().put("message", message).build();
+          return GSON.toJson(variables);
         } catch (InterruptedException | ExecutionException e2) {
           System.out.println("caught");
-          message = "ERROR: Bug in SQL.";
+          message = "error";
           e2.printStackTrace();
           variables = new ImmutableMap.Builder().put("message", message)
               .build();
@@ -839,7 +846,9 @@ public class SparkHandler {
     @Override
     public ModelAndView handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
-      int clientID = Integer.parseInt(qm.value("string").substring(10));
+      String unparsed = qm.value("string");
+      unparsed = unparsed.replace("#", "");
+      int clientID = Integer.parseInt(unparsed.substring(10));
       String code = qm.value("code");
       // String form = getRandomForm();
       ServerCalls sc = new ServerCalls();
@@ -859,9 +868,7 @@ public class SparkHandler {
 
         ch.addEvent(event);
         System.out.println(event.getTitle());
-      }
-      clients.remove(clientID);
-      clients.put(clientID, ch);
+      };
       System.out.println("GOOGLE TOKEN: " + ch.getAccessToken());
       // try {
       // System.out.println(events.get(0).getDate());
@@ -916,10 +923,11 @@ public class SparkHandler {
       String regName = qm.value("fullname");
       UserThread ut = new UserThread(user, pass, regName);
       Future<String> t = pool.submit(ut);
-      int success = 0;
+      int success = 1;
       try {
-        t.get();
-        success = 1;
+        if (t.get().equals("taken")) {
+          success = 0;
+        }
       } catch (InterruptedException | ExecutionException e) {
         e.printStackTrace();
       }
