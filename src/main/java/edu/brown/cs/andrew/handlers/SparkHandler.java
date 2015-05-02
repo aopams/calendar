@@ -806,10 +806,12 @@ public class SparkHandler {
       ServerCalls sc = new ServerCalls();
       HashMap<String, String> map = sc.authorize(code);
       String accessToken = map.get("access_token");
+      String refreshToken = map.get("refresh_token");
       ClientHandler ch = clients.get(clientID);
       System.out.println("CLIENT ID: " + clientID);
       System.out.println("CLIENT NAME: " + ch.getClient());
       ch.setAccessToken(accessToken);
+      ch.setRefreshToken(refreshToken);
       HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
       HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList,
           accessToken);
