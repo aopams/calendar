@@ -23,12 +23,13 @@ public class UserThread implements Callable<String>{
   }
   @Override
   public String call() throws Exception {
-    if (myDBHandler.findUser(user) == null) {
+    if (!myDBHandler.findUser(user).isEmpty()) {
+      System.out.println("user found");
       return "taken";
     }
     myDBHandler.insertUser(user, pass, name);
     myDBHandler.closeConnection();
-    return null;
+    return "nottaken";
   }
 
 }

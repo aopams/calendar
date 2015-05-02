@@ -103,8 +103,18 @@ $(document).ready(function(e) {
 	});
 	
 	$("#makeGroup").bind('click', function(e) {
-		var groupName = $("#groupName").val();
-		if (groupName && !/^[a-zA-Z0-9- ]*$/.test(groupName) == false) {
+		var groupName = $("#groupName").val().trim();
+		if (groupName && !/^[a-zA-Z0-9- ]*$/.test(groupName) == true) {
+			document.getElementById('message').innerHTML = "";
+			document.getElementById('message').style.textAlign = 'center';
+			document.getElementById('message').style.color = 'red';
+			document.getElementById('message').innerHTML = "Group name contains special characters, which is invalid. Please try another group name.";
+		} else if (!groupName) {
+			document.getElementById('message').innerHTML = "";
+			document.getElementById('message').style.textAlign = 'center';
+			document.getElementById('message').style.color = 'red';
+			document.getElementById('message').innerHTML = "Group name is empty, please specify a group name.";
+		} else {
 			document.getElementById('message').innerHTML = "";
 			form =
 			'<form class="form-inline" id ="newEventForm">' +
@@ -120,11 +130,7 @@ $(document).ready(function(e) {
 				'<div class="margin-group-xl">'+ 
 				'<img id="new-group-button" src="\\img/check.png"/>' +
 				'</div> </div> </form>';
-			$(form).dialog({ modal: true, resizable: false});	
-		} else {
-			document.getElementById('message').innerHTML = "";
-			document.getElementById('message').innerHTML = "Group name is not valid."
-			document.getElementById('makeGroupBar').appendChild(message);
+			$(form).dialog({ modal: true, resizable: false});
 		}
 	});
 	
@@ -195,7 +201,7 @@ function createFriends() {
 				refuse.id = 'refuse';
 				accept.id = 'accept';
 				img.src = getProfPic(pendingFriends[i]);
-				refuse.src = '/img/x.png';
+				refuse.src = '/img/minus.png';
 				refuse.onclick=function() {removeFriend(this);};
 				accept.src = '/img/check.png';
 				accept.onclick=function() {acceptFriend(this);};
@@ -232,7 +238,7 @@ function createFriends() {
 				img.src = getProfPic(friends[count]);
 				var rem = document.createElement('img');
 				rem.id = 'rem';
-				rem.src = '/img/x.png';
+				rem.src = '/img/minus.png';
 				rem.onclick=function() {removeFriend(this);};
 				rem.style.marginRight='175px';
 				friend.appendChild(rem);
@@ -297,7 +303,7 @@ function createGroups() {
 					img.onclick=function() {viewGroupMembers(this);};
 					var rem = document.createElement('img');
 					rem.id = 'rem';
-					rem.src = '/img/x.png';
+					rem.src = '/img/minus.png';
 					rem.onclick=function() {removeGroup(this);};
 					rem.style.marginRight='175px';
 					group.appendChild(rem);
@@ -421,8 +427,38 @@ function newGroup() {
 	var command = "add";
 	var postParameters = {url : url, users : users, groupname : groupname, command : command};
 	$.post('/editgroups', postParameters, function(responseJSON) {
+		responseObject = JSON.parse(responseJSON);
+		var message = responseObject.message;
 		console.log("editing groups");
-		createGroups();
+		console.log(message);
+		//case for when groupname already exists
+		if (message == "failure") {
+			console.log("group name already exists");
+			document.getElementById('message').style.textAlign = "center";
+			document.getElementById('message').style.color = "red";
+			document.getElementById('message').innerHTML = "Group name already exists, please try another."
+		//SQL error occured, report to user;
+		} else if (message == "error") {
+			document.getElementById('message').style.textAlign = "center";
+			document.getElementById('message').style.color = "red";
+			document.getElementById('message').innerHTML = "An error has occured with our database, please try again."
+		//check for invalid usernames to post back to front end.
+		} else {
+			console.log("should print back invalid users");
+			var invalidUsers = message.split(",");
+			var string = "The following usernames were invalid: ";
+			for (i = 0; i < invalidUsers.length; i++) {
+				console.log("in invalid users loop");
+				console.log(invalidUsers[i]);
+				string += invalidUsers[i];
+				string += " ";
+			}
+			console.log(string);
+			document.getElementById('message').style.textAlign = "center";
+			document.getElementById('message').style.color = "red";
+			document.getElementById('message').innerHTML = string;
+			createGroups();
+		}
 	});
 }
 
@@ -455,7 +491,8 @@ function viewGroupMembers(elem) {
 		//adding members to group
 		$(document).on('click','#new-members-button', function(e) {
 			var users = document.getElementById('attendees').value;
-			if (users) {				$(".members").remove();
+			if (users) {
+				$(".members").remove();
 				var command = "newmembers";
 				var postParameters = {url : url, groupid : groupid, groupname : groupname, command : command, users : users};
 				$.post('/editgroups', postParameters, function(responseJSON) {

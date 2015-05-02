@@ -85,6 +85,7 @@ public class SparkHandler {
     Spark.get("/", new CodeHandler(), freeMarker);
     // Spark.get("/calendar", new FrontHandler(), freeMarker);
     Spark.get("/login", new LoginHandler(), freeMarker);
+    Spark.post("/validate", new ValidateLoginHandler());
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
     Spark.post("/getGoogleEvents", new GoogleEventsHandler());
@@ -285,7 +286,7 @@ public class SparkHandler {
       while (clients.containsKey(randomHolder)) {
         randomHolder = (int) (Math.random() * 1000000);
       }
-      String form = "<form method = \"POST\" action=\"/calendar/"
+      String form = "<form id =\"loginForm\" method = \"POST\" action=\"/calendar/"
           + randomHolder + "\">";
       Map<String, Object> variables = ImmutableMap.of("title", "Login",
           "message", "", "form", form);
@@ -314,9 +315,47 @@ public class SparkHandler {
     while (clients.containsKey(randomHolder)) {
       randomHolder = (int) (Math.random() * 1000000);
     }
-    String form = "<form method = \"POST\" action=\"/calendar/" + randomHolder
+    String form = "<form id =\"loginForm\" method = \"POST\" action=\"/calendar/" + randomHolder
         + "\">";
     return form;
+  }
+
+  private static class ValidateLoginHandler implements Route {
+    @Override
+    public Object handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      String user = qm.value("username");
+      String pass = qm.value("password");
+      boolean found = false;
+      try {
+        DatabaseHandler myDBHandler = new DatabaseHandler(database);
+        found = myDBHandler.findUser(user, pass);
+        System.out.println(found);
+        myDBHandler.closeConnection();
+      } catch (SQLException | ClassNotFoundException e) {
+        String message = "An Error Occurred while logging in, please try again.";
+        String status = "error";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("status", status)
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      }
+      if (found) {
+        String message = "";
+        String status = "success";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("status", status)
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      } else {
+        String message = "The username or password entered was not found.";
+        String status = "failure";
+        Map<String, String> variables = new ImmutableMap.Builder()
+        .put("status", status)
+        .put("message", message).build();
+        return GSON.toJson(variables);
+      }
+    }
   }
 
   private static class LoginEventHandler implements TemplateViewRoute {
@@ -349,11 +388,13 @@ public class SparkHandler {
         }
         return new ModelAndView(variables, "main.ftl");
       } else {
+        
         clients.remove(randomHolder);
         String form = getRandomForm();
         String newMessage = "The username or password entered was not found";
         Map<String, Object> variables = ImmutableMap.of("title", "Login",
             "message", newMessage, "form", form);
+        //changed from 6.tl**
         return new ModelAndView(variables, "login.ftl");
 
       }
@@ -414,6 +455,20 @@ public class SparkHandler {
       String unparsedID = qm.value("string").replace("#", "");
       System.out.println("unparsed ID: " + unparsedID);
       int clientID = Integer.parseInt(unparsedID.substring(10));
+     /** if (clients.get(clientID).getAccessToken() != null) {
+        ServerCalls sc = new ServerCalls();
+        String accessToken = clients.get(clientID).getAccessToken();
+        HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
+        HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList,
+            accessToken);
+        List<Event> events = sc.getAllEvents(eventsList);
+        ClientHandler ch = clients.get(clientID);
+        for (Event event : events) {
+          System.out.println(event.getTitle());
+          ch.addEvent(event);
+          System.out.println(event.getTitle());
+        }
+      } **/
       /**
        * if (clients.get(clientID).getAccessToken() != null) {
        *
@@ -743,11 +798,17 @@ public class SparkHandler {
           ct = new ContactsThread(clients.get(id), null, groupName, null,
               usersList, Commands.ADD_GROUP);
           Future<String> t = pool.submit(ct);
-          t.get();
-          break;
+          String exists = t.get();
+          if (exists.equals("failure")) {
+            message = "failure";
+          } else {
+            message = exists;
+          }
+          variables = new ImmutableMap.Builder().put("message", message).build();
+          return GSON.toJson(variables);
         } catch (InterruptedException | ExecutionException e2) {
           System.out.println("caught");
-          message = "ERROR: Bug in SQL.";
+          message = "error";
           e2.printStackTrace();
           variables = new ImmutableMap.Builder().put("message", message)
               .build();
@@ -913,10 +974,10 @@ public class SparkHandler {
       String regName = qm.value("fullname");
       UserThread ut = new UserThread(user, pass, regName);
       Future<String> t = pool.submit(ut);
-      int success = 0;
+      int success = 1;
       try {
         if (t.get().equals("taken")) {
-          success = 1;
+          success = 0;
         }
       } catch (InterruptedException | ExecutionException e) {
         e.printStackTrace();
