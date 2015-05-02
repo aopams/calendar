@@ -72,8 +72,9 @@ public class CalendarThread implements Callable<String>{
       myDBHandler.removeEvent(deleteEvent);
       Event nextDay2 = client1.checkTwoDays(myEvent);
       myDBHandler.addEvent(myEvent);
-      if (nextDay2 != null) {
+      while (nextDay2 != null) {
         myDBHandler.addEvent(nextDay2);
+        nextDay2 = client1.checkTwoDays(nextDay2);
       }
       break;
     default :

@@ -56,6 +56,7 @@ public class ClientHandler {
         Date endDate = c.getTime();
         if (eventDate.after(start) && eventDate.before(endDate)) {
           toReturn.put(e.getKey(), e.getValue());
+          System.out.println("ID: " + e.getValue().getId() + "\t" + e.getKey());
         }
       } catch (ParseException e1) {
         // TODO Auto-generated catch block
@@ -166,15 +167,17 @@ public class ClientHandler {
   }
 
   public void addEvent(Event e) {
-    if (e.getId()>=0) {
       maxEventId += 1;
       e.setID(maxEventId);
       System.out.println(events);
-      events.put(maxEventId, e);
-    } else {
-      events.put((maxEventId * -1), e);
-    }
-    System.out.println("EVENT ID: " + e.getId());
+      if (e.getCreator().equals("google")) {
+        System.out.println(e.getId());
+        e.setID(maxEventId * -1);
+        events.put(maxEventId * -1, e);
+        System.out.println(e.getId());
+      } else {
+        events.put(maxEventId, e);
+      }
   }
   public void removeEvent(Event e) {
     events.remove(e.getId());
@@ -192,7 +195,7 @@ public class ClientHandler {
   public void removeGroup(int groupID) {
     groups.remove(groupID);
   }
-
+  
   public void setAccessToken(String accessToken) {
     this.accessToken = accessToken;
   }

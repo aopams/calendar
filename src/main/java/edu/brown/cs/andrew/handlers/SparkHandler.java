@@ -431,7 +431,6 @@ public class SparkHandler {
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
       Date currentWeekStart = currentWeeks.get(clientID);
-      System.out.println("CLIENT ID BTF: " + clientID);
 
       if (currentWeekStart == null) {
         currentWeeks.put(clientID, c.getTime());
@@ -455,7 +454,6 @@ public class SparkHandler {
           currentWeeks.put(clientID, c.getTime());
         }
         Gson gson = new Gson();
-        System.out.println(currentWeekStart);
         System.out.println("");
         ConcurrentHashMap<Integer, Event> testEvents;
         testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
@@ -820,9 +818,13 @@ public class SparkHandler {
       System.out.println(ch);
       for (Event event : events) {
         // System.out.println(event);
-
-        ch.addEvent(event);
-        System.out.println(event.getTitle());
+        List<String> attends = new ArrayList<String>();
+        attends.add(ch.user);
+        event.setAttendees(attends);
+        System.out.println(event.getId());
+        CalendarThread ct = new CalendarThread(ch, Commands.ADD_EVENT, event,
+            null, null);
+        Future<String> t = pool.submit(ct);
       };
       System.out.println("GOOGLE TOKEN: " + ch.getAccessToken());
       // try {
