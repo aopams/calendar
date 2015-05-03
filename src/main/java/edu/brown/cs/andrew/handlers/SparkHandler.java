@@ -308,10 +308,11 @@ public class SparkHandler {
   }
 
   private static String getRandomForm() {
-    while (clients.containsKey(randomHolder)) {
-      randomHolder = (int) (Math.random() * 1000000);
+    int rando = (int) (Math.random() * 1000000);;
+    while (clients.containsKey(rando)) {
+      rando = (int) (Math.random() * 1000000);
     }
-    String form = "<form id =\"loginForm\" method = \"POST\" action=\"/calendar/" + randomHolder
+    String form = "<form id =\"loginForm\" method = \"POST\" action=\"/calendar/" + rando
         + "\">";
     return form;
   }
