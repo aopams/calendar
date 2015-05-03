@@ -828,7 +828,9 @@ public class SparkHandler {
           ct = new ContactsThread(clients.get(id), null, null, groupID,
               usersList2, Commands.NEW_MEMBERS);
           Future<String> t = pool.submit(ct);
-          t.get();
+          message = t.get();
+          variables = new ImmutableMap.Builder().put("message", message).build();
+          return GSON.toJson(variables);
         } catch (InterruptedException | ExecutionException e2) {
           System.out.println("caught");
           message = "ERROR: Bug in SQL.";
@@ -837,7 +839,6 @@ public class SparkHandler {
               .build();
           return GSON.toJson(variables);
         }
-        break;
       }
       message = "ERROR: Bug has occured, try again.";
       variables = new ImmutableMap.Builder().put("message", message).build();

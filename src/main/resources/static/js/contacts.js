@@ -483,6 +483,8 @@ function viewGroupMembers(elem) {
 					'<div class="input-group margin-group" id="membersToAdd">' +
 				    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="Users to add"/>'+
 					'</div>' +
+					'<div id="membersFormError">' +
+					'</div>' +
 					'<img id="new-members-button" src="\\img/check.png"/>' +
 				'</div>' +
 			'</form>';
@@ -498,6 +500,27 @@ function viewGroupMembers(elem) {
 				$.post('/editgroups', postParameters, function(responseJSON) {
 					console.log("adding members");
 					command = "members";
+					responseObject = JSON.parse(responseJSON);
+					message = responseObject.message;
+					
+					//TODO: TEST THIS FUNCITON
+					if (message) {
+						var invalidUsers = message.split(",");
+						var string = "The following usernames were invalid: ";
+						for (i = 0; i < invalidUsers.length; i++) {
+							console.log("in invalid users loop");
+							console.log(invalidUsers[i]);
+							string += invalidUsers[i];
+							string += " ";
+						}
+						
+						document.getElementById('membersFormError').style.textAlign = "center";
+						document.getElementById('membersFormError').style.color = "red";
+						document.getElementById('membersFormError').innerHTML = string;
+					}
+					
+					
+					
 					var postParameters = {url : url, groupid : groupid, groupname : groupname, command : command, users : users};
 					//view members again
 					$.post('/editgroups', postParameters, function(responseJSON) {

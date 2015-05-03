@@ -42,10 +42,11 @@ public class ContactsThread implements Callable<String> {
       switch (command) {
         case GET_NAME:
           String name = myDBHandler.getName(user1);
+          myDBHandler.closeConnection();
           return name;
         case REMOVE_FRIEND:
           client1.removeFriend(user2);
-          myDBHandler.removeFriend(user1, user2);
+          myDBHandler.removeFriend(user1, user2);          
           break;
         case ADD_FRIEND :
           //friend exists
@@ -55,15 +56,18 @@ public class ContactsThread implements Callable<String> {
             String status = client1.requestFriend(user2);
             if (status.equals("exists")) {
               System.out.println("relation already exists");
+              myDBHandler.closeConnection();
               return "exists";
             } else {
               System.out.println("friend request sent");
               myDBHandler.addFriendRequest(user1, user2);
+              myDBHandler.closeConnection();
               return "success";
             }
           //friend does not exist
           } else {
             System.out.println("friend does not exist");
+            myDBHandler.closeConnection();
             return "toobad";
           }
         case ACCEPT_FRIEND : 
@@ -80,6 +84,7 @@ public class ContactsThread implements Callable<String> {
           if (myDBHandler.findGroup(groupName) != -1) {
             System.out.println("group found");
             groupStatus = "failure";
+            myDBHandler.closeConnection();
             return groupStatus;
           } else {
             System.out.println("group not found");
@@ -99,6 +104,7 @@ public class ContactsThread implements Callable<String> {
               //remove the user him/herself
             }
             int groupID = myDBHandler.getNewGroupID();
+            System.out.println("");
             myDBHandler.addGroup(groupName, groupID);
             for (int i = 0; i < groupMembers.size(); i++) {
               System.out.println("member to add = " + groupMembers.get(i));
@@ -106,6 +112,7 @@ public class ContactsThread implements Callable<String> {
             }
             client1.addGroup(groupName, groupID);
             groupStatus = invalidFriends.toString();
+            myDBHandler.closeConnection();
             return groupStatus;
           }
         case REMOVE_GROUP :
@@ -125,8 +132,10 @@ public class ContactsThread implements Callable<String> {
             toReturn.append(person);
             toReturn.append(",");
           }
+          myDBHandler.closeConnection();
           return toReturn.toString();
         case NEW_MEMBERS :
+          StringBuilder invalidFriends2 = new StringBuilder();
           Set<String> acceptedFriends2 = myDBHandler.getAcceptedFriends(user1);
           for (Iterator<String> it = groupMembers.iterator(); it.hasNext();) {
             //user does not exist, remove from list
@@ -135,14 +144,16 @@ public class ContactsThread implements Callable<String> {
               it.remove();
             //if the user is not friends with the person they want to add, don't add them
             } else if (!acceptedFriends2.contains(user)) {
-              System.out.println("not friends with " + user);
+              invalidFriends2.append(user);
+              invalidFriends2.append(" ");
               it.remove();
             }
           }
           for (int i = 0; i < groupMembers.size(); i++) {
             myDBHandler.addUserToGroup(groupMembers.get(i), removeGroupID);
           }
-          break;
+          myDBHandler.closeConnection();
+          return invalidFriends2.toString();
       default:
         break;
       }

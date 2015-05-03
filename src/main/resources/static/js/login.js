@@ -25,7 +25,7 @@ jQuery(document).ready(function($) {
 				var message = document.createElement('p');
 				message.style.textAlign = "center";
 				message.style.color = "red";
-				message.appendChild(document.createTextNode("Username or password not found in database, please try again."));
+				message.appendChild(document.createTextNode("Error with database, please try again."));
 				$('#loginForm').submit(function(e) {
 					return false;
 				});
