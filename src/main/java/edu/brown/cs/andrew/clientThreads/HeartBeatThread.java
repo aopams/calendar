@@ -32,7 +32,6 @@ public class HeartBeatThread implements Callable<String>{
 //        client.setMaxGroupId(myDBHandler.getMaxGroupID());
         int maxID = myDBHandler.getMaxEventID();
         client.setMaxEventId(maxID);
-        client.setNegMaxEventID(maxID * -1);
       } catch (SQLException | ParseException e2) {
         e2.printStackTrace();
       }

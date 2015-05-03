@@ -72,33 +72,42 @@ public class ContactsThread implements Callable<String> {
             break;
             //CHECK IF EACH USER IS VALID
         case ADD_GROUP :
-          Set<String> acceptedFriends = myDBHandler.getAcceptedFriends(user1);
-          for (Iterator<String> i = acceptedFriends.iterator(); i.hasNext();) {
-            String friend = i.next();
-            System.out.println("accepted friends = " + friend);
-          }
-          for (Iterator<String> it = groupMembers.iterator(); it.hasNext();) {
-            //user does not exist, remove from list
-            String user = it.next();
-            if (myDBHandler.findUser(user) == null) {
-              it.remove();
-            } else if (!acceptedFriends.contains(user) && !user.equals(user1)) {
-              System.out.println("not friends with " + user);
-              it.remove();
+          String groupStatus = "";
+          StringBuilder invalidFriends = new StringBuilder();
+          //check if groupname already exists, if it does, then
+          //report an error back to user
+          System.out.println("group name = " + groupName);
+          if (myDBHandler.findGroup(groupName) != -1) {
+            System.out.println("group found");
+            groupStatus = "failure";
+            return groupStatus;
+          } else {
+            System.out.println("group not found");
+            Set<String> acceptedFriends = myDBHandler.getAcceptedFriends(user1);
+            for (Iterator<String> it = groupMembers.iterator(); it.hasNext();) {
+              //user does not exist, remove from list
+              String user = it.next();
+              if (myDBHandler.findUser(user) == null) {
+                it.remove();
+              } else if (!acceptedFriends.contains(user) && !user.equals(user1)) {
+                System.out.println("not friends with " + user);
+                invalidFriends.append(user);
+                invalidFriends.append(",");
+                it.remove();
+              }
+              //user list includes user logged in, so must make sure to not accidentally
+              //remove the user him/herself
             }
-            //user list includes user logged in, so must make sure to not accidentally
-            //remove the user him/herself
-            
+            int groupID = myDBHandler.getNewGroupID();
+            myDBHandler.addGroup(groupName, groupID);
+            for (int i = 0; i < groupMembers.size(); i++) {
+              System.out.println("member to add = " + groupMembers.get(i));
+              myDBHandler.addUserToGroup(groupMembers.get(i), groupID);
+            }
+            client1.addGroup(groupName, groupID);
+            groupStatus = invalidFriends.toString();
+            return groupStatus;
           }
-          int groupID = myDBHandler.getNewGroupID();
-          System.out.println(groupID);
-          myDBHandler.addGroup(groupName, groupID);
-          for (int i = 0; i < groupMembers.size(); i++) {
-            System.out.println("member to add = " + groupMembers.get(i));
-            myDBHandler.addUserToGroup(groupMembers.get(i), groupID);
-          }
-          client1.addGroup(groupName, groupID);
-          break;
         case REMOVE_GROUP :
           client1.removeGroup(removeGroupID);
           myDBHandler.removeUserFromGroup(user1, removeGroupID);
@@ -124,12 +133,11 @@ public class ContactsThread implements Callable<String> {
             String user = it.next();
             if (myDBHandler.findUser(user) == null) {
               it.remove();
+            //if the user is not friends with the person they want to add, don't add them
             } else if (!acceptedFriends2.contains(user)) {
               System.out.println("not friends with " + user);
               it.remove();
             }
-            //if the user is not friends with the person they want to add, don't add them
-            
           }
           for (int i = 0; i < groupMembers.size(); i++) {
             myDBHandler.addUserToGroup(groupMembers.get(i), removeGroupID);

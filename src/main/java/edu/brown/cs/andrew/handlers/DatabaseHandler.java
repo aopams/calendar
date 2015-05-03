@@ -116,10 +116,12 @@ public class DatabaseHandler {
     PreparedStatement theStat = conn.prepareStatement(query);
     theStat.setString(1, user_name);
     ResultSet rs = theStat.executeQuery();
-    String toReturn = null;
+    String toReturn = "";
     if (rs.next()) {
       toReturn = rs.getString(1);
+      System.out.println("user found");
     }
+    
     rs.close();
     return toReturn;
   }
@@ -344,7 +346,9 @@ public class DatabaseHandler {
     ResultSet row =  theStat.getGeneratedKeys();
     int theRow = row.getInt(1);
     theStat.close();
-    e.setID(theRow);
+    if (e.getId() >= 0 && !e.getCreator().equals("google")) {
+      e.setID(theRow);
+    }
     String eventToGroup = "";
 
     eventToGroup = "INSERT into User_Event (user_name, event_id)"
@@ -373,6 +377,9 @@ public class DatabaseHandler {
   }
   public void removeEvent(Event e) throws SQLException, ParseException {
     int eventID = e.getId();
+    if (eventID < 0) {
+      eventID = eventID * -1;
+    }
     System.out.println("deleting group_event");
     String query3 = "Delete From Group_Event where event_id = ?";
     PreparedStatement stat3 = conn.prepareStatement(query3);

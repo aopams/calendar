@@ -46,17 +46,17 @@ public class ClientHandler {
   public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date startTimed) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
     Date start = SparkHandler.setTimeToMidnight(startTimed);
-    System.out.println("events size: " + events.size());
     for (Entry<Integer, Event> e : events.entrySet()) {
+      System.out.println(e.getValue().getTitle());
       try {
         Date eventDate = e.getValue().getDate();
         Calendar c = Calendar.getInstance();
         c.setTime(start);
         c.add(Calendar.DATE, 6);
         Date endDate = c.getTime();
-        if (eventDate.after(start) && eventDate.before(endDate)) {
+        if (eventDate.after(start) && eventDate.before(endDate) || eventDate.equals(start)) {
           toReturn.put(e.getKey(), e.getValue());
-          System.out.println("ID: " + e.getValue().getId() + "\t" + e.getKey());
+          System.out.println("Date: " + e.getValue().getDate() + "\t" + e.getKey());
         }
       } catch (ParseException e1) {
         // TODO Auto-generated catch block
@@ -98,10 +98,11 @@ public class ClientHandler {
 
   public synchronized void setEvents(ConcurrentHashMap<Integer, Event> events) {
     this.events = events;
-  } 
-//  public synchronized void setMaxGroupId(int maxID) {
-//    this.maxGroupId = maxID;
-//  }
+  }
+
+  // public synchronized void setMaxGroupId(int maxID) {
+  // this.maxGroupId = maxID;
+  // }
 
   public synchronized void setMaxEventId(int maxID) {
     this.maxEventId = maxID;
@@ -179,18 +180,21 @@ public class ClientHandler {
         events.put(maxEventId, e);
       }
   }
+
   public void removeEvent(Event e) {
     events.remove(e.getId());
 
   }
-  //edited groupid count, handled in database
+
+  // edited groupid count, handled in database
   public void addGroup(String group, int groupID) {
     groups.put(groupID, group);
   }
-//  public void addGroup(String group) {
-//    maxGroupId++;
-//    groups.put(maxGroupId, group);
-//  }
+
+  // public void addGroup(String group) {
+  // maxGroupId++;
+  // groups.put(maxGroupId, group);
+  // }
 
   public void removeGroup(int groupID) {
     groups.remove(groupID);
@@ -202,5 +206,13 @@ public class ClientHandler {
 
   public String getAccessToken() {
     return accessToken;
+  }
+
+  public void setRefreshToken(String refreshToken) {
+    this.refreshToken = refreshToken;
+  }
+
+  public String getRefreshToken() {
+    return refreshToken;
   }
 }
