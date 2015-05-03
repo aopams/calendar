@@ -283,11 +283,7 @@ public class SparkHandler {
       int id = Integer.parseInt(idUnparsed.substring(10));
       System.out.println(id);
       clients.remove(id);
-      while (clients.containsKey(randomHolder)) {
-        randomHolder = (int) (Math.random() * 1000000);
-      }
-      String form = "<form id =\"loginForm\" method = \"POST\" action=\"/calendar/"
-          + randomHolder + "\">";
+      String form = getRandomForm();
       Map<String, Object> variables = ImmutableMap.of("title", "Login",
           "message", "", "form", form);
       return new ModelAndView(variables, "login.ftl");

@@ -93,11 +93,11 @@ public class ContactsThread implements Callable<String> {
               //user does not exist, remove from list
               String user = it.next();
               if (myDBHandler.findUser(user) == null) {
+                invalidFriends.append(user);
+                invalidFriends.append(",");
                 it.remove();
               } else if (!acceptedFriends.contains(user) && !user.equals(user1)) {
                 System.out.println("not friends with " + user);
-                invalidFriends.append(user);
-                invalidFriends.append(",");
                 it.remove();
               }
               //user list includes user logged in, so must make sure to not accidentally
@@ -141,11 +141,11 @@ public class ContactsThread implements Callable<String> {
             //user does not exist, remove from list
             String user = it.next();
             if (myDBHandler.findUser(user) == null) {
+              invalidFriends2.append(user);
+              invalidFriends2.append(" ");
               it.remove();
             //if the user is not friends with the person they want to add, don't add them
             } else if (!acceptedFriends2.contains(user)) {
-              invalidFriends2.append(user);
-              invalidFriends2.append(" ");
               it.remove();
             }
           }

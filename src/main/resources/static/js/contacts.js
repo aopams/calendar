@@ -443,7 +443,7 @@ function newGroup() {
 			document.getElementById('message').style.color = "red";
 			document.getElementById('message').innerHTML = "An error has occured with our database, please try again."
 		//check for invalid usernames to post back to front end.
-		} else {
+		} else if (message) {
 			console.log("should print back invalid users");
 			var invalidUsers = message.split(",");
 			var string = "The following usernames were invalid: ";
@@ -457,6 +457,8 @@ function newGroup() {
 			document.getElementById('message').style.textAlign = "center";
 			document.getElementById('message').style.color = "red";
 			document.getElementById('message').innerHTML = string;
+			createGroups();
+		} else {
 			createGroups();
 		}
 	});
