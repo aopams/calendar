@@ -60,6 +60,9 @@ public class Event {
   public void setID(int id) {
     this.id = id;
   }
+  public void setAttendees(List<String> attends) {
+    attendees = attends;
+  }
   public List<String> getAttendees() {
     List<String> toReturn = new ArrayList<String>();
     for (int i = 0; i < attendees.size(); i++) {

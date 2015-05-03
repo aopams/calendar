@@ -89,6 +89,7 @@ public class SparkHandler {
     Spark.post("/calendar/:id", new LoginEventHandler(), freeMarker);
     Spark.post("/getevents", new BTFEventHandler());
     Spark.post("/getGoogleEvents", new GoogleEventsHandler());
+    Spark.get("/hasAccessToken", new HasAccessTokenHandler());
     Spark.post("/getfriends", new FriendsHandler());
     Spark.post("/leftarrow", new BTFEventHandler());
     Spark.post("/rightarrow", new BTFEventHandler());
@@ -484,7 +485,6 @@ public class SparkHandler {
       c.set(Calendar.WEEK_OF_YEAR, week);
       c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
       Date currentWeekStart = currentWeeks.get(clientID);
-      System.out.println("CLIENT ID BTF: " + clientID);
 
       if (currentWeekStart == null) {
         currentWeeks.put(clientID, c.getTime());
@@ -508,7 +508,6 @@ public class SparkHandler {
           currentWeeks.put(clientID, c.getTime());
         }
         Gson gson = new Gson();
-        System.out.println(currentWeekStart);
         System.out.println("");
         ConcurrentHashMap<Integer, Event> testEvents;
         testEvents = clients.get(clientID).getEventsByWeek(currentWeekStart);
@@ -856,24 +855,63 @@ public class SparkHandler {
     }
   }
 
+  public static class HasAccessTokenHandler implements Route {
+    @Override
+    public Object handle(Request req, Response res) {
+      QueryParamsMap qm = req.queryMap();
+      String unparsed = qm.value("string");
+      int clientID = Integer.parseInt(unparsed.substring(10));
+      boolean toReturn;
+      toReturn = (clients.get(clientID).getAccessToken() != null);
+      Map<String, Object> variables = new ImmutableMap.Builder().put(
+          "hasAccessToken", toReturn).build();
+      System.out.println(GSON.toJson(variables));
+      return GSON.toJson(variables);
+    }
+  }
+
   public static class GoogleEventsHandler implements Route {
     @Override
     public ModelAndView handle(Request req, Response res) {
       QueryParamsMap qm = req.queryMap();
+      boolean hasAccessToken = Boolean.parseBoolean(qm.value("hasAccessToken"));
       String unparsed = qm.value("string");
+      System.out.println("STRING: " + unparsed);
       unparsed = unparsed.replace("#", "");
       int clientID = Integer.parseInt(unparsed.substring(10));
-      String code = qm.value("code");
-      // String form = getRandomForm();
-      ServerCalls sc = new ServerCalls();
-      HashMap<String, String> map = sc.authorize(code);
-      String accessToken = map.get("access_token");
-      String refreshToken = map.get("refresh_token");
       ClientHandler ch = clients.get(clientID);
+      ServerCalls sc = new ServerCalls();
+      String accessToken;
+      if (!hasAccessToken) {
+        String code = qm.value("code");
+        // String form = getRandomForm();
+
+        HashMap<String, String> map = sc.authorize(code);
+        accessToken = map.get("access_token");
+        String refreshToken = map.get("refresh_token");
+        ch.setAccessToken(accessToken);
+        ch.setRefreshToken(refreshToken);
+        for (Entry<Integer, Event> e : ch.getEvents().entrySet()) {
+          if (e.getKey() < 0) {
+            CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,
+                e.getValue(), clients);
+            pool.submit(ct);
+          }
+        }
+      } else {
+        accessToken = ch.getAccessToken();
+        for (Entry<Integer, Event> e : ch.getEvents().entrySet()) {
+          if (e.getKey() < 0) {
+            CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,
+                e.getValue(), clients);
+            pool.submit(ct);
+          }
+        }
+      }
+
       System.out.println("CLIENT ID: " + clientID);
       System.out.println("CLIENT NAME: " + ch.getClient());
-      ch.setAccessToken(accessToken);
-      ch.setRefreshToken(refreshToken);
+
       HashMap<String, String> calendarList = sc.getCalendarList(accessToken);
       HashMap<String, String> eventsList = sc.getAllEventsMap(calendarList,
           accessToken);
@@ -881,15 +919,14 @@ public class SparkHandler {
       System.out.println(events.size());
       for (Event event : events) {
         // System.out.println(event);
-
-        ch.addEvent(event);
-        System.out.println(event.getTitle());
-      }
-      ;
-      System.out.println("EVENTS: " + ch.getEvents().size());
-      // System.out.println("EVENTS: " + ch.getEventsByWeek(startTimed));
-      clients.remove(clientID);
-      clients.put(clientID, ch);
+        List<String> attends = new ArrayList<String>();
+        attends.add(ch.user);
+        event.setAttendees(attends);
+        System.out.println(event.getId());
+        CalendarThread ct = new CalendarThread(ch, Commands.ADD_EVENT, event,
+            null, null);
+        Future<String> t = pool.submit(ct);
+      };
       System.out.println("GOOGLE TOKEN: " + ch.getAccessToken());
       // try {
       // System.out.println(events.get(0).getDate());

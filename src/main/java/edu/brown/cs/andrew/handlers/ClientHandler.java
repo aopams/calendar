@@ -46,7 +46,6 @@ public class ClientHandler {
   public ConcurrentHashMap<Integer, Event> getEventsByWeek(Date startTimed) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
     Date start = SparkHandler.setTimeToMidnight(startTimed);
-    System.out.println("events size: " + events.size());
     for (Entry<Integer, Event> e : events.entrySet()) {
       System.out.println(e.getValue().getTitle());
       try {
@@ -55,8 +54,9 @@ public class ClientHandler {
         c.setTime(start);
         c.add(Calendar.DATE, 6);
         Date endDate = c.getTime();
-        if (eventDate.after(start) && eventDate.before(endDate)) {
+        if (eventDate.after(start) && eventDate.before(endDate) || eventDate.equals(start)) {
           toReturn.put(e.getKey(), e.getValue());
+          System.out.println("Date: " + e.getValue().getDate() + "\t" + e.getKey());
         }
       } catch (ParseException e1) {
         // TODO Auto-generated catch block
@@ -168,17 +168,17 @@ public class ClientHandler {
   }
 
   public void addEvent(Event e) {
-    if (e.getId() >= 0) {
       maxEventId += 1;
       e.setID(maxEventId);
       System.out.println(events);
-      events.put(maxEventId, e);
-    } else {
-      maxEventId += 1;
-      e.setID(maxEventId * -1);
-      events.put((maxEventId * -1), e);
-    }
-    System.out.println("EVENT ID: " + e.getId());
+      if (e.getCreator().equals("google")) {
+        System.out.println(e.getId());
+        e.setID(maxEventId * -1);
+        events.put(maxEventId * -1, e);
+        System.out.println(e.getId());
+      } else {
+        events.put(maxEventId, e);
+      }
   }
 
   public void removeEvent(Event e) {
@@ -199,7 +199,7 @@ public class ClientHandler {
   public void removeGroup(int groupID) {
     groups.remove(groupID);
   }
-
+  
   public void setAccessToken(String accessToken) {
     this.accessToken = accessToken;
   }
