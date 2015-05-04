@@ -25,30 +25,6 @@ public class Main {
     System.out.println(System.currentTimeMillis() / 1000);
     try {
       myDBHandler = new DatabaseHandler("calendar.sqlite3");
-//      myDBHandler.createTablesForCalendar();
-//      myDBHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy");
-//      myDBHandler.deleteUser("Harsha");
-//      myDBHandler.deleteUser("Harsha2");
-//      myDBHandler.insertUser("Harsha", "meow", "Harsha Yeddanapudy");
-//      myDBHandler.insertUser("Harsha2", "meow", "Harsha Yeddanapudy");
-//      myDBHandler.insertUser("Rohan", "6969", "Rohan Chandra");
-//      myDBHandler.insertUser("Dylan", "dg", "Dylan Gattey");
-//      myDBHandler.insertUser("Will", "Nagasaki", "William Truong");
-//      myDBHandler.insertUser("Andrew", "dino", "Andrew Osgood");
-//      myDBHandler.insertUser("Will2", "Nagasaki", "William Truong");
-//      myDBHandler.insertUser("Will3", "Nagasaki", "William Truong");
-//      myDBHandler.insertUser("Will4", "Nagasaki", "William Truong");
-//      myDBHandler.addFriendRequest("Rohan", "Harsha2");
-//      myDBHandler.addFriendRequest("Rohan", "Harsha");
-//      myDBHandler.addFriendRequest("Rohan", "Will");
-//      myDBHandler.addFriendRequest("Rohan", "Dylan");
-//      myDBHandler.addFriendRequest("Rohan", "Andrew");
-//      myDBHandler.addFriendRequest("Rohan", "Will2");
-//      myDBHandler.addFriendRequest("Rohan", "Will3");
-//      myDBHandler.addFriendRequest("Rohan", "Will4");
-//      myDBHandler.acceptFriendRequest("Rohan", "Harsha2");
-//      myDBHandler.addFriendRequest("Harsha", "Harsha2");
-//      myDBHandler.acceptFriendRequest("Harsha2", "Harsha");
       Date myDate = new SimpleDateFormat("dd/MM/yyyy").parse("13/4/2015");
       System.out.println(myDate.toString());
       List<String> hSquad = new ArrayList<String>();
@@ -85,11 +61,8 @@ public class Main {
       myDBHandler.closeConnection();
       //System.out.println(myRanker.checkConflict(e2.getDate()));
       System.out.println(System.currentTimeMillis() / 1000);
-    } catch (ClassNotFoundException | SQLException e) {
+    } catch (ClassNotFoundException | SQLException | ParseException e) {
       e.printStackTrace();
-    } catch (ParseException e4) {
-      // TODO Auto-generated catch block
-      e4.printStackTrace();
     } finally {
       run(args);
       //try {

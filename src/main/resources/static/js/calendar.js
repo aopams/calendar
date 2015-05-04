@@ -78,9 +78,6 @@ function googleEvents() {
 		}
 	});
 
-	updateDisplayedEvents();
-	
-
 }
 
 
@@ -612,14 +609,15 @@ function timeOffsetMargin() {
 		value = eventMap[key];
 		var evTime = eventMap[key].date.split(" ")[3].split(":")[1] * 1;
 		var currMarg = $('.event#' + key).css('margin-top');
-		if (currMarg == undefined) {
+		if (currMarg === undefined) {
 			currMarg = 0;
-		} else {
+		}
+		 else {
+		 console.log(currMarg);
 			currMarg = currMarg.substring(0, currMarg.length - 2);
 		}
-		console.log('hereh');
 		var newMarg = (currMarg * 1) + getTimeOffsetMargin(evTime);
-		$('.event#' + key).css('margin-top', newMarg+'px');
+		document.getElementById(key).style.marginTop =  newMarg + "px";
 	}
 }
 
