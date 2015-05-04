@@ -44,7 +44,7 @@ public class SparkHandler {
   private static ConcurrentHashMap<Integer, Date> currentWeeks = new ConcurrentHashMap<Integer, Date>();
   private static String database;
   private static final int RESSTAT = 500;
-  protected static final ExecutorService pool = Executors.newFixedThreadPool(8);
+  protected static final ExecutorService pool = Executors.newFixedThreadPool(30);
   private static Gson GSON = new Gson();
   private static int randomHolder = (int) (Math.random() * 1000000);
   private static ConcurrentHashMap<Integer, ClientHandler> clients;
@@ -566,7 +566,7 @@ public class SparkHandler {
       }
       Map<String, Object> variables = new ImmutableMap.Builder()
           .put("events", toFrontEnd).put("week", currentWeek).build();
-      // System.out.println(GSON.toJson(variables));
+      System.out.println(GSON.toJson(variables));
       return GSON.toJson(variables);
     }
   }
@@ -920,7 +920,12 @@ public class SparkHandler {
           if (e.getKey() < 0) {
             CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,
                 e.getValue(), clients);
-            pool.submit(ct);
+            Future<String> t = pool.submit(ct);
+            try {
+              t.get();
+            } catch (InterruptedException | ExecutionException e1) {
+              e1.printStackTrace();
+            }
           }
         }
       } else {
@@ -929,7 +934,19 @@ public class SparkHandler {
           if (e.getKey() < 0) {
             CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,
                 e.getValue(), clients);
-            pool.submit(ct);
+            Future<String> t = pool.submit(ct);
+            try {
+              t.get();
+              System.out.println("THREAD COMPLETED");
+            } catch (InterruptedException | ExecutionException e1) {
+              e1.printStackTrace();
+            }
+          }
+          try {
+            System.out.println(e.getValue().getDate());
+          } catch (ParseException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
           }
         }
       }
@@ -951,7 +968,13 @@ public class SparkHandler {
         CalendarThread ct = new CalendarThread(ch, Commands.ADD_EVENT, event,
             null, null);
         Future<String> t = pool.submit(ct);
-      };
+        try {
+          t.get();
+          System.out.println("THREAD COMPLETED");
+        } catch (InterruptedException | ExecutionException e1) {
+          e1.printStackTrace();
+        }
+      }
       System.out.println("GOOGLE TOKEN: " + ch.getAccessToken());
       // try {
       // System.out.println(events.get(0).getDate());
