@@ -205,7 +205,8 @@ public class DatabaseHandler {
     theStat.setString(1, user_name);
     ResultSet rs = theStat.executeQuery();
     while (rs.next()) {
-      toReturn.put(rs.getString(1), rs.getString(2));
+      String status = rs.getString(1);
+      toReturn.put(rs.getString(1), status);
     }
     rs.close();
     String query2 = "Select user_name2, status from Friends where user_name1 = ?";
