@@ -9,81 +9,44 @@ jQuery(document).ready(function($) {
 		$("#registerpage").hide(0);
 	});
 	
-
-	//add enter funcitonality
+	//login functionality
 	$('#loginbutton').bind('click', function(event) {
-		console.log("login button clicked");
-		$("p").remove();
-		var username = $('#loginUser').val();
-		var password = $('#loginPass').val();
-		var postParameters = {username : username, password : password};
-		$.post('/validate', postParameters, function(responseJSON) {
-			console.log("response received");
-			responseObject = JSON.parse(responseJSON);
-			status = responseObject.status;
-			console.log(status);
-			if (status == "error") {
-				console.log("errorrrr");
-				var message = document.createElement('p');
-				message.style.textAlign = "center";
-				message.style.color = "red";
-				message.appendChild(document.createTextNode("Error with database, please try again."));
-				$('#logreg').append(message);
-			} else if (status == "failure") {
-				console.log("failedshit");
-				var message = document.createElement('p');
-				message.style.textAlign = "center";
-				message.style.color = "red";
-				message.appendChild(document.createTextNode("Username or password not found in database, please try again."));
-				$('#logreg').append(message);
-			} else {
-				console.log("submit");
-				$('#loginForm').submit();
-			}
-		});
+		parseLoginInfo();
+	});
+	$('#loginPass').keyup(function(event) {
+		if (event.keyCode == 13) {
+			parseLoginInfo();
+		}
+	});
+	$('#loginUser').keyup(function(event) {
+		if (event.keyCode == 13) {
+			parseLoginInfo();
+		}
 	});
 	
-	$("#register").bind('click', function(event) {
-		console.log("noice");
-		$("p").remove();
-		var password = document.getElementById('pass').value;
-		var confpass = document.getElementById('pass2').value;
-		var username = document.getElementById('regUser').value;
-		var fullname = document.getElementById('regName').value;
-		//check for valid fields
-		//username or full name contains only whitespace, not allowed
-		if (/^\s+$/.test(username)) {
-			var message = document.createElement('p');
-			message.style.textAlign = "center";
-			message.style.color = "red";
-			message.appendChild(document.createTextNode("Username and full name cannot contain only whitespaces, please try again."));
-			$("#registerForm").append(message);
-		//any of the fields are empty, not allowed
-		} else if (!password || !confpass || !username || !fullname) {
-			var message = document.createElement('p');
-			message.style.textAlign = "center";
-			message.style.color = "red";
-			message.appendChild(document.createTextNode("Please fill out all fields."));
-			$("#registerForm").append(message);
-		//password and confirm pass do not match, not allowed
-		} else if (password != confpass) {
-			var message = document.createElement('p');
-			message.style.textAlign = "center";
-			message.style.color = "red";
-			message.appendChild(document.createTextNode("Passwords do not match, please try again."));
-			$("#registerForm").append(message);
-		//username or fullname contain non-alphanumeric characters, not allowed
-		} else if (!/^[a-zA-Z0-9- ]*$/.test(username) || !/^[a-zA-Z0-9- ]*$/.test(fullname)) {
-			var message = document.createElement('p');
-			message.style.textAlign = "center";
-			message.style.color = "red";
-			message.appendChild(document.createTextNode("Username and full name fields cannot contain special symbols, please try again."));
-			$("#registerForm").append(message);
-		//valid inputs, now check with backend if 
-		} else {
-			var postParameters = {username : username, password : password, fullname : fullname};
-			register(postParameters);	
+	//registration functionality
+	$('#regUser').keyup(function(event) {
+		if (event.keyCode == 13) {
+			parseRegisterInfo()
 		}
+	});
+	$('#pass').keyup(function(event) {
+		if (event.keyCode == 13) {
+			parseRegisterInfo()
+		}
+	});
+	$('#pass2').keyup(function(event) {
+		if (event.keyCode == 13) {
+			parseRegisterInfo()
+		}
+	});
+	$('#regName').keyup(function(event) {
+		if (event.keyCode == 13) {
+			parseRegisterInfo()
+		}
+	});
+	$("#register").bind('click', function(event) {
+		parseRegisterInfo()
 	})
 });
 
@@ -141,4 +104,77 @@ function login(postParameters) {
 	/*$.post(url, postParameters, function(responseJSON) {
 			
 	}); */
+}
+
+function parseLoginInfo() {
+	$("p").remove();
+	var username = $('#loginUser').val();
+	var password = $('#loginPass').val();
+	var postParameters = {username : username, password : password};
+	$.post('/validate', postParameters, function(responseJSON) {
+		console.log("response received");
+		responseObject = JSON.parse(responseJSON);
+		status = responseObject.status;
+		console.log(status);
+		if (status == "error") {
+			console.log("errorrrr");
+			var message = document.createElement('p');
+			message.style.textAlign = "center";
+			message.style.color = "red";
+			message.appendChild(document.createTextNode("Error with database, please try again."));
+			$('#logreg').append(message);
+		} else if (status == "failure") {
+			console.log("failedshit");
+			var message = document.createElement('p');
+			message.style.textAlign = "center";
+			message.style.color = "red";
+			message.appendChild(document.createTextNode("Username or password not found in database, please try again."));
+			$('#logreg').append(message);
+		} else {
+			console.log("submit");
+			$('#loginForm').submit();
+		}
+	});
+}
+
+function parseRegisterInfo() {
+	$("p").remove();
+	var password = document.getElementById('pass').value;
+	var confpass = document.getElementById('pass2').value;
+	var username = document.getElementById('regUser').value;
+	var fullname = document.getElementById('regName').value;
+	//check for valid fields
+	//username or full name contains only whitespace, not allowed
+	if (/^\s+$/.test(username) || /^\s+$/.test(fullname)) {
+		var message = document.createElement('p');
+		message.style.textAlign = "center";
+		message.style.color = "red";
+		message.appendChild(document.createTextNode("Username and full name cannot contain only whitespaces, please try again."));
+		$("#registerForm").append(message);
+	//any of the fields are empty, not allowed
+	} else if (!password || !confpass || !username || !fullname) {
+		var message = document.createElement('p');
+		message.style.textAlign = "center";
+		message.style.color = "red";
+		message.appendChild(document.createTextNode("Please fill out all fields."));
+		$("#registerForm").append(message);
+	//password and confirm pass do not match, not allowed
+	} else if (password != confpass) {
+		var message = document.createElement('p');
+		message.style.textAlign = "center";
+		message.style.color = "red";
+		message.appendChild(document.createTextNode("Passwords do not match, please try again."));
+		$("#registerForm").append(message);
+	//username or fullname contain non-alphanumeric characters, not allowed
+	} else if (!/^[a-zA-Z0-9- ]*$/.test(username) || !/^[a-zA-Z0-9- ]*$/.test(fullname)) {
+		var message = document.createElement('p');
+		message.style.textAlign = "center";
+		message.style.color = "red";
+		message.appendChild(document.createTextNode("Username and full name fields cannot contain special symbols, please try again."));
+		$("#registerForm").append(message);
+	//valid inputs, now check with backend if 
+	} else {
+		var postParameters = {username : username, password : password, fullname : fullname};
+		register(postParameters);	
+	}
 }
