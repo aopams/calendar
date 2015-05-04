@@ -279,10 +279,12 @@ public class SparkHandler {
             newE.setID(eventID);
           }
           String color = "red";
-          if (conflicts.get(c.getActualMinimum(Calendar.HOUR_OF_DAY)) ==0) {
+          System.out.println("Conflict #:" + conflicts.get(c.get(Calendar.HOUR_OF_DAY))
+             + "\t hour: " +  c.get(Calendar.HOUR_OF_DAY));
+          if (conflicts.get(c.get(Calendar.HOUR_OF_DAY)) ==0) {
             color = "green";
-          } else if ((double)conflicts.get(c.getActualMinimum(Calendar.HOUR_OF_DAY))
-              / attendees.size() >=.5) {
+          } else if ((double)conflicts.get(c.get(Calendar.HOUR_OF_DAY))
+              / attendees.size() <.5) {
             color = "yellow";
           }
           newE.setConflictColor(color);

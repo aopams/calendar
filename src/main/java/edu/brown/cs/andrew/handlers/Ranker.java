@@ -106,7 +106,8 @@ public class Ranker {
               int val = bestHoursTable.get(j);
               int newVal = val - (500 / attendees.size());
               bestHoursTable.put(j, newVal);
-              this.hourConflictTable.put(j, hourConflictTable.get(j) + 1);
+              int newConflict = hourConflictTable.get(j) + 1;
+              this.hourConflictTable.put(j, newConflict);
             }
           }
           
@@ -147,6 +148,7 @@ public class Ranker {
 
   private void setBestHours() {
     HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+    HashMap<Integer, Integer> map2 = new HashMap<Integer, Integer>();
     map.put(0, 50);
     map.put(1, 50);
     map.put(2, 50);
@@ -173,9 +175,9 @@ public class Ranker {
     map.put(23, 300);
     this.bestHoursTable = map;
     for (int i = 0; i < 24; i++) {
-      map.put(i, 0);
+      map2.put(i, 0);
     }
-    this.hourConflictTable = map;
+    this.hourConflictTable = map2;
   }
 
   private Comparator<Integer> hourComp = new Comparator<Integer>() {
