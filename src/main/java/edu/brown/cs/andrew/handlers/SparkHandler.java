@@ -176,8 +176,12 @@ public class SparkHandler {
       String description = qm.value("description");
       String creator = cli.user;
       String group = qm.value("group");
+      String invalidGroup = "";
       System.out.println(group);
+      //client is not a part of this group -> invalid group?
+      //so set string of invalid group to this, and pass back to front end.
       if (group != null && !cli.getGroups().contains(group)) {
+        invalidGroup = group;
         group = null;
       }
       int duration = Integer.parseInt(qm.value("duration"));
@@ -201,14 +205,29 @@ public class SparkHandler {
       }
       //TODO: modify this so that backend spits to frontend
       //the invalid users or users that aren't friends with current user
+      StringBuilder invalidUsers = new StringBuilder();
       for (String friend : usersBuffer) {
         friend = friend.trim();
         if (cli.getFriends().containsKey(friend)) {
           if (cli.getFriends().get(friend).equals("accepted")) {
             attendees.add(friend);
+            //we have a valid user, but we're not friends yet (pending),
+            //so can't add to event -> add to invalid users list
+          } else {
+            System.out.println("unaccepted friend = " + friend);
+            invalidUsers.append(friend);
+            invalidUsers.append(" ");
           }
+          //no relation with this user, either invalid username,
+          //or simply no conncetion, and also do not append
+          //own self to invalid users list
+        } else if (!friend.equals(cli.getClient())){
+          System.out.println("no relation with " + friend);
+          invalidUsers.append(friend);
+          invalidUsers.append(" ");
         }
       }
+      
       Calendar c = Calendar.getInstance();
 
       c.setTime(date);
@@ -256,15 +275,20 @@ public class SparkHandler {
             int status = -2;
             String message = "The event is being placed on the first 1:00 AM for Daylights Savings time";
             Map<String, Object> variables = new ImmutableMap.Builder()
-            .put("status", status).put("message", message).build();
+            .put("status", status)
+            .put("message", message)
+            .put("invalidUsers", invalidUsers.toString())
+            .put("invalidGroup", invalidGroup).build();
             return GSON.toJson(variables);
           }
         }
         int status = 1;
         String message = "accepted";
         Map<String, Object> variables = new ImmutableMap.Builder()
-            .put("status", status).put("message", message).build();
-        
+            .put("status", status)
+            .put("message", message)
+            .put("invalidUsers", invalidUsers.toString())
+            .put("invalidGroup", invalidGroup).build();
         System.out.println(GSON.toJson(variables));
         return GSON.toJson(variables);
       } else {
@@ -296,8 +320,11 @@ public class SparkHandler {
         int status = 0;
         String message = "conflict";
         Map<String, Object> variables = new ImmutableMap.Builder()
-            .put("status", status).put("message", message)
-            .put("events", toFrontEnd).build();
+            .put("status", status)
+            .put("message", message)
+            .put("events", toFrontEnd)
+            .put("invalidUsers", invalidUsers.toString())
+            .put("invalidGroup", invalidGroup).build();
         return GSON.toJson(variables);
       }
     }
