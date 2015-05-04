@@ -10,34 +10,34 @@ jQuery(document).ready(function($) {
 	});
 	
 
-	
 	//add enter funcitonality
 	$('#loginbutton').bind('click', function(event) {
+		console.log("login button clicked");
 		$("p").remove();
 		var username = $('#loginUser').val();
 		var password = $('#loginPass').val();
 		var postParameters = {username : username, password : password};
 		$.post('/validate', postParameters, function(responseJSON) {
+			console.log("response received");
 			responseObject = JSON.parse(responseJSON);
 			status = responseObject.status;
-			message = responseObject.message;
+			console.log(status);
 			if (status == "error") {
+				console.log("errorrrr");
 				var message = document.createElement('p');
 				message.style.textAlign = "center";
 				message.style.color = "red";
 				message.appendChild(document.createTextNode("Error with database, please try again."));
-				$('#loginForm').submit(function(e) {
-					return false;
-				});
+				$('#logreg').append(message);
 			} else if (status == "failure") {
+				console.log("failedshit");
 				var message = document.createElement('p');
 				message.style.textAlign = "center";
 				message.style.color = "red";
 				message.appendChild(document.createTextNode("Username or password not found in database, please try again."));
-				$('#loginForm').submit(function(e) {
-					return false;
-				});
+				$('#logreg').append(message);
 			} else {
+				console.log("submit");
 				$('#loginForm').submit();
 			}
 		});

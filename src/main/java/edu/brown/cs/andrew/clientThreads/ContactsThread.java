@@ -92,7 +92,7 @@ public class ContactsThread implements Callable<String> {
             for (Iterator<String> it = groupMembers.iterator(); it.hasNext();) {
               //user does not exist, remove from list
               String user = it.next();
-              if (myDBHandler.findUser(user) == null) {
+              if (myDBHandler.findUser(user).isEmpty()) {
                 invalidFriends.append(user);
                 invalidFriends.append(",");
                 it.remove();
@@ -140,7 +140,7 @@ public class ContactsThread implements Callable<String> {
           for (Iterator<String> it = groupMembers.iterator(); it.hasNext();) {
             //user does not exist, remove from list
             String user = it.next();
-            if (myDBHandler.findUser(user) == null) {
+            if (myDBHandler.findUser(user).isEmpty()) {
               invalidFriends2.append(user);
               invalidFriends2.append(" ");
               it.remove();

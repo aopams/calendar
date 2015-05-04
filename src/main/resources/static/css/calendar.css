@@ -269,6 +269,7 @@ body {
 	width: 100%;
 	height: 455px;
 	border-top: 1px solid;
+    overflow-y: scroll;
 }
 
 .contacts-row {

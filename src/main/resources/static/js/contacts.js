@@ -54,21 +54,17 @@ $(document).ready(function(e) {
 	
 	//grabs friends from database and populates the appropriate arrays for friends
 	//to be created and displayed
-	$.post('/getfriends', postParameters, function(responseJSON) {
-		responseObject = JSON.parse(responseJSON);
-		temp = responseObject.friends;
-		for (i = 0; i < temp.length; i++) {
-			if (temp[i][1] == "pending") {
-				pendingFriends.push(temp[i][0]);
-			} else if (temp[i][1] == "accepted") {
-				friends.push(temp[i][0]);
-			}
-		};
-		createFriends();
-	});
-	
-	//create groups
+	createFriends();
 	createGroups();
+	
+	/* update calendar every 3 seconds */
+/*
+	window.setInterval(function() { 
+		createFriends();
+		createGroups();
+	}, 3000); 
+*/
+
 	
 	//button to add friend at top of contacts page
 	$("#sendInvite").bind('click', function(e) {
@@ -83,6 +79,7 @@ $(document).ready(function(e) {
 			alert(message);
 			
 			//send same post request as on document load to grab newly updated friend's list
+/*
 			postParameters = {url : url};
 			$.post('/getfriends', postParameters, function(responseJSON) {
 				//empty arrays
@@ -97,8 +94,8 @@ $(document).ready(function(e) {
 						friends.push(temp[i][0]);
 					}
 				};
+*/
 				createFriends();
-			});
 		});
 	});
 	
@@ -164,7 +161,6 @@ $(document).ready(function(e) {
 //friends) to populate proper divs and display them on the 
 //contacts page
 function createFriends() {
-	
 	//figure out how to remove everything from existing divs!!!!!
 	//might have to modify id's and change themto classes
 	$('.friend').remove();
@@ -172,86 +168,105 @@ function createFriends() {
 	$('.scrollRow').remove();
 	$('.contacts-row').remove();
 		
-	//loop through pending friends list to show on contacts page
-	if (pendingFriends.length > 0) {
-		var pending = document.createElement('div');
-		pending.className = 'pending';
-		var text = document.createElement('h3');
-		text.innerHTML = "Pending";
-		pending.appendChild(text);
-		var grid = document.getElementById('contactsGrid');
-		grid.appendChild(pending);
-		var scrollRow = document.createElement('div');
-		scrollRow.className = 'scrollRow';
-		grid.appendChild(scrollRow);
-		for (i = 0; i < pendingFriends.length; i++) {
-			var friend = document.createElement('div');
-				friend.className = 'friend';
-				friend.id = i;
-				//set this attribute to be grabbed later for accepting/refusing friend request
-				//**must know about users
-				friend.setAttribute('username', pendingFriends[i]);
-				var text = document.createElement('div');
-				text.id = 'text';
-				var name = document.createTextNode(pendingFriends[i]);
-				text.appendChild(name);
-				var img = document.createElement('img');
-				var refuse = document.createElement('img');
-				var accept = document.createElement('img');
-				refuse.id = 'refuse';
-				accept.id = 'accept';
-				img.src = getProfPic(pendingFriends[i]);
-				refuse.src = '/img/minus.png';
-				refuse.onclick=function() {removeFriend(this);};
-				accept.src = '/img/check.png';
-				accept.onclick=function() {acceptFriend(this);};
-				friend.appendChild(img);
-				friend.appendChild(text);
-				friend.appendChild(refuse);
-				friend.appendChild(accept);
-				scrollRow.appendChild(friend);
-		}
-	}
-	//loops through accepted friends list to show on contacts page
-	var count = 0;
-	var len = friends.length;
-	var rows = Math.ceil(len/5);
-	var grid = document.getElementById('contactsGrid');
-	if (len != 0 ) {
-		for (i = 0; i < rows; i++) {
-			var row = document.createElement('div');
-			row.className = 'contacts-row';
-			row.id = i;
-			grid.appendChild(row);
-			for (j = 0; j < 5; j++) {
+	postParameters = {url : url};
+	$.post('/getfriends', postParameters, function(responseJSON) {
+		//empty arrays
+		friends = [];
+		pendingFriends = [];
+		responseObject = JSON.parse(responseJSON);
+		temp = responseObject.friends;
+		for (i = 0; i < temp.length; i++) {
+			console.log(temp[i][1]);
+			console.log(temp[i][0]);
+			if (temp[i][1] == "pending") {
+				pendingFriends.push(temp[i][0]);
+			} else if (temp[i][1] == "accepted") {
+				friends.push(temp[i][0]);
+			}
+		};
+	
+		//loop through pending friends list to show on contacts page
+		if (pendingFriends.length > 0) {
+			var pending = document.createElement('div');
+			pending.className = 'pending';
+			var text = document.createElement('h3');
+			text.style.marginTop = "36.5px";
+			text.innerHTML = "Pending";
+			pending.appendChild(text);
+			var grid = document.getElementById('contactsGrid');
+			grid.appendChild(pending);
+			var scrollRow = document.createElement('div');
+			scrollRow.className = 'scrollRow';
+			grid.appendChild(scrollRow);
+			for (i = 0; i < pendingFriends.length; i++) {
 				var friend = document.createElement('div');
-				friend.className = 'friend';
-				friend.id = count;
-				friend.setAttribute('username', friends[count]);
-				var name = document.createElement('div');
-				name.id = 'name';
-				name.style.marginLeft='auto';
-				name.style.marginRight='auto';
-				name.style.display='block';
-				name.innerHTML = friends[count];
-				var img = document.createElement('img');
-				img.src = getProfPic(friends[count]);
-				var rem = document.createElement('img');
-				rem.id = 'rem';
-				rem.src = '/img/minus.png';
-				rem.onclick=function() {removeFriend(this);};
-				rem.style.marginRight='175px';
-				friend.appendChild(rem);
-				friend.appendChild(img);
-				friend.appendChild(name);
-				row.appendChild(friend);
-				count++;
-				if (count == len) {
-					break;
+					friend.className = 'friend';
+					friend.id = i;
+					//set this attribute to be grabbed later for accepting/refusing friend request
+					//**must know about users
+					friend.setAttribute('username', pendingFriends[i]);
+					var text = document.createElement('div');
+					text.id = 'text';
+					var name = document.createTextNode(pendingFriends[i]);
+					text.appendChild(name);
+					var img = document.createElement('img');
+					var refuse = document.createElement('img');
+					var accept = document.createElement('img');
+					refuse.id = 'refuse';
+					accept.id = 'accept';
+					img.src = getProfPic(pendingFriends[i]);
+					refuse.src = '/img/minus.png';
+					refuse.onclick=function() {removeFriend(this);};
+					accept.src = '/img/check.png';
+					accept.onclick=function() {acceptFriend(this);};
+					friend.appendChild(img);
+					friend.appendChild(text);
+					friend.appendChild(refuse);
+					friend.appendChild(accept);
+					scrollRow.appendChild(friend);
+			}
+		}
+		//loops through accepted friends list to show on contacts page
+		var count = 0;
+		var len = friends.length;
+		var rows = Math.ceil(len/5);
+		var grid = document.getElementById('contactsGrid');
+		if (len != 0 ) {
+			for (i = 0; i < rows; i++) {
+				var row = document.createElement('div');
+				row.className = 'contacts-row';
+				row.id = i;
+				grid.appendChild(row);
+				for (j = 0; j < 5; j++) {
+					var friend = document.createElement('div');
+					friend.className = 'friend';
+					friend.id = count;
+					friend.setAttribute('username', friends[count]);
+					var name = document.createElement('div');
+					name.id = 'name';
+					name.style.marginLeft='auto';
+					name.style.marginRight='auto';
+					name.style.display='block';
+					name.innerHTML = friends[count];
+					var img = document.createElement('img');
+					img.src = getProfPic(friends[count]);
+					var rem = document.createElement('img');
+					rem.id = 'rem';
+					rem.src = '/img/minus.png';
+					rem.onclick=function() {removeFriend(this);};
+					rem.style.marginRight='175px';
+					friend.appendChild(rem);
+					friend.appendChild(img);
+					friend.appendChild(name);
+					row.appendChild(friend);
+					count++;
+					if (count == len) {
+						break;
+					}
 				}
 			}
 		}
-	}
+	});
 };
 
 function createGroups() {
@@ -347,6 +362,7 @@ function acceptFriend(elem) {
 		message = responseObject.message;
 		alert(message);
 		//send same post request as on document load to grab newly updated friend's list
+/*
 		postParameters = {url : url};
 		$.post('/getfriends', postParameters, function(responseJSON) {
 			//empty arrays
@@ -361,8 +377,13 @@ function acceptFriend(elem) {
 					friends.push(temp[i][0]);
 				}
 			};
+
+
 			createFriends();
 		});
+*/
+
+		createFriends();
 	});
 };
 
@@ -386,7 +407,8 @@ function removeFriend(elem) {
 		message = responseObject.message;
 		alert(message);
 		//send same post request as on document load to grab newly updated friend's list
-		postParameters = {url : url};
+		/*
+postParameters = {url : url};
 		$.post('/getfriends', postParameters, function(responseJSON) {
 			console.log("should update removed friend");
 			//empty arrays
@@ -403,6 +425,8 @@ function removeFriend(elem) {
 			};
 			createFriends();
 		});
+*/
+		createFriends();
 	});
 };
 
@@ -485,10 +509,10 @@ function viewGroupMembers(elem) {
 					'<div class="input-group margin-group" id="membersToAdd">' +
 				    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="Users to add"/>'+
 					'</div>' +
-					'<div id="membersFormError">' +
-					'</div>' +
 					'<img id="new-members-button" src="\\img/check.png"/>' +
 				'</div>' +
+				'<p id="membersFormError">' +
+				'</p>' +
 			'</form>';
 		$(form).dialog({ modal: true, resizable: false});
 		
@@ -500,13 +524,17 @@ function viewGroupMembers(elem) {
 				var command = "newmembers";
 				var postParameters = {url : url, groupid : groupid, groupname : groupname, command : command, users : users};
 				$.post('/editgroups', postParameters, function(responseJSON) {
+					$("#membersFormError").text("");
 					console.log("adding members");
 					command = "members";
 					responseObject = JSON.parse(responseJSON);
 					message = responseObject.message;
 					
 					//TODO: TEST THIS FUNCITON
+					console.log("message error should pop up?");
 					if (message) {
+						console.log("invalid members exist");
+						console.log(message);
 						var invalidUsers = message.split(",");
 						var string = "The following usernames were invalid: ";
 						for (i = 0; i < invalidUsers.length; i++) {
@@ -516,12 +544,10 @@ function viewGroupMembers(elem) {
 							string += " ";
 						}
 						
-						document.getElementById('membersFormError').style.textAlign = "center";
-						document.getElementById('membersFormError').style.color = "red";
-						document.getElementById('membersFormError').innerHTML = string;
+						$('#membersFormError').css("text-align", "center");
+						$('#membersFormError').css("color", "red");
+						$('#membersFormError').text(string);
 					}
-					
-					
 					
 					var postParameters = {url : url, groupid : groupid, groupname : groupname, command : command, users : users};
 					//view members again

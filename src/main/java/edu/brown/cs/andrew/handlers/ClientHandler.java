@@ -32,6 +32,10 @@ public class ClientHandler {
   }
 
   public synchronized ConcurrentHashMap<String, String> getFriends() {
+    for (String friend : friends.keySet()) {
+      System.out.println("friend = " + friend);
+      System.out.println("status = " + friends.get(friend));
+    }
     return friends;
   }
 

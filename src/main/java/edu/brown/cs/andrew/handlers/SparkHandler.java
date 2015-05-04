@@ -794,6 +794,7 @@ public class SparkHandler {
               usersList, Commands.ADD_GROUP);
           Future<String> t = pool.submit(ct);
           String exists = t.get();
+          System.out.println("invalid members = " + exists);
           if (exists.equals("failure")) {
             message = "failure";
           } else {
