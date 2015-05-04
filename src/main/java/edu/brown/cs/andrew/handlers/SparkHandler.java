@@ -282,10 +282,10 @@ public class SparkHandler {
           System.out.println("Conflict #:" + conflicts.get(c.get(Calendar.HOUR_OF_DAY))
              + "\t hour: " +  c.get(Calendar.HOUR_OF_DAY));
           if (conflicts.get(c.get(Calendar.HOUR_OF_DAY)) ==0) {
-            color = "green";
+            color = "success";
           } else if ((double)conflicts.get(c.get(Calendar.HOUR_OF_DAY))
               / attendees.size() <.5) {
-            color = "yellow";
+            color = "warning";
           }
           newE.setConflictColor(color);
           toFrontEnd.add(newE);
