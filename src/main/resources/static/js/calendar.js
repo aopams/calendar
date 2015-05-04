@@ -8,7 +8,7 @@ var weekInfo = [];
 var newWindow;
 
 //colors that we assign to event boxes
-var eventColors = ["#FF9393", "#98FB98", "#FFFF99", "#c0aee0", "#e0d9ae", "#A9D8B6", "lightgoldenrodyellow"]
+var eventColors = ["#FF9393", "#98FB98", "#FFFF99", "#c0aee0", "#e0d9ae", "#A9D8B6", "lightgoldenrodyellow"];
 
 //ranking suggestions array
 var events = [];
