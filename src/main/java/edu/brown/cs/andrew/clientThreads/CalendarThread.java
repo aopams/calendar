@@ -33,20 +33,28 @@ public class CalendarThread implements Callable<String>{
       error.printStackTrace();
     }
   }
-  
- 
-
   @Override
   public String call() throws SQLException, ParseException {
     // TODO Auto-generated method stub
     switch (command) {
     case ADD_EVENT :
-      Event nextDay = client1.checkTwoDays(myEvent);
-      myDBHandler.addEvent(myEvent);
+      
+      for (Integer i : attendees.keySet()) {
+        ClientHandler cli1 = attendees.get(i);
+      if (myEvent.getAttendees().contains(cli1)) {
+      Event nextDay = cli1.checkTwoDays(myEvent);
+      if (client1.getClient().equals(cli1.getClient())) {
+        myDBHandler.addEvent(myEvent);
+      }
       while(nextDay != null) {
-        myDBHandler.addEvent(nextDay);
+        if (client1.getClient().equals(cli1.getClient())) {
+          myDBHandler.addEvent(myEvent);
+        }
         nextDay = client1.checkTwoDays(nextDay);
       }
+      }
+    }
+
       break;
     case DELETE_EVENT :
       List<String> attens = deleteEvent.getAttendees();
@@ -82,5 +90,4 @@ public class CalendarThread implements Callable<String>{
     }
     return null;
   }
-
 }

@@ -1,6 +1,7 @@
 package edu.brown.cs.andrew.clientThreads;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import edu.brown.cs.andrew.handlers.ClientHandler;
 import edu.brown.cs.andrew.handlers.Commands;
 import edu.brown.cs.andrew.handlers.DatabaseHandler;
+import edu.brown.cs.andrew.handlers.Event;
 
 public class ContactsThread implements Callable<String> {
   
@@ -44,7 +46,7 @@ public class ContactsThread implements Callable<String> {
     }
   }
   @Override
-  public String call() throws SQLException {
+  public String call() throws SQLException, ParseException {
     String user1 = client1.getClient();
       switch (command) {
         case GET_NAME:
@@ -147,6 +149,13 @@ public class ContactsThread implements Callable<String> {
         case REMOVE_GROUP :
           client1.removeGroup(removeGroupID);
           myDBHandler.removeUserFromGroup(user1, removeGroupID);
+          //remove user from all events in database of this given group
+          //also update hashmap of events
+          List<Event> eventsToEdit = myDBHandler.getEventsFromGroup(removeGroupID);
+          for (Event e : eventsToEdit) {
+            myDBHandler.removeUserFromEvent(user1, e.getId());
+            client1.removeEvent(e);
+          }
           //if we just removed last member from the group, delete the group.
           if (myDBHandler.getUsersFromGroup(removeGroupID).isEmpty()) {
             System.out.println("Group is empty, remove it from db");

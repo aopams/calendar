@@ -191,7 +191,6 @@ public class ClientHandler {
 
   public void removeEvent(Event e) {
     events.remove(e.getId());
-
   }
 
   // edited groupid count, handled in database
