@@ -827,8 +827,6 @@ $(document).ready(function(e) {
 		googleEvents();
 	});
 	
-	
-	
 	$(document).on('click','#new-event-button', function(e) {
 	    newEvent();
 	    updateDisplayedEvents();
