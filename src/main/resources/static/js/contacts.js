@@ -58,12 +58,10 @@ $(document).ready(function(e) {
 	createGroups();
 	
 	/* update calendar every 3 seconds */
-/*
 	window.setInterval(function() { 
 		createFriends();
 		createGroups();
 	}, 3000); 
-*/
 
 	
 	//button to add friend at top of contacts page

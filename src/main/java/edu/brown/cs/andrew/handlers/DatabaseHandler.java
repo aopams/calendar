@@ -205,7 +205,7 @@ public class DatabaseHandler {
     theStat.setString(1, user_name);
     ResultSet rs = theStat.executeQuery();
     while (rs.next()) {
-      String status = rs.getString(1);
+      String status = rs.getString(2);
       toReturn.put(rs.getString(1), status);
     }
     rs.close();

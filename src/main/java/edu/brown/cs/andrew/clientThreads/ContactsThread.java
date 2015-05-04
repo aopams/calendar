@@ -52,6 +52,13 @@ public class ContactsThread implements Callable<String> {
           myDBHandler.closeConnection();
           return name;
         case REMOVE_FRIEND:
+          //loop through clients, find users who were friends with current user,
+          //and update their friend's hashmap
+          for (Entry<Integer, ClientHandler> cli: clients.entrySet()) {
+            if (cli.getValue().getClient().equals(user2)) {
+              cli.getValue().removeFriend(user1);
+            }
+          }
           client1.removeFriend(user2);
           myDBHandler.removeFriend(user1, user2);          
           break;
@@ -69,7 +76,7 @@ public class ContactsThread implements Callable<String> {
               System.out.println("friend request sent");
               for (Entry<Integer, ClientHandler> cli: clients.entrySet()) {
                 if (cli.getValue().getClient().equals(user2)) {
-                  cli.getValue().addFriend(user2);
+                  cli.getValue().addFriend(user1);
                 }
               }
               myDBHandler.addFriendRequest(user1, user2);
@@ -86,7 +93,7 @@ public class ContactsThread implements Callable<String> {
             client1.acceptFriend(user2);
             for (Entry<Integer, ClientHandler> cli: clients.entrySet()) {
               if (cli.getValue().getClient().equals(user2)) {
-                cli.getValue().acceptFriend(user2);
+                cli.getValue().acceptFriend(user1);
               }
             }
             myDBHandler.acceptFriendRequest(user1, user2);

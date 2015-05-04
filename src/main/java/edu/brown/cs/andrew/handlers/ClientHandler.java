@@ -199,11 +199,6 @@ public class ClientHandler {
     groups.put(groupID, group);
   }
 
-  // public void addGroup(String group) {
-  // maxGroupId++;
-  // groups.put(maxGroupId, group);
-  // }
-
   public void removeGroup(int groupID) {
     groups.remove(groupID);
   }
