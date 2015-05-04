@@ -269,6 +269,7 @@ public class SparkHandler {
       } else {
         List<Event> toFrontEnd = new ArrayList<Event>();
         rank.checkAllConflicts(date);
+        HashMap<Integer,Integer> conflicts =  rank.getConflicts();
         Integer[] bestTimes = rank.getBestTimes(3, date);
         for (int i = 0; i < 3; i++) {
           c.set(Calendar.HOUR_OF_DAY, bestTimes[i]);
@@ -277,6 +278,14 @@ public class SparkHandler {
           if (eventID != -1) {
             newE.setID(eventID);
           }
+          String color = "red";
+          if (conflicts.get(c.getActualMinimum(Calendar.HOUR_OF_DAY)) ==0) {
+            color = "green";
+          } else if ((double)conflicts.get(c.getActualMinimum(Calendar.HOUR_OF_DAY))
+              / attendees.size() >=.5) {
+            color = "yellow";
+          }
+          newE.setConflictColor(color);
           toFrontEnd.add(newE);
         }
         e.setID(eventID);
@@ -1058,5 +1067,4 @@ public class SparkHandler {
       return GSON.toJson(variables);
     }
   }
-
 }
