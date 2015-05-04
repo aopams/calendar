@@ -3,8 +3,10 @@ package edu.brown.cs.andrew.clientThreads;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.brown.cs.andrew.handlers.ClientHandler;
 import edu.brown.cs.andrew.handlers.Commands;
@@ -19,9 +21,13 @@ public class ContactsThread implements Callable<String> {
   private int removeGroupID;
   private List<String> groupMembers;
   private Commands command;
+  private ConcurrentHashMap<Integer, ClientHandler> clients;
 
   //ADD GROUP ID FOR CONSTRUCTOR TO BE ABLE TO REMOVE YOURSELF FROM A GROUP
-  public ContactsThread(ClientHandler client1, String client2, String groupName, Integer groupid, List<String> memberNames, Commands command) {
+  public ContactsThread(ClientHandler client1, String client2,
+      String groupName, Integer groupid,
+      List<String> memberNames, Commands command,
+      ConcurrentHashMap<Integer, ClientHandler> clients) {
     this.client1 = client1;
     this.user2 = client2;
     this.groupName = groupName;
@@ -30,6 +36,7 @@ public class ContactsThread implements Callable<String> {
     if (groupid != null) {
       removeGroupID = groupid;
     }
+    this.clients = clients;
     try {
       myDBHandler = new DatabaseHandler("calendar.sqlite3");
     } catch (SQLException | ClassNotFoundException e) {
@@ -60,6 +67,11 @@ public class ContactsThread implements Callable<String> {
               return "exists";
             } else {
               System.out.println("friend request sent");
+              for (Entry<Integer, ClientHandler> cli: clients.entrySet()) {
+                if (cli.getValue().getClient().equals(user2)) {
+                  cli.getValue().addFriend(user2);
+                }
+              }
               myDBHandler.addFriendRequest(user1, user2);
               myDBHandler.closeConnection();
               return "success";
@@ -72,6 +84,11 @@ public class ContactsThread implements Callable<String> {
           }
         case ACCEPT_FRIEND : 
             client1.acceptFriend(user2);
+            for (Entry<Integer, ClientHandler> cli: clients.entrySet()) {
+              if (cli.getValue().getClient().equals(user2)) {
+                cli.getValue().acceptFriend(user2);
+              }
+            }
             myDBHandler.acceptFriendRequest(user1, user2);
             break;
             //CHECK IF EACH USER IS VALID
@@ -109,6 +126,11 @@ public class ContactsThread implements Callable<String> {
             for (int i = 0; i < groupMembers.size(); i++) {
               System.out.println("member to add = " + groupMembers.get(i));
               myDBHandler.addUserToGroup(groupMembers.get(i), groupID);
+              for (Entry<Integer, ClientHandler> cli: clients.entrySet()) {
+                if (cli.getValue().getClient().equals(groupMembers.get(i))) {
+                  cli.getValue().addGroup(groupName, groupID);
+                }
+              }
             }
             client1.addGroup(groupName, groupID);
             groupStatus = invalidFriends.toString();
@@ -151,6 +173,11 @@ public class ContactsThread implements Callable<String> {
           }
           for (int i = 0; i < groupMembers.size(); i++) {
             myDBHandler.addUserToGroup(groupMembers.get(i), removeGroupID);
+            for (Entry<Integer, ClientHandler> cli: clients.entrySet()) {
+              if (cli.getValue().getClient().equals(groupMembers.get(i))) {
+                cli.getValue().addGroup(groupName, removeGroupID);
+              }
+            }
           }
           myDBHandler.closeConnection();
           return invalidFriends2.toString();
