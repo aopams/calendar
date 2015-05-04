@@ -8,7 +8,7 @@ var weekInfo = [];
 var newWindow;
 
 //colors that we assign to event boxes
-var eventColors = ["#FF9393", "#98FB98", "#FFFF99", "#c0aee0", "#e0d9ae", "#A9D8B6", "lightgoldenrodyellow"];
+var eventColors = ["#82CA9D", "#FFF79A", "#6ECFF6", "#F49AC2", "#F9AD81", "#BC8DBF", "#F49AC2"];
 
 //ranking suggestions array
 var events = [];
@@ -104,13 +104,14 @@ function newEvent() {
 
 	$.post("/newevent", postParameters, function(responseJSON){
 		var responseObject = JSON.parse(responseJSON);
-		console.log('response object is ');
 		console.log(responseObject);
-	    if(responseObject.status != 1) {
-			displayRanking(responseObject, 0);
-		} else if (responseObject.status === -2) {
+		if (responseObject.status == -2) {
 			console.log('daylight savings');
-			console.log(responseObject);
+			var $dialog = $('.ui-dialog-content');
+		    $dialog.dialog('destroy');
+		    daylightMessage(responseObject.message);
+		} else if(responseObject.status != 1) {
+			displayRanking(responseObject, 0);
 		} else {
 			var $dialog = $('.ui-dialog-content');
 		    $dialog.dialog('destroy');
@@ -290,10 +291,11 @@ function daylightMessage(message) {
 	'<form class="form-inline" id ="newEventForm">' +
 	'<div class="form-group dialog-form">' +
 		'<img id="x-button" src="/img/x.png"/>' +
+	'</div>' +
 	   '<p>' + message + '</p>' + 
 	   	'<div class="margin-group-xl">'+ 
 		'<img id="new-event-button" src="\\img/check.png"/>' +
-		'</div> </div> </form>';
+		'</div></form>';
 	$(form).dialog({ modal: true, resizable: false});
 }
 
