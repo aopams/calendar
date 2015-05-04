@@ -18,11 +18,6 @@ jQuery(document).ready(function($) {
 			parseLoginInfo();
 		}
 	});
-	$('#loginUser').keyup(function(event) {
-		if (event.keyCode == 13) {
-			parseLoginInfo();
-		}
-	});
 	
 	//registration functionality
 	$('#regUser').keyup(function(event) {

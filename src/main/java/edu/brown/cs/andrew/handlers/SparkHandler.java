@@ -235,7 +235,7 @@ public class SparkHandler {
       if (conflict || override == 1) {
 
         CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e,
-            null, null);
+            null, clients);
         if (eventID > -1) {
           Event d = cli.getEvents().get(eventID);
           System.out.println("EVENTID: " + eventID);
@@ -988,7 +988,7 @@ public class SparkHandler {
         event.setAttendees(attends);
         System.out.println(event.getId());
         CalendarThread ct = new CalendarThread(ch, Commands.ADD_EVENT, event,
-            null, null);
+            null, clients);
         Future<String> t = pool.submit(ct);
         try {
           t.get();

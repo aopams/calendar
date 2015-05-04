@@ -190,6 +190,7 @@ public class ClientHandler {
   }
 
   public void removeEvent(Event e) {
+    //remove own self from event's attendees
     events.remove(e.getId());
   }
 

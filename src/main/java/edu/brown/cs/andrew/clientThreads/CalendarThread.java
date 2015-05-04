@@ -38,22 +38,27 @@ public class CalendarThread implements Callable<String>{
     // TODO Auto-generated method stub
     switch (command) {
     case ADD_EVENT :
+      System.out.println("in add event");
       
-      for (Integer i : attendees.keySet()) {
-        ClientHandler cli1 = attendees.get(i);
-      if (myEvent.getAttendees().contains(cli1)) {
-      Event nextDay = cli1.checkTwoDays(myEvent);
-      if (client1.getClient().equals(cli1.getClient())) {
-        myDBHandler.addEvent(myEvent);
-      }
-      while(nextDay != null) {
-        if (client1.getClient().equals(cli1.getClient())) {
-          myDBHandler.addEvent(myEvent);
+      for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
+        ClientHandler cli1 = e.getValue();
+        System.out.println(cli1.getClient());
+        System.out.println("in for loop");
+        if (myEvent.getAttendees().contains(cli1.getClient())) {
+          System.out.println("event should contain me");
+          Event nextDay = cli1.checkTwoDays(myEvent);
+          if (client1.getClient().equals(cli1.getClient())) {
+            System.out.println("this is me");
+            myDBHandler.addEvent(myEvent);
+          }
+          while(nextDay != null) {
+            if (client1.getClient().equals(cli1.getClient())) {
+              myDBHandler.addEvent(myEvent);
+            }
+            nextDay = client1.checkTwoDays(nextDay);
+          }
         }
-        nextDay = client1.checkTwoDays(nextDay);
       }
-      }
-    }
 
       break;
     case DELETE_EVENT :
@@ -68,6 +73,15 @@ public class CalendarThread implements Callable<String>{
     case REMOVE_USER_EVENT :
       client1.removeEvent(deleteEvent);
       myDBHandler.removeUserFromEvent(client1.getClient(), deleteEvent.getId());
+      //loop through rest of clients and update their hashmaps to reflect that
+      //this user just left the event
+      for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
+        if (deleteEvent.getAttendees().contains(e.getValue().getClient())) {
+          System.out.println("iNHEREEEE");
+          System.out.println(e.getValue().getClient());
+          e.getValue().getEvents().get(deleteEvent.getId()).getAttendees().remove(client1.getClient());
+        }
+      }
       break;
     case EDIT_EVENT :
       System.out.println(myEvent.getDescription());
