@@ -724,6 +724,7 @@ function displayRanking(obj, type) {
 }
 
 $(document).ready(function(e) {
+	 document.getElementById('calendar').scrollTop = 300;
 	$(".ui-state-default").hide()  
 	/* update the displayed events to get events on page */
 	updateDisplayedEvents();
