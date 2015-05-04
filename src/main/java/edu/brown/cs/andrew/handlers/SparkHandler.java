@@ -253,7 +253,7 @@ public class SparkHandler {
           if (c.get(Calendar.DAY_OF_WEEK) == 1
               && c.get(Calendar.HOUR_OF_DAY) == 1) {
             int status = -2;
-            String message = "The event is being placed on the first";
+            String message = "The event is being placed on the first 1:00 AM for Daylights Savings time";
             Map<String, Object> variables = new ImmutableMap.Builder()
             .put("status", status).put("message", message).build();
             return GSON.toJson(variables);
@@ -298,7 +298,7 @@ public class SparkHandler {
       }
       if (c.get(Calendar.WEEK_OF_YEAR) == 11) {
         if (c.get(Calendar.DAY_OF_WEEK) == 1
-            && c.get(Calendar.HOUR_OF_DAY) == 1) {
+            && c.get(Calendar.HOUR_OF_DAY) == 2) {
         int status = -2;
         String message = "This hour does not exist due to Daylight Savings Time";
         Map<String, Object> variables = new ImmutableMap.Builder()
