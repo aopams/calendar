@@ -221,6 +221,9 @@ public class SparkHandler {
           description, creator);
       c.setTime(date);
       String daylightSavings = checkDaylightSavings(e, c);
+      if (daylightSavings != null) {
+        return daylightSavings;
+      }
       Ranker rank = new Ranker(e);
       boolean conflict = false;
       try {
@@ -233,22 +236,24 @@ public class SparkHandler {
 
         CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e,
             null, null);
-        if (eventID != -1) {
+        if (eventID > -1) {
           Event d = cli.getEvents().get(eventID);
+          System.out.println("EVENTID: " + eventID);
           ct = new CalendarThread(cli, Commands.EDIT_EVENT, e, d, clients);
         }
-        Future<String> t = pool.submit(ct);
-        try {
-          t.get();
-        } catch (InterruptedException | ExecutionException e1) {
-          e1.printStackTrace();
-        }
+        pool.submit(ct);
+//        try {
+//          t.get();
+//        } catch (InterruptedException | ExecutionException e1) {
+//          e1.printStackTrace();
+//        }
         clients.put(clientID, cli);
-        if (c.getWeekYear() == 45) {
+        c.setTime(date);
+        if (c.get(Calendar.WEEK_OF_YEAR) == 45) {
           if (c.get(Calendar.DAY_OF_WEEK) == 1
               && c.get(Calendar.HOUR_OF_DAY) == 1) {
             int status = -2;
-            String message = "The event is being placed on the first";
+            String message = "The event is being placed on the first 1:00 AM for Daylights Savings time";
             Map<String, Object> variables = new ImmutableMap.Builder()
             .put("status", status).put("message", message).build();
             return GSON.toJson(variables);
@@ -274,6 +279,7 @@ public class SparkHandler {
           }
           toFrontEnd.add(newE);
         }
+        e.setID(eventID);
         toFrontEnd.add(e);
         int status = 0;
         String message = "conflict";
@@ -285,10 +291,14 @@ public class SparkHandler {
     }
 
     private String checkDaylightSavings(Event e, Calendar c) {
-      String toReturn = null;
-      if (c.getWeekYear() == 11) {
+      try {
+        c.setTime(e.getDate());
+      } catch (ParseException e1) {
+        e1.printStackTrace();
+      }
+      if (c.get(Calendar.WEEK_OF_YEAR) == 11) {
         if (c.get(Calendar.DAY_OF_WEEK) == 1
-            && c.get(Calendar.HOUR_OF_DAY) == 1) {
+            && c.get(Calendar.HOUR_OF_DAY) == 2) {
         int status = -2;
         String message = "This hour does not exist due to Daylight Savings Time";
         Map<String, Object> variables = new ImmutableMap.Builder()

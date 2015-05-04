@@ -86,6 +86,7 @@ public class Ranker {
 
     for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
       ClientHandler curr = e.getValue();
+      System.out.println(e.getValue().getClient());
       ConcurrentHashMap<Integer, Event> daysEvents = curr.getEventsByDay(d);
       System.out.println(d);
       System.out.println("Events number " + daysEvents.size());
@@ -96,39 +97,57 @@ public class Ranker {
           c.setTime(event.getValue().getDate());
 
           int startHour = c.get(Calendar.HOUR_OF_DAY);
-          c.add(Calendar.MINUTE, base.getDuration());
+          c.add(Calendar.MINUTE, event.getValue().getDuration());
           int endHour = c.get(Calendar.HOUR_OF_DAY);
           if (startHour <= endHour) {
-            for (int j = startHour; j <= endHour; j++) {
+            for (int j = startHour; j < endHour; j++) {
+              System.out.println("subtracting from hour " + j);
               int val = bestHoursTable.get(j);
-              int newVal = val - (200 / attendees.size());
+              int newVal = val - (1000 / attendees.size());
               bestHoursTable.put(j, newVal);
             }
           }
-          if (startHour != 0) {
-            int val = bestHoursTable.get(startHour - 1);
-            int newVal = val + (200 / attendees.size());
-            bestHoursTable.put(startHour - 1, newVal);
-          }
-          if (endHour != 23) {
-            int val = bestHoursTable.get(endHour + 1);
-            int newVal = val + (200 / attendees.size());
-            bestHoursTable.put(endHour + 1, newVal);
-          }
+          
         } catch (ParseException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
         }
-
       }
     }
+    Calendar c = Calendar.getInstance();
+    c.setTime(d);
+    int startHour = c.get(Calendar.HOUR_OF_DAY);
+    if (startHour != 0) {
+      int val = bestHoursTable.get(startHour - 1);
+      int newVal = val + (500 / attendees.size());
+      bestHoursTable.put(startHour - 1, newVal);
+      if (startHour != 1) {
+        int val2 = bestHoursTable.get(startHour - 2);
+        int newVal2 = val2 + (500 / attendees.size());
+        bestHoursTable.put(startHour - 2, newVal2);
+      }
+    }
+    if (startHour != 23) {
+      int val = bestHoursTable.get(startHour + 1);
+      int newVal = val + (500 / attendees.size());
+      bestHoursTable.put(startHour + 1, newVal);
+      if (startHour != 22) {
+        int val2 = bestHoursTable.get(startHour + 2);
+        int newVal2 = val2 + (500 / attendees.size());
+        bestHoursTable.put(startHour + 2, newVal2);
+      }
+    }
+    for (int i = 0; i < 24; i++) {
+      System.out.println("Hout: " + i + " Value: " + bestHoursTable.get(i));
+    }
+    System.out.println("Event Attendees " + attendees.size());
   }
 
   private void setBestHours() {
     HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
-    map.put(0, 200);
-    map.put(1, 100);
-    map.put(2, 100);
+    map.put(0, 50);
+    map.put(1, 50);
+    map.put(2, 50);
     map.put(3, 50);
     map.put(4, 20);
     map.put(5, 20);

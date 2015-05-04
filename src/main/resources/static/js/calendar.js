@@ -8,7 +8,7 @@ var weekInfo = [];
 var newWindow;
 
 //colors that we assign to event boxes
-var eventColors = ["#FF9393", "#98FB98", "#FFFF99", "#c0aee0", "#e0d9ae", "#A9D8B6", "lightgoldenrodyellow"]
+var eventColors = ["#FF9393", "#98FB98", "#FFFF99", "#c0aee0", "#e0d9ae", "#A9D8B6", "lightgoldenrodyellow"];
 
 //ranking suggestions array
 var events = [];
@@ -105,8 +105,12 @@ function newEvent() {
 	$.post("/newevent", postParameters, function(responseJSON){
 		var responseObject = JSON.parse(responseJSON);
 		console.log(responseObject);
-	    if(responseObject.status != 1) {
-		    console.log('conflict');
+		if (responseObject.status == -2) {
+			console.log('daylight savings');
+			var $dialog = $('.ui-dialog-content');
+		    $dialog.dialog('destroy');
+		    daylightMessage(responseObject.message);
+		} else if(responseObject.status != 1) {
 			displayRanking(responseObject, 0);
 		} else {
 			var $dialog = $('.ui-dialog-content');
@@ -278,6 +282,20 @@ function newEventDialog(date, time) {
 		'<div class="margin-group-xl">'+ 
 		'<img id="new-event-button" src="\\img/check.png"/>' +
 		'</div> </div> </form>';
+	$(form).dialog({ modal: true, resizable: false});
+}
+
+/* opens dialog window for alerts about daylight savings time */
+function daylightMessage(message) {
+	form =
+	'<form class="form-inline" id ="newEventForm">' +
+	'<div class="form-group dialog-form">' +
+		'<img id="x-button" src="/img/x.png"/>' +
+	'</div>' +
+	   '<p>' + message + '</p>' + 
+	   	'<div class="margin-group-xl">'+ 
+		'<img id="new-event-button" src="\\img/check.png"/>' +
+		'</div></form>';
 	$(form).dialog({ modal: true, resizable: false});
 }
 
