@@ -78,7 +78,7 @@ function googleEvents() {
 		}
 	});
 
-	
+	updateDisplayedEvents();
 	
 
 }
@@ -617,6 +617,7 @@ function timeOffsetMargin() {
 		} else {
 			currMarg = currMarg.substring(0, currMarg.length - 2);
 		}
+		console.log('hereh');
 		var newMarg = (currMarg * 1) + getTimeOffsetMargin(evTime);
 		$('.event#' + key).css('margin-top', newMarg+'px');
 	}
