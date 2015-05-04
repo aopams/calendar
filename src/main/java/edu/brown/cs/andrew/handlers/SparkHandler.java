@@ -219,6 +219,8 @@ public class SparkHandler {
       String dayOfWeek = numbersToDay.get(dayWeek);
       Event e = new Event(date, title, dayOfWeek, attendees, group, duration,
           description, creator);
+      c.setTime(date);
+      String daylightSavings = checkDaylightSavings(e, c);
       Ranker rank = new Ranker(e);
       boolean conflict = false;
       try {
@@ -242,10 +244,21 @@ public class SparkHandler {
           e1.printStackTrace();
         }
         clients.put(clientID, cli);
+        if (c.getWeekYear() == 45) {
+          if (c.get(Calendar.DAY_OF_WEEK) == 1
+              && c.get(Calendar.HOUR_OF_DAY) == 1) {
+            int status = -2;
+            String message = "The event is being placed on the first";
+            Map<String, Object> variables = new ImmutableMap.Builder()
+            .put("status", status).put("message", message).build();
+            return GSON.toJson(variables);
+          }
+        }
         int status = 1;
         String message = "accepted";
         Map<String, Object> variables = new ImmutableMap.Builder()
             .put("status", status).put("message", message).build();
+        
         System.out.println(GSON.toJson(variables));
         return GSON.toJson(variables);
       } else {
@@ -267,9 +280,23 @@ public class SparkHandler {
         Map<String, Object> variables = new ImmutableMap.Builder()
             .put("status", status).put("message", message)
             .put("events", toFrontEnd).build();
-        System.out.println(GSON.toJson(variables));
         return GSON.toJson(variables);
       }
+    }
+
+    private String checkDaylightSavings(Event e, Calendar c) {
+      String toReturn = null;
+      if (c.getWeekYear() == 11) {
+        if (c.get(Calendar.DAY_OF_WEEK) == 1
+            && c.get(Calendar.HOUR_OF_DAY) == 1) {
+        int status = -2;
+        String message = "This hour does not exist due to Daylight Savings Time";
+        Map<String, Object> variables = new ImmutableMap.Builder()
+            .put("status", status).put("message", message).build();
+        return GSON.toJson(variables);
+        }
+      }
+      return null;
     }
 
   }
