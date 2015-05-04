@@ -119,9 +119,7 @@ public class DatabaseHandler {
     String toReturn = "";
     if (rs.next()) {
       toReturn = rs.getString(1);
-      System.out.println("user found");
     }
-    
     rs.close();
     return toReturn;
   }

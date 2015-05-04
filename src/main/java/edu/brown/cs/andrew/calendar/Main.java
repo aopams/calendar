@@ -25,10 +25,43 @@ public class Main {
     System.out.println(System.currentTimeMillis() / 1000);
     try {
       myDBHandler = new DatabaseHandler("calendar.sqlite3");
+      Date myDate = new SimpleDateFormat("dd/MM/yyyy").parse("13/4/2015");
+      System.out.println(myDate.toString());
+      List<String> hSquad = new ArrayList<String>();
+      hSquad.add("Harsha");
+      hSquad.add("Harsha2");
+      List<String> hGroup = new ArrayList<String>();
+      hGroup.add("Harsha");
+      hGroup.add("Rohan");
+      System.out.println(myDate.toString());
+      Event e = new Event(myDate, "Party Time!!!!", "Friday", hSquad,
+          "", 180,
+          "Harsha Squad going Ham to Trap Queen for 3 hours",
+          "Harsha");
+      Date myDate2 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("16/4/2015 13:00");
+      Date myDate3 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("21/4/2015 18:00");
+      System.out.println(myDate2);
+      Event e2 = new Event(myDate2, "Ninja Time!", "Monday", hGroup, "", 30,
+          "Harsha going stealth-mode",
+          "Harsha2");
+      Event e3 = new Event(myDate3, "Ninja Time! Pt. 2", "Tuesday", hGroup, "", 60,
+          "Harsha and Rohan going stealth-mode",
+          "Rohan");
+      System.out.println(myDBHandler.findGroup("Harsha Squad"));
+     // myDBHandler.addEvent(e);
+     // myDBHandler.addEvent(e2);
+     // myDBHandler.addEvent(e3); 
+      List<String> hGroup1 = new ArrayList<String>();
+      hGroup1.add("Harsha");
+      Date myDate1 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("13/4/2015 13:00");
+      Event e1 = new Event(myDate1, "Ninja Time!", "Monday", hGroup1, "", 180,
+          "Harsha going stealth-mode",
+          "Harsha");
+      e1.setID(11);
       myDBHandler.closeConnection();
       //System.out.println(myRanker.checkConflict(e2.getDate()));
       System.out.println(System.currentTimeMillis() / 1000);
-    } catch (ClassNotFoundException | SQLException e) {
+    } catch (ClassNotFoundException | SQLException | ParseException e) {
       e.printStackTrace();
     } finally {
       run(args);

@@ -170,15 +170,19 @@ public class ContactsThread implements Callable<String> {
             //user does not exist, remove from list
             String user = it.next();
             if (myDBHandler.findUser(user).isEmpty()) {
+              System.out.println("removing user = " + user);
               invalidFriends2.append(user);
               invalidFriends2.append(" ");
               it.remove();
             //if the user is not friends with the person they want to add, don't add them
-            } else if (!acceptedFriends2.contains(user)) {
+            //also don't add yourself
+            } else if (!acceptedFriends2.contains(user) || user.equals(user1)) {
+              System.out.println("removing user = " + user);
               it.remove();
             }
           }
           for (int i = 0; i < groupMembers.size(); i++) {
+            System.out.println("member to add = " + groupMembers.get(i));
             myDBHandler.addUserToGroup(groupMembers.get(i), removeGroupID);
             for (Entry<Integer, ClientHandler> cli: clients.entrySet()) {
               if (cli.getValue().getClient().equals(groupMembers.get(i))) {
