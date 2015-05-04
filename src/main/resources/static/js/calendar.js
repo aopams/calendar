@@ -118,6 +118,7 @@ function newEvent() {
 
 /* user edits her own event. */
 function editEvent(id) {
+console.log('id is ' + id);
 	var title = document.getElementById('title').value;
 	var date = document.getElementById('datepicker').value;
 	var time = document.getElementById('dialog-time').value;
@@ -138,7 +139,7 @@ function editEvent(id) {
 		console.log(responseObject);
 	    if(responseObject.status != 1) {
 	    	console.log('going to ranking functions');
-			displayRanking(responseObject, id);
+			displayRanking(responseObject, 1);
 		} else {
 			var $dialog = $('.ui-dialog-content');
 		    $dialog.dialog('destroy');

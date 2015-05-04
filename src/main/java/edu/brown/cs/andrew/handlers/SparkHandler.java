@@ -236,16 +236,17 @@ public class SparkHandler {
 
         CalendarThread ct = new CalendarThread(cli, Commands.ADD_EVENT, e,
             null, null);
-        if (eventID != -1) {
+        if (eventID > -1) {
           Event d = cli.getEvents().get(eventID);
+          System.out.println("EVENTID: " + eventID);
           ct = new CalendarThread(cli, Commands.EDIT_EVENT, e, d, clients);
         }
-        Future<String> t = pool.submit(ct);
-        try {
-          t.get();
-        } catch (InterruptedException | ExecutionException e1) {
-          e1.printStackTrace();
-        }
+        pool.submit(ct);
+//        try {
+//          t.get();
+//        } catch (InterruptedException | ExecutionException e1) {
+//          e1.printStackTrace();
+//        }
         clients.put(clientID, cli);
         if (c.getWeekYear() == 45) {
           if (c.get(Calendar.DAY_OF_WEEK) == 1
@@ -277,6 +278,7 @@ public class SparkHandler {
           }
           toFrontEnd.add(newE);
         }
+        e.setID(eventID);
         toFrontEnd.add(e);
         int status = 0;
         String message = "conflict";
@@ -288,8 +290,7 @@ public class SparkHandler {
     }
 
     private String checkDaylightSavings(Event e, Calendar c) {
-      String toReturn = null;
-      if (c.getWeekYear() == 11) {
+      if (c.getWeekYear() == 10) {
         if (c.get(Calendar.DAY_OF_WEEK) == 1
             && c.get(Calendar.HOUR_OF_DAY) == 1) {
         int status = -2;
