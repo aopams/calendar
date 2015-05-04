@@ -584,7 +584,7 @@ public class SparkHandler {
       QueryParamsMap qm = arg0.queryMap();
       int id = Integer.parseInt(qm.value("url").replace("#", ""));
       ContactsThread ct = new ContactsThread(clients.get(id), null, null, null,
-          null, Commands.GET_NAME);
+          null, Commands.GET_NAME, clients);
       Future<String> t = pool.submit(ct);
       String name;
       try {
@@ -649,7 +649,7 @@ public class SparkHandler {
       case "accept":
         try {
           ct = new ContactsThread(clients.get(id), user2, null, null, null,
-              Commands.ACCEPT_FRIEND);
+              Commands.ACCEPT_FRIEND, clients);
           Future<String> t = pool.submit(ct);
           t.get();
           message = "Friends request accepted!";
@@ -666,7 +666,7 @@ public class SparkHandler {
       case "remove":
         try {
           ct = new ContactsThread(clients.get(id), user2, null, null, null,
-              Commands.REMOVE_FRIEND);
+              Commands.REMOVE_FRIEND, clients);
           Future<String> t = pool.submit(ct);
           t.get();
           message = "Friend removed!";
@@ -683,7 +683,7 @@ public class SparkHandler {
       case "add":
         try {
           ct = new ContactsThread(clients.get(id), user2, null, null, null,
-              Commands.ADD_FRIEND);
+              Commands.ADD_FRIEND, clients);
           Future<String> t = pool.submit(ct);
           String exists = t.get();
           if (exists.equals("toobad")) {
@@ -771,7 +771,7 @@ public class SparkHandler {
         try {
           System.out.println("in members");
           ct = new ContactsThread(clients.get(id), null, null, groupID, null,
-              Commands.FIND_MEMBERS);
+              Commands.FIND_MEMBERS, clients);
           Future<String> t = pool.submit(ct);
           String[] members = t.get().split(",");
           message = "Members found!";
@@ -791,7 +791,7 @@ public class SparkHandler {
         try {
           System.out.println("in remove group");
           ct = new ContactsThread(clients.get(id), null, groupName, groupID,
-              null, Commands.REMOVE_GROUP);
+              null, Commands.REMOVE_GROUP, clients);
           Future<String> t = pool.submit(ct);
           t.get();
           message = "Friend removed!";
@@ -818,7 +818,7 @@ public class SparkHandler {
         try {
           System.out.println("in add group");
           ct = new ContactsThread(clients.get(id), null, groupName, null,
-              usersList, Commands.ADD_GROUP);
+              usersList, Commands.ADD_GROUP, clients);
           Future<String> t = pool.submit(ct);
           String exists = t.get();
           if (exists.equals("failure")) {
@@ -849,7 +849,7 @@ public class SparkHandler {
         groupID = Integer.parseInt(gid);
         try {
           ct = new ContactsThread(clients.get(id), null, null, groupID,
-              usersList2, Commands.NEW_MEMBERS);
+              usersList2, Commands.NEW_MEMBERS, clients);
           Future<String> t = pool.submit(ct);
           t.get();
         } catch (InterruptedException | ExecutionException e2) {
