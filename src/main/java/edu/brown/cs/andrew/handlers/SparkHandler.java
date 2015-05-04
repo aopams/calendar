@@ -199,7 +199,8 @@ public class SparkHandler {
         attendees.add(cli.getClient());
         group = "";
       }
-
+      //TODO: modify this so that backend spits to frontend
+      //the invalid users or users that aren't friends with current user
       for (String friend : usersBuffer) {
         friend = friend.trim();
         if (cli.getFriends().containsKey(friend)) {

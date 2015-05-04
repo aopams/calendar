@@ -122,8 +122,11 @@ public class ContactsThread implements Callable<String> {
                 invalidFriends.append(user);
                 invalidFriends.append(",");
                 it.remove();
+              //not friends with this user, so it is also considered invalid
               } else if (!acceptedFriends.contains(user) && !user.equals(user1)) {
                 System.out.println("not friends with " + user);
+                invalidFriends.append(user);
+                invalidFriends.append(",");
                 it.remove();
               }
               //user list includes user logged in, so must make sure to not accidentally
@@ -185,8 +188,11 @@ public class ContactsThread implements Callable<String> {
               it.remove();
             //if the user is not friends with the person they want to add, don't add them
             //also don't add yourself
+            //not friends with this user, so it is also considered invalid
             } else if (!acceptedFriends2.contains(user) || user.equals(user1)) {
               System.out.println("removing user = " + user);
+              invalidFriends2.append(user);
+              invalidFriends2.append(",");
               it.remove();
             }
           }
