@@ -843,13 +843,14 @@ public class SparkHandler {
         String[] tempUsersList2 = users2.split(",");
         List<String> usersList2 = new ArrayList<String>();
         for (String s : tempUsersList2) {
-          System.out.println(s);
+          System.out.println(s.trim());
           usersList2.add(s.trim());
         }
         gid = qm.value("groupid");
         groupID = Integer.parseInt(gid);
+        System.out.println("groupID = " + groupID);
         try {
-          ct = new ContactsThread(clients.get(id), null, null, groupID,
+          ct = new ContactsThread(clients.get(id), null, groupName, groupID,
               usersList2, Commands.NEW_MEMBERS, clients);
           Future<String> t = pool.submit(ct);
           message = t.get();

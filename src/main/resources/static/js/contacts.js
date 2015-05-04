@@ -519,6 +519,7 @@ function viewGroupMembers(elem) {
 			if (users) {
 				$(".members").remove();
 				var command = "newmembers";
+				console.log("groupid = " + groupid);
 				var postParameters = {url : url, groupid : groupid, groupname : groupname, command : command, users : users};
 				$.post('/editgroups', postParameters, function(responseJSON) {
 					$("#membersFormError").text("");
