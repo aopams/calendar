@@ -17,6 +17,7 @@ public class Event {
   private List<String> attendees;
   private String description;
   private String creator;
+  private String conflictColor;
   
   public Event (Date date, String title,
       String dayOfWeek, List<String> attendees,  
@@ -72,5 +73,8 @@ public class Event {
   }
   public void setDuration(int d) {
     duration = d;
+  }
+  public void setConflictColor(String color) {
+    this.conflictColor = color;
   }
 }

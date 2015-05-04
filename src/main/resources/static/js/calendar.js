@@ -692,6 +692,7 @@ function dateRegex(date) {
 
 function displayRanking(obj, type) {
 	events = obj.events;
+	console.log(events);
 	$('#newEventForm').html(
 	'<table class="table">' +
 	'<tbody>' +
@@ -702,13 +703,13 @@ function displayRanking(obj, type) {
 	    '<tr>' +
 	     ' <td class="no-border"> Everyone\'s free: </td>' +
 		    '</tr>' +
-		    '<tr class="active">' +
+		    '<tr class="' + obj.events[0].conflictColor + '">' +
 		      '<td><a onclick="rankedEvent(0, ' + type + ')">' + obj.events[0].date + '</a></td>' +
 		    '</tr>' +
-		    '<tr>' +
+		    '<tr class="' + obj.events[0].conflictColor + '">' +
 		      '<td><a onclick="rankedEvent(1, ' + type + ')">' + obj.events[1].date + '</a></td>' +
 		    '</tr>' +
-		    '<tr class="active">' +
+		    '<tr class="' + obj.events[0].conflictColor + '">' +
 		      '<td><a onclick="rankedEvent(2, ' + type + ')">' + obj.events[2].date + '</a></td>' +
 		    '</tr>' +
 		    '<tr>' +
