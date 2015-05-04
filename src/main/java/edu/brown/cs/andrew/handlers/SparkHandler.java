@@ -248,7 +248,7 @@ public class SparkHandler {
 //          e1.printStackTrace();
 //        }
         clients.put(clientID, cli);
-        if (c.getWeekYear() == 45) {
+        if (c.getWeekYear() == 44) {
           if (c.get(Calendar.DAY_OF_WEEK) == 1
               && c.get(Calendar.HOUR_OF_DAY) == 1) {
             int status = -2;
