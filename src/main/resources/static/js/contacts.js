@@ -255,9 +255,9 @@ function createFriends() {
 					rem.src = '/img/minus.png';
 					rem.onclick=function() {removeFriend(this);};
 					rem.style.marginRight='175px';
-					friend.appendChild(rem);
 					friend.appendChild(img);
 					friend.appendChild(name);
+					friend.appendChild(rem);
 					row.appendChild(friend);
 					count++;
 					if (count == len) {
@@ -320,10 +320,9 @@ function createGroups() {
 					rem.id = 'rem';
 					rem.src = '/img/minus.png';
 					rem.onclick=function() {removeGroup(this);};
-					rem.style.marginRight='175px';
-					group.appendChild(rem);
 					group.appendChild(img);
 					group.appendChild(name);
+					group.appendChild(rem);
 					row.appendChild(group);
 					count++;
 					if (count == len) {
