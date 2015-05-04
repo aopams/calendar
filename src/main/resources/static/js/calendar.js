@@ -613,7 +613,6 @@ function timeOffsetMargin() {
 			currMarg = 0;
 		}
 		 else {
-		 console.log(currMarg);
 			currMarg = currMarg.substring(0, currMarg.length - 2);
 		}
 		var newMarg = (currMarg * 1) + getTimeOffsetMargin(evTime);

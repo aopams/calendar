@@ -221,6 +221,9 @@ public class SparkHandler {
           description, creator);
       c.setTime(date);
       String daylightSavings = checkDaylightSavings(e, c);
+      if (daylightSavings != null) {
+        return daylightSavings;
+      }
       Ranker rank = new Ranker(e);
       boolean conflict = false;
       try {
