@@ -290,7 +290,12 @@ public class SparkHandler {
     }
 
     private String checkDaylightSavings(Event e, Calendar c) {
-      if (c.getWeekYear() == 10) {
+      try {
+        c.setTime(e.getDate());
+      } catch (ParseException e1) {
+        e1.printStackTrace();
+      }
+      if (c.get(Calendar.WEEK_OF_YEAR) == 11) {
         if (c.get(Calendar.DAY_OF_WEEK) == 1
             && c.get(Calendar.HOUR_OF_DAY) == 1) {
         int status = -2;
