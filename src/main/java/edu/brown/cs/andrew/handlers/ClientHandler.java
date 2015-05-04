@@ -32,6 +32,10 @@ public class ClientHandler {
   }
 
   public synchronized ConcurrentHashMap<String, String> getFriends() {
+    for (String friend : friends.keySet()) {
+      System.out.println("friend = " + friend);
+      System.out.println("status = " + friends.get(friend));
+    }
     return friends;
   }
 
@@ -194,11 +198,6 @@ public class ClientHandler {
   public void addGroup(String group, int groupID) {
     groups.put(groupID, group);
   }
-
-  // public void addGroup(String group) {
-  // maxGroupId++;
-  // groups.put(maxGroupId, group);
-  // }
 
   public void removeGroup(int groupID) {
     groups.remove(groupID);

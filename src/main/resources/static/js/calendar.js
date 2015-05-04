@@ -78,9 +78,6 @@ function googleEvents() {
 		}
 	});
 
-	updateDisplayedEvents();
-	
-
 }
 
 
@@ -609,6 +606,7 @@ function getEventColor(duration) {
 function timeOffsetMargin() {
 	var key;
 	for(key in eventMap) {
+		console.log(key);
 		value = eventMap[key];
 		var evTime = eventMap[key].date.split(" ")[3].split(":")[1] * 1;
 		var currMarg = $('.event#' + key).css('margin-top');
