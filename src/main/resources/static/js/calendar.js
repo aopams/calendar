@@ -104,13 +104,14 @@ function newEvent() {
 
 	$.post("/newevent", postParameters, function(responseJSON){
 		var responseObject = JSON.parse(responseJSON);
-		console.log('response object is ');
 		console.log(responseObject);
-	    if(responseObject.status != 1) {
-			displayRanking(responseObject, 0);
-		} else if (responseObject.status === -2) {
+		if (responseObject.status == -2) {
 			console.log('daylight savings');
-			console.log(responseObject);
+			var $dialog = $('.ui-dialog-content');
+		    $dialog.dialog('destroy');
+		    daylightMessage(responseObject.message);
+		} else if(responseObject.status != 1) {
+			displayRanking(responseObject, 0);
 		} else {
 			var $dialog = $('.ui-dialog-content');
 		    $dialog.dialog('destroy');
@@ -290,10 +291,11 @@ function daylightMessage(message) {
 	'<form class="form-inline" id ="newEventForm">' +
 	'<div class="form-group dialog-form">' +
 		'<img id="x-button" src="/img/x.png"/>' +
+	'</div>' +
 	   '<p>' + message + '</p>' + 
 	   	'<div class="margin-group-xl">'+ 
 		'<img id="new-event-button" src="\\img/check.png"/>' +
-		'</div> </div> </form>';
+		'</div></form>';
 	$(form).dialog({ modal: true, resizable: false});
 }
 
