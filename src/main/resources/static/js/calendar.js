@@ -627,6 +627,7 @@ function addNegativeMargins(id, slot) {
 	var evTime = eventMap[id].date.split(" ")[3].split(":")[1] * 1;
 	var tOffset = getTimeOffsetMargin(evTime);
 	var adjustedHeight = boxHeight - 37.5 + tOffset;
+	console.log('adding negative margin to ' + id);
 	if (adjustedHeight > 0) {
 		adjustMargin(adjustedHeight, slot);
 	}
@@ -639,11 +640,13 @@ function adjustMargin(ah, slot) {
 		//if condition for events that span more than one day 
 		var len = $('.eventSlot#' + slot).children().length;
 		var index = len - 1;
+		console.log('slot is ' + slot);
 		$('.eventSlot#' + slot).children().each(function () {
 			var currMarg = this.style.marginTop;
 			var currMarg = (currMarg.substring(0, currMarg.length) * 1);
 			var newMarg = (currMarg * 1) - ah;
 			this.style.marginTop = newMarg + "px";
+			console.log('margintop of ' + this.id + ' is ' + newMarg);
 			this.style.marginRight = ((index/len)*133.984) + "px";
 			index--;
 		});
