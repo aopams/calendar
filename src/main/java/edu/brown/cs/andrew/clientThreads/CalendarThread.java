@@ -38,17 +38,12 @@ public class CalendarThread implements Callable<String>{
     // TODO Auto-generated method stub
     switch (command) {
     case ADD_EVENT :
-      System.out.println("in add event");
       
       for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
         ClientHandler cli1 = e.getValue();
-        System.out.println(cli1.getClient());
-        System.out.println("in for loop");
-        if (myEvent.getAttendees().contains(cli1.getClient())) {
-          System.out.println("event should contain me");
+        if (myEvent.getAttendees().contains(cli1.getClient())) {;
           Event nextDay = cli1.checkTwoDays(myEvent);
           if (client1.getClient().equals(cli1.getClient())) {
-            System.out.println("this is me");
             myDBHandler.addEvent(myEvent);
           }
           while(nextDay != null) {
@@ -75,24 +70,17 @@ public class CalendarThread implements Callable<String>{
       List<String> newAttendees = deleteEvent.getAttendees();
       newAttendees.remove(client1.getClient());
       deleteEvent.setAttendees(newAttendees);
-      System.out.println("Deleting: " +  deleteEvent.getAttendees().size());
       myDBHandler.removeUserFromEvent(client1.getClient(), deleteEvent.getId());
       //loop through rest of clients and update their hashmaps to reflect that
       //this user just left the event
       for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
-        System.out.println("Delete attendees " + e.getValue().getClient());
         if (deleteEvent.getAttendees().contains(e.getValue().getClient())
             && !client1.getClient().equals(e.getValue().getClient())) {
-          System.out.println("iNHEREEEE");
-          System.out.println(client1.getClient());
           e.getValue().getEvents().put(deleteEvent.getId(), deleteEvent);
-          System.out.println(e.getValue().getEvents().get(deleteEvent.getId()).getAttendees().get(0));
-          //System.out.println(e.getValue().getEvents().get(deleteEvent.getId()).getAttendees().get(1));
         }
       }
       break;
     case EDIT_EVENT :
-      System.out.println(myEvent.getDescription());
       List<String> attends = deleteEvent.getAttendees();
       for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
         if (attends.contains(e.getValue().getClient())) {
@@ -103,17 +91,15 @@ public class CalendarThread implements Callable<String>{
       for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
         ClientHandler cli1 = e.getValue();
         if (myEvent.getAttendees().contains(cli1.getClient())) {
-          System.out.println("event should contain me");
           Event nextDay = cli1.checkTwoDays(myEvent);
           if (client1.getClient().equals(cli1.getClient())) {
-            System.out.println("this is me");
             myDBHandler.addEvent(myEvent);
           }
           while(nextDay != null) {
             if (client1.getClient().equals(cli1.getClient())) {
               myDBHandler.addEvent(myEvent);
             }
-            nextDay = client1.checkTwoDays(nextDay);
+            nextDay = cli1.checkTwoDays(nextDay);
           }
         }
       }
