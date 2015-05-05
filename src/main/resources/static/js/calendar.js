@@ -134,7 +134,7 @@ function newEvent() {
 
 /* user edits his own event. */
 //should this account for daylight savings too?
-function (id) {
+function editEvent(id) {
 	var title = document.getElementById('title').value;
 	var date = document.getElementById('datepicker').value;
 	var time = document.getElementById('dialog-time').value;

@@ -143,6 +143,7 @@ public class SparkHandler {
           e, clients);
       Future<String> t = pool.submit(ct);
       try {
+        //sometimes throws DB locked
         t.get();
       } catch (InterruptedException | ExecutionException e1) {
         // TODO Auto-generated catch block
