@@ -114,8 +114,10 @@ public class CalendarThread implements Callable<String>{
       }
       break;
     default :
+      myDBHandler.closeConnection();
       return null;
     }
+    myDBHandler.closeConnection();
     return null;
   }
 }
