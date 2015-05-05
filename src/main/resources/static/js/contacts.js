@@ -61,7 +61,7 @@ $(document).ready(function(e) {
 	window.setInterval(function() { 
 		createFriends();
 		createGroups();
-	}, 3000); 
+	}, 6000); 
 
 	//button to add friend at top of contacts page
 	$("#sendInvite").bind('click', function(e) {
