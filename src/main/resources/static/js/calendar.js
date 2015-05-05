@@ -117,10 +117,23 @@ function newEvent() {
 		    $dialog.dialog('destroy');
 		    updateDisplayedEvents();
 		}
+		
+		console.log("should display new window");
+		
+		if (responseObject.invalidUsers) {
+			temp = "The following users could not be added to the event since you are not friends with them: " + responseObject.invalidUsers;
+			invalidUsersMessage(temp);
+		}
+		
+		if (responseObject.invalidGroup) {
+			temp = "You are not a part of the group: " + responseObject.invalidGroup;
+			invalidGroupMessage(temp);
+		}
 	})
 }
 
-/* user edits her own event. */
+/* user edits his own event. */
+//should this account for daylight savings too?
 function editEvent(id) {
 	var title = document.getElementById('title').value;
 	var date = document.getElementById('datepicker').value;
@@ -140,13 +153,29 @@ function editEvent(id) {
 	$.post("/newevent", postParameters, function(responseJSON){
 		var responseObject = JSON.parse(responseJSON);
 		console.log(responseObject);
-	    if(responseObject.status != 1) {
+		//error check for -2?
+	    if (responseObject.status == -2) {
+			console.log('daylight savings');
+			var $dialog = $('.ui-dialog-content');
+		    $dialog.dialog('destroy');
+		    daylightMessage(responseObject.message);
+		} else if(responseObject.status != 1) {
 	    	console.log('going to ranking functions');
 			displayRanking(responseObject, id);
 		} else {
 			var $dialog = $('.ui-dialog-content');
 		    $dialog.dialog('destroy');
 		    updateDisplayedEvents();
+		}
+		
+		if (responseObject.invalidUsers) {
+			temp = "The following users could not be added to the event since you are not friends with them: " + responseObject.invalidUsers;
+			invalidUsersMessage(temp);
+		}
+		
+		if (responseObject.invalidGroup) {
+			temp = "You are not a part of the group: " + responseObject.invalidGroup;
+			invalidGroupMessage(temp);
 		}
 	})
 }
@@ -293,6 +322,34 @@ function daylightMessage(message) {
 		'<img id="x-button" src="/img/x.png"/>' +
 	'</div>' +
 	   '<p>' + message + '</p>' + 
+	   	'<div class="margin-group-xl">'+ 
+		'<img id="new-event-button" src="\\img/check.png"/>' +
+		'</div></form>';
+	$(form).dialog({ modal: true, resizable: false});
+}
+
+/* opens dialog window for alerts adding invalid users to an event */
+function invalidUsersMessage(message) {
+	form =
+	'<form class="form-inline" id ="newEventForm">' +
+	'<div class="form-group dialog-form">' +
+		'<img id="x-button" src="/img/x.png"/>' +
+	'</div>' +
+	   '<p style="color:red; text-align:center">' + message + '</p>' + 
+	   	'<div class="margin-group-xl">'+ 
+		'<img id="new-event-button" src="\\img/check.png"/>' +
+		'</div></form>';
+	$(form).dialog({ modal: true, resizable: false});
+}
+
+/* opens dialog window for alerts adding invalid users to an event */
+function invalidGroupMessage(message) {
+	form =
+	'<form class="form-inline" id ="newEventForm">' +
+	'<div class="form-group dialog-form">' +
+		'<img id="x-button" src="/img/x.png"/>' +
+	'</div>' +
+	   '<p style="color:red; text-align:center">' + message + '</p>' + 
 	   	'<div class="margin-group-xl">'+ 
 		'<img id="new-event-button" src="\\img/check.png"/>' +
 		'</div></form>';
@@ -724,6 +781,7 @@ function displayRanking(obj, type) {
 }
 
 $(document).ready(function(e) {
+	 document.getElementById('calendar').scrollTop = 300;
 	$(".ui-state-default").hide()  
 	/* update the displayed events to get events on page */
 	updateDisplayedEvents();

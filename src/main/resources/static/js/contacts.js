@@ -428,7 +428,7 @@ function newGroup() {
 		} else if (message) {
 			console.log("should print back invalid users");
 			var invalidUsers = message.split(",");
-			var string = "The following usernames were invalid: ";
+			var string = "You are not friends with the following users: ";
 			for (i = 0; i < invalidUsers.length; i++) {
 				console.log("in invalid users loop");
 				console.log(invalidUsers[i]);
@@ -491,7 +491,7 @@ function viewGroupMembers(elem) {
 						console.log("invalid members exist");
 						console.log(message);
 						var invalidUsers = message.split(",");
-						var string = "The following usernames were invalid: ";
+						var string = "You are not friends with the following users: ";
 						for (i = 0; i < invalidUsers.length; i++) {
 							console.log("in invalid users loop");
 							console.log(invalidUsers[i]);
