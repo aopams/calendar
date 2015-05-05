@@ -82,6 +82,8 @@ public class CalendarThread implements Callable<String>{
       break;
     case EDIT_EVENT :
       List<String> attends = deleteEvent.getAttendees();
+      String groupname = myEvent.getGroup();
+      
       for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
         if (attends.contains(e.getValue().getClient())) {
           e.getValue().removeEvent(deleteEvent);
@@ -89,13 +91,20 @@ public class CalendarThread implements Callable<String>{
       }
       myDBHandler.removeEvent(deleteEvent);
       for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
+        System.out.println("Current client = " + e.getValue().getClient());
         ClientHandler cli1 = e.getValue();
+        //check for all clients logged in, see if they are an attendee
+        //to this event, if so, update their hashmap
         if (myEvent.getAttendees().contains(cli1.getClient())) {
+          System.out.println("client is an attendee = " + cli1.getClient());
           Event nextDay = cli1.checkTwoDays(myEvent);
+          //checks for user who made the event, add to database once
           if (client1.getClient().equals(cli1.getClient())) {
+            System.out.println("add to database ONCEEE");
             myDBHandler.addEvent(myEvent);
           }
           while(nextDay != null) {
+            System.out.println("next day is not null, make it show up on next day?");
             if (client1.getClient().equals(cli1.getClient())) {
               myDBHandler.addEvent(myEvent);
             }
