@@ -184,7 +184,6 @@ public class DatabaseHandler {
     theStat.close();
   }
   public void removeFriend(String user_name1, String user_name2) throws SQLException {
-    System.out.println("removing a friendship");
     String query = "Delete From Friends where (user_name1 = ? and user_name2 = ?) "
         + "or (user_name1 = ? and user_name2 = ?);";
     PreparedStatement theStat = conn.prepareStatement(query);
@@ -192,8 +191,7 @@ public class DatabaseHandler {
     theStat.setString(2, user_name2);
     theStat.setString(3, user_name2);
     theStat.setString(4, user_name1);
-    System.out.println(theStat.executeUpdate());
-    System.out.println("friend removed");
+    theStat.executeUpdate();
     theStat.close();
   }
   public ConcurrentHashMap<String, String> getFriendsFromUser(String user_name) throws SQLException {
@@ -364,7 +362,6 @@ public class DatabaseHandler {
     conn.setAutoCommit(true);
     if (group_name != null && !group_name.equals("")) {
       int group_id = findGroup(group_name);
-      System.out.println(group_id);
       eventToGroup = "INSERT into Group_Event (group_id, event_id)"
           + "Values(?, ?);";
       PreparedStatement theStat3 = conn.prepareStatement(eventToGroup);
@@ -379,13 +376,11 @@ public class DatabaseHandler {
     if (eventID < 0) {
       eventID = eventID * -1;
     }
-    System.out.println("deleting group_event");
     String query3 = "Delete From Group_Event where event_id = ?";
     PreparedStatement stat3 = conn.prepareStatement(query3);
     stat3.setInt(1, eventID);
     stat3.executeUpdate();
     stat3.close();
-    System.out.println("groups deleted");
     String query2 = "Delete From User_Event where event_id = ?";
     PreparedStatement stat2 = conn.prepareStatement(query2);
     stat2.setInt(1, eventID);
@@ -397,7 +392,6 @@ public class DatabaseHandler {
     stat.setInt(1, eventID);
     stat.executeUpdate(); 
     stat.close();
-    System.out.println("DB Delete complete");
   }
   public List<String> getUsersFromGroup(int group_id) throws SQLException {
     List<String> toReturn = new CopyOnWriteArrayList<String>();
@@ -458,7 +452,6 @@ public class DatabaseHandler {
     String query2 = "select * from Events where event_id = ?";
     PreparedStatement theStat2 = conn.prepareStatement(query2);
     while (rs.next()) {
-      System.out.println("should enter if check");
       theStat2.setInt(1, rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
       Event toAdd = new Event(rs2.getDate("date"), rs2.getString("title"), rs2.getString("day_of_week"),
@@ -482,9 +475,7 @@ public class DatabaseHandler {
     while (rs.next()) {
       theStat2.setInt(1, rs.getInt(1));
       ResultSet rs2 = theStat2.executeQuery();
-      System.out.println("should enter if check");
       if (rs2.next()) {
-        System.out.println("adding to group events to return");
         Event toAdd = new Event(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(rs2.getString("date")), rs2.getString("title"), rs2.getString("day_of_week"),
             users, group_name, rs2.getInt("duration"), rs2.getString("description"),  rs2.getString("creator"));
         toAdd.setID(rs2.getInt("event_id"));
@@ -523,8 +514,6 @@ public class DatabaseHandler {
     eventList.addAll(getPersonnalEventsFromUser(user_name));
     List<Integer> groups = getGroupsIDFromUser(user_name);
     for (int i = 0; i < groups.size(); i++) {
-      System.out.println("groups ids " + groups.get(i));
-      System.out.println("events size of this group = " + getEventsFromGroup(groups.get(i)).size());
       eventList.addAll(getEventsFromGroup(groups.get(i)));
     }
     ConcurrentHashMap<Integer, Event> actualReturn = new ConcurrentHashMap<Integer, Event>();

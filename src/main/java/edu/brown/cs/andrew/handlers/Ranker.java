@@ -38,7 +38,6 @@ public class Ranker {
       // TODO Auto-generated catch block
       e1.printStackTrace();
     }
-    System.out.println(attendees.get(0).getEvents().size());
   }
 
   public boolean checkConflict(Date d) {
@@ -51,7 +50,6 @@ public class Ranker {
       if (!toReturn) {
         return false;
       }
-      System.out.println("attendees : " + attendees.entrySet().size());
       ClientHandler curr = e.getValue();
       ConcurrentHashMap<Integer, Event> daysEvents = curr.getEventsByDay(d);
       for (Entry<Integer, Event> event : daysEvents.entrySet()) {
@@ -62,19 +60,15 @@ public class Ranker {
           Date eventTime;
           try {
             eventTime = event.getValue().getDate();
-            System.out.println(d + " START VERSUS " + eventTime);
             Calendar innerCal = Calendar.getInstance();
             innerCal.setTime(eventTime);
-            System.out.println(event.getValue().getDuration());
             innerCal.add(Calendar.MINUTE, event.getValue().getDuration());
             Date endTime = innerCal.getTime();
-            System.out.println(end + " End VERSUS " + endTime);
             toReturn = !((d.after(eventTime) && d.before(endTime)) || 
                 (end.after(eventTime) && end.before(endTime))
                 || (eventTime.after(d) && eventTime.before(end))
                 || (endTime.after(d) && endTime.before(end))
                 || (d.compareTo(eventTime) == 0 || end.compareTo(endTime) == 0));
-            System.out.println(toReturn);
           } catch (ParseException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -89,10 +83,7 @@ public class Ranker {
 
     for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
       ClientHandler curr = e.getValue();
-      System.out.println(e.getValue().getClient());
       ConcurrentHashMap<Integer, Event> daysEvents = curr.getEventsByDay(d);
-      System.out.println(d);
-      System.out.println("Events number " + daysEvents.size());
       for (Entry<Integer, Event> event : daysEvents.entrySet()) {
         try {
           Calendar c = Calendar.getInstance();
@@ -102,7 +93,6 @@ public class Ranker {
           int endHour = c.get(Calendar.HOUR_OF_DAY);
           if (startHour <= endHour) {
             for (int j = startHour; j < endHour; j++) {
-              System.out.println("subtracting from hour " + j);
               int val = bestHoursTable.get(j);
               int newVal = val - (500 / attendees.size());
               bestHoursTable.put(j, newVal);
@@ -141,9 +131,7 @@ public class Ranker {
       }
     }
     for (int i = 0; i < 24; i++) {
-      System.out.println("Hour: " + i + " Value: " + bestHoursTable.get(i));
     }
-    System.out.println("Event Attendees " + attendees.size());
   }
 
   private void setBestHours() {

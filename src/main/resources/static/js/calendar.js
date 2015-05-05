@@ -59,7 +59,7 @@ function googleEvents() {
 		var responseObject = JSON.parse(responseJSON);
 		var hasAccessToken = responseObject.hasAccessToken;
 		if (!hasAccessToken) {
-			newWindow = window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://localhost:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com&access_type=offline", "popupWindow", "width=600,height=600,scrollbars=yes");
+			newWindow = window.open("https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/calendar&response_type=code&redirect_uri=http://10.38.56.241:1234&client_id=223888438447-5vjvjsu85l893mjengfjvd0fjsd8fo1r.apps.googleusercontent.com&access_type=offline", "popupWindow", "width=600,height=600,scrollbars=yes");
 			setTimeout(function() {
 				var codePathname = newWindow.location.href;
 				var code = codePathname.substring(28);
