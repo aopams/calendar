@@ -26,7 +26,6 @@ public class HeartBeatThread implements Callable<String>{
       ClientHandler client = e.getValue();
       try {
         String user = client.getClient();
-        System.out.println("user = " + user);
         client.setFriends(myDBHandler.getFriendsFromUser(user));
         client.setGroups(myDBHandler.getGroupsNameFromUser(user));
         client.setEvents(myDBHandler.getAllEventsFromUser(user));

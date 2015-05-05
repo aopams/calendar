@@ -452,10 +452,6 @@ body {
 	float: left;
 	width: 200px;
 }
-.ui-widget-content a {
-	color : white;
-}
-
 /*dialog inner styling */
 #duration {
 	width: 55px;

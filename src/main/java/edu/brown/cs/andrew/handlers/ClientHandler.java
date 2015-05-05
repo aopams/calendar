@@ -51,7 +51,6 @@ public class ClientHandler {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
     Date start = SparkHandler.setTimeToMidnight(startTimed);
     for (Entry<Integer, Event> e : events.entrySet()) {
-      System.out.println(e.getValue().getTitle());
       try {
         Date eventDate = e.getValue().getDate();
         Calendar c = Calendar.getInstance();
@@ -60,7 +59,6 @@ public class ClientHandler {
         Date endDate = c.getTime();
         if (eventDate.after(start) && eventDate.before(endDate) || eventDate.equals(start)) {
           toReturn.put(e.getKey(), e.getValue());
-          System.out.println("Date: " + e.getValue().getDate() + "\t" + e.getKey());
         }
       } catch (ParseException e1) {
         // TODO Auto-generated catch block
@@ -73,7 +71,6 @@ public class ClientHandler {
   public ConcurrentHashMap<Integer, Event> getEventsByDay(Date startTimed) {
     ConcurrentHashMap<Integer, Event> toReturn = new ConcurrentHashMap<Integer, Event>();
     Date start = SparkHandler.setTimeToMidnight(startTimed);
-    System.out.println("events size: " + events.size());
     for (Entry<Integer, Event> e : events.entrySet()) {
       try {
         Date eventDate = e.getValue().getDate();
@@ -160,7 +157,6 @@ public class ClientHandler {
       int newDuration = 0;
       if (hour > 1440) {
         newDuration = hour - 1440;
-        System.out.println("new Dat TIME: " + newDuration);
         duration = duration - newDuration;
       }
       e.setDuration(duration);
@@ -178,12 +174,9 @@ public class ClientHandler {
   public void addEvent(Event e) {
       maxEventId += 1;
       e.setID(maxEventId);
-      System.out.println(events);
       if (e.getCreator().equals("google")) {
-        System.out.println(e.getId());
         e.setID(maxEventId * -1);
         events.put(maxEventId * -1, e);
-        System.out.println(e.getId());
       } else {
         events.put(maxEventId, e);
       }

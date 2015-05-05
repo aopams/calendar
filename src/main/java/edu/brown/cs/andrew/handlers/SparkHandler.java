@@ -68,8 +68,6 @@ public class SparkHandler {
     try {
       config.setDirectoryForTemplateLoading(templates);
     } catch (IOException ioe) {
-      System.out.printf("ERROR: Unable " + "use %s for template loading.\n",
-          templates);
       System.exit(1);
     }
     return new FreeMarkerEngine(config);
