@@ -205,8 +205,8 @@ public class SparkHandler {
         }
       }
       List<String> attendees = groupAttendees;
+      attendees.add(cli.getClient());
       if (group == null) {
-        attendees.add(cli.getClient());
         group = "";
       }
       //TODO: modify this so that backend spits to frontend
