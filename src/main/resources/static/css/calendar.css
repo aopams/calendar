@@ -437,10 +437,10 @@ body {
 }
 
 #new-members-button {
-	height: 24px;
 	float: left;
-	margin-top: 9px;
-	margin-left: 3px;
+	width:50px;
+	margin-top: 5px;
+	margin-left: 2px;
 }
 
 .addMembersWrap {
@@ -450,8 +450,12 @@ body {
 
 #membersToAdd {
 	float: left;
-	width: 224px;
+	width: 200px;
 }
+.ui-widget-content a {
+	color : white;
+}
+
 /*dialog inner styling */
 #duration {
 	width: 55px;

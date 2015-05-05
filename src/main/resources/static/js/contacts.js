@@ -461,13 +461,15 @@ function viewGroupMembers(elem) {
 		form =
 			'<form class="form-inline" id="membersForm">' +
 				'<div class="form-group dialog-form">' +
+					'<h3 style="display:block; float:left">' + groupname + '</h3>' +
 					'<img id="x-button" src="/img/x.png"/>' +
 				'</div>' +
 				'<div class="addMembersWrap">' +
 					'<div class="input-group margin-group" id="membersToAdd">' +
 				    	'<div class="input-group-addon">@</div><input type="text" class="form-control" id="attendees" placeholder="Users to add"/>'+
 					'</div>' +
-					'<img id="new-members-button" src="\\img/check.png"/>' +
+/* 					'<img id="new-members-button" src="\\img/check.png"/>' + */
+					'<a class="btn btn-default btn-primary" href="#" id="new-members-button" role="button">Add</a>' +
 				'</div>' +
 				'<p id="membersFormError">' +
 				'</p>' +
