@@ -114,8 +114,14 @@ public class SparkHandler {
       Event e = clients.get(clientID).getEvents().get(eventID);
       ClientHandler cli = clients.get(clientID);
       CalendarThread ct = new CalendarThread(cli, Commands.REMOVE_USER_EVENT,
-          null, e, null);
-      pool.submit(ct);
+          null, e, clients);
+      Future<String> t = pool.submit(ct);
+      try {
+        t.get();
+      } catch (InterruptedException | ExecutionException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
       int status = 0;
       String message = "accepted";
       Map<String, Object> variables = new ImmutableMap.Builder()
