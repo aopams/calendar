@@ -137,6 +137,9 @@ public class SparkHandler {
       int clientID = Integer.parseInt(qm.value("string").substring(10));
       int eventID = Integer.parseInt(qm.value("id"));
       Event e = clients.get(clientID).getEvents().get(eventID);
+      System.out.println(eventID);
+      System.out.println(clients.get(clientID).getEvents().get(eventID));
+      System.out.println(clients.get(clientID).user);
       CalendarThread ct = new CalendarThread(null, Commands.DELETE_EVENT, null,
           e, clients);
       Future<String> t = pool.submit(ct);
@@ -204,6 +207,7 @@ public class SparkHandler {
         }
       }
       List<String> attendees = groupAttendees;
+      System.out.println(attendees.size());
       attendees.add(cli.getClient());
       if (group == null) {
         group = "";

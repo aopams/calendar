@@ -55,7 +55,7 @@ public class ClientHandler {
         Date eventDate = e.getValue().getDate();
         Calendar c = Calendar.getInstance();
         c.setTime(start);
-        c.add(Calendar.DATE, 6);
+        c.add(Calendar.DATE, 7);
         Date endDate = c.getTime();
         if (eventDate.after(start) && eventDate.before(endDate) || eventDate.equals(start)) {
           toReturn.put(e.getKey(), e.getValue());
@@ -167,6 +167,7 @@ public class ClientHandler {
           e.getCreator());
       addEvent(cont);
     }
+    System.out.println(user);
     addEvent(e);
     return cont;
   }

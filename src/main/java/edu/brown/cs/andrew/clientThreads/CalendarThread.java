@@ -41,8 +41,10 @@ public class CalendarThread implements Callable<String>{
       
       for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
         ClientHandler cli1 = e.getValue();
-        if (myEvent.getAttendees().contains(cli1.getClient())) {;
+        if (myEvent.getAttendees().contains(cli1.getClient())) {
+          System.out.println(cli1.getEvents().size());
           Event nextDay = cli1.checkTwoDays(myEvent);
+          System.out.println(myEvent.getId());
           if (client1.getClient().equals(cli1.getClient())) {
             myDBHandler.addEvent(myEvent);
           }

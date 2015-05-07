@@ -319,6 +319,7 @@ public class ServerCalls {
   public ArrayList<Event> getAllEvents(HashMap<String, String> eventsList) {
     ArrayList<Event> toReturn = new ArrayList<Event>();
     String itemString = eventsList.get("items");
+    System.out.println(itemString);
     String[] events = itemString.split("kind");
     for (int i = 1; i < events.length; i++) {
 

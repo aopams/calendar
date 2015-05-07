@@ -535,7 +535,7 @@ public class DatabaseHandler {
   }
   public int getMaxEventID() throws SQLException {
     int toReturn = -1;
-    String query = "Select MAX(event_id) from User_Event";
+    String query = "Select MAX(event_id) from Events";
     PreparedStatement theStat = conn.prepareStatement(query);
     ResultSet rs = theStat.executeQuery();
     if (rs.next()) {

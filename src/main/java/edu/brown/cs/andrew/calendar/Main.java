@@ -28,8 +28,6 @@ public class Main {
       Date myDate = new SimpleDateFormat("dd/MM/yyyy").parse("13/4/2015");
       System.out.println(myDate.toString());
       List<String> hSquad = new ArrayList<String>();
-      hSquad.add("Harsha");
-      hSquad.add("Harsha2");
       List<String> hGroup = new ArrayList<String>();
       hGroup.add("Harsha");
       hGroup.add("Rohan");
@@ -37,7 +35,7 @@ public class Main {
       Event e = new Event(myDate, "Party Time!!!!", "Friday", hSquad,
           "", 180,
           "Harsha Squad going Ham to Trap Queen for 3 hours",
-          "Harsha");
+          "mickey");
       Date myDate2 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("16/4/2015 13:00");
       Date myDate3 = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse("21/4/2015 18:00");
       System.out.println(myDate2);
@@ -48,7 +46,7 @@ public class Main {
           "Harsha and Rohan going stealth-mode",
           "Rohan");
       System.out.println(myDBHandler.findGroup("Harsha Squad"));
-     // myDBHandler.addEvent(e);
+      myDBHandler.addEvent(e);
      // myDBHandler.addEvent(e2);
      // myDBHandler.addEvent(e3); 
       List<String> hGroup1 = new ArrayList<String>();

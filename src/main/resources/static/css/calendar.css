@@ -223,6 +223,11 @@ body {
 
 /* contacts page stuff */
 
+#contacts {
+	width: 1000px;
+	margin: auto;
+}
+
 #contactsWindow {
 	width: 1000px;
 	height: 535px;
@@ -351,7 +356,7 @@ body {
 }
 
 #tabs {
-	margin-left: 235px;
+	margin-left: 15px;
 	border:none;
 }
 
