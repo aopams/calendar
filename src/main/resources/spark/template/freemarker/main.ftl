@@ -24,6 +24,7 @@
 	<div class="row header">
 		<img src="\img/logo.png" style="width:140px;">
 	</div>
+	<!-- buttons for navigation here -->
 	<div class="row choices">
 		<div class="col-md-4 col-sm-4 col-xs-4">
 			<a class="btn btn-default btn-primary" href="#" id="calendarbutton" role="button">Calendar</a>
@@ -37,7 +38,7 @@
 			<input type="button" class="btn btn-default" href="#" role="button" id="logout-btn" value="Log out" onclick="window.location='/login';">
 		</div>
 	</div>
-	
+	<!-- contacts page, hidden till contacts button pressed -->
 	<div id="contacts">
 			<ul class="nav nav-tabs" id="tabs">
 			  <li role="presentation" class="active" id="friendsTab"><a href="#">Friends</a></li>
@@ -91,6 +92,8 @@
 				<img class="arrow" src="\img/leftarrow.png" id="leftarrow">
 			</div>
 		</div>
+		<!-- the calendar template uses a day-hour schema (i.e. day 1, hour 23 for sunday at 11pm)
+		 so that the javascript can easily place events. -->
 		<div id="calendar" class="row calendar btn-outline">
 			<div class="calendar-times">
 				<div class="time">12 am</div>
