@@ -13,6 +13,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import edu.brown.cs.andrew.clientThreads.HeartBeatThread;
+
+/**
+ * Ranker class for ranking the best times in our calendar.
+ *
+ * @author rmchandr
+ *
+ */
 public class Ranker {
 
   private Event base;
@@ -20,6 +27,12 @@ public class Ranker {
       new ConcurrentHashMap<Integer, ClientHandler>();
   private HashMap<Integer, Integer> bestHoursTable;
   private HashMap<Integer, Integer> hourConflictTable;
+  /**
+   * Ranker constructor.
+   *
+   * @param e
+   *          event that represents event being compared to
+   */
   public Ranker(Event e) {
     this.setBestHours();
     List<String> attendeeList = e.getAttendees();
@@ -41,6 +54,13 @@ public class Ranker {
     }
   }
 
+  /**
+   * Checks if there is any sort of conflict with the given date
+   *
+   * @param d
+   *          given date
+   * @return boolean that represents if there is a conflict or not
+   */
   public boolean checkConflict(Date d) {
     Calendar c = Calendar.getInstance();
     c.setTime(d);
@@ -81,6 +101,13 @@ public class Ranker {
     return toReturn;
   }
 
+  /**
+   * Checks all conflicts among all users in the group, and ranks times
+   * accordingly
+   *
+   * @param d
+   *          date to be checked
+   */
   public void checkAllConflicts(Date d) {
 
     for (Entry<Integer, ClientHandler> e : attendees.entrySet()) {
@@ -133,6 +160,9 @@ public class Ranker {
     }
   }
 
+  /**
+   * Sets the ranking of each hour of the day upon startup
+   */
   private void setBestHours() {
     HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
     HashMap<Integer, Integer> map2 = new HashMap<Integer, Integer>();
@@ -167,6 +197,9 @@ public class Ranker {
     this.hourConflictTable = map2;
   }
 
+  /**
+   * Comparator for our ranker
+   */
   private Comparator<Integer> hourComp = new Comparator<Integer>() {
     @Override
     public int compare(Integer i1, Integer i2) {
@@ -180,6 +213,12 @@ public class Ranker {
     }
   };
 
+  /**
+   * Gets k best times given a date
+   * @param k number of times to be returned
+   * @param d given date
+   * @return and Integer array of the best hours
+   */
   public Integer[] getBestTimes(int k, Date d) {
     this.checkAllConflicts(d);
     PriorityQueue<Integer> pq = new PriorityQueue<Integer>(hourComp);
@@ -195,6 +234,11 @@ public class Ranker {
     }
     return toReturn;
   }
+
+  /**
+   * Gets conflicts
+   * @return updated HashMap
+   */
   public HashMap<Integer, Integer> getConflicts() {
     HashMap<Integer, Integer> toReturn = new HashMap<Integer, Integer>();
     for (int i = 0; i < 24; i++) {
