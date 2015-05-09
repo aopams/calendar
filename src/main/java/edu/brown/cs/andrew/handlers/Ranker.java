@@ -13,14 +13,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import edu.brown.cs.andrew.clientThreads.HeartBeatThread;
-
 public class Ranker {
 
   private Event base;
-  private ConcurrentHashMap<Integer, ClientHandler> attendees = new ConcurrentHashMap<Integer, ClientHandler>();
+  private ConcurrentHashMap<Integer, ClientHandler> attendees =
+      new ConcurrentHashMap<Integer, ClientHandler>();
   private HashMap<Integer, Integer> bestHoursTable;
   private HashMap<Integer, Integer> hourConflictTable;
-
   public Ranker(Event e) {
     this.setBestHours();
     List<String> attendeeList = e.getAttendees();
@@ -30,12 +29,14 @@ public class Ranker {
       attendees.put(i, currHandler);
     }
     base = e;
-    HeartBeatThread hbt = new HeartBeatThread("pull", attendees);
+    HeartBeatThread hbt = new HeartBeatThread(attendees);
     Future<String> wait = SparkHandler.pool.submit(hbt);
     try {
       wait.get();
-    } catch (InterruptedException | ExecutionException e1) {
+    } catch (InterruptedException e1) {
       // TODO Auto-generated catch block
+      e1.printStackTrace();
+    } catch (ExecutionException e1) {
       e1.printStackTrace();
     }
   }
@@ -64,11 +65,12 @@ public class Ranker {
             innerCal.setTime(eventTime);
             innerCal.add(Calendar.MINUTE, event.getValue().getDuration());
             Date endTime = innerCal.getTime();
-            toReturn = !((d.after(eventTime) && d.before(endTime)) || 
-                (end.after(eventTime) && end.before(endTime))
+            toReturn = !((d.after(eventTime) && d.before(endTime))
+                || (end.after(eventTime) && end.before(endTime))
                 || (eventTime.after(d) && eventTime.before(end))
                 || (endTime.after(d) && endTime.before(end))
-                || (d.compareTo(eventTime) == 0 || end.compareTo(endTime) == 0));
+                || (d.compareTo(eventTime) == 0
+                || end.compareTo(endTime) == 0));
           } catch (ParseException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -100,7 +102,6 @@ public class Ranker {
               this.hourConflictTable.put(j, newConflict);
             }
           }
-          
         } catch (ParseException e1) {
           // TODO Auto-generated catch block
           e1.printStackTrace();
@@ -129,8 +130,6 @@ public class Ranker {
         int newVal2 = val2 + (500 / attendees.size());
         bestHoursTable.put(startHour + 2, newVal2);
       }
-    }
-    for (int i = 0; i < 24; i++) {
     }
   }
 
@@ -189,7 +188,6 @@ public class Ranker {
     }
     Integer[] toReturn = new Integer[k];
     int p = 0;
-
     while (p < k) {
       Integer integer = pq.poll();
       toReturn[p] = integer;

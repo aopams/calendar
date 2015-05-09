@@ -222,10 +222,19 @@ body {
 }
 
 /* contacts page stuff */
+<<<<<<< HEAD
 #contacts {
 	width:1000px;
 	margin:auto;
 }
+=======
+
+#contacts {
+	width: 1000px;
+	margin: auto;
+}
+
+>>>>>>> a5ef0c07e845d532410f7f70a689ae7286a6eb3a
 #contactsWindow {
 	width: 1000px;
 	height: 535px;
@@ -354,7 +363,7 @@ body {
 }
 
 #tabs {
-	margin-left: 10px;
+	margin-left: 15px;
 	border:none;
 }
 

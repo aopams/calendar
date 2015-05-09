@@ -1,2 +1,4 @@
 /target/
 /calendar.sqlite3
+/.classpath
+/.mvn-classpath
